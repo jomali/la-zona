@@ -1,0 +1,596 @@
+
+
+!!==============================================================================
+!!
+!!	LA ZONA
+!!	Mensajes personalizados de la librería
+!!
+!!==============================================================================
+!!
+!!	Archivo:		laZona_langLM.inf
+!!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Castellano)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		GLULX
+!!	Versión:		0.0
+!!	Fecha:			2017/12/16
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte del relato interactivo LA ZONA.
+!!
+!!	LA ZONA es software libre: usted puede redistribuirlo y/o
+!!	modificarlo bajo los términos de la Licencia Pública General GNU
+!!	publicada por la Fundación para el Software Libre, ya sea la versión
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
+!!
+!!	LA ZONA se distribuye con la esperanza de que sea útil, pero
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
+!!	la Licencia Pública General GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU
+!!	junto a LA ZONA. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2018, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	0.0: 2016/06/18	Inicio del desarrollo.
+!!
+!!------------------------------------------------------------------------------
+
+
+Object	LibraryMessages
+ with	before [ st;
+
+	Answer, Ask, AskFor, Order, Tell:
+		print_ret (parser) "Para iniciar una conversación, usa simplemente la
+		orden HABLA (a/con) PERSONAJE.";
+
+	CommandsOff:
+		switch (lm_n) {
+			1:	print_ret (parser) "Grabación de órdenes finalizada.";
+			#Ifdef TARGET_GLULX;
+			2:	print_ret (parser) "Grabación de órdenes ya finalizada.";
+			#Endif; ! TARGET_
+		}
+
+	CommandsOn:
+		switch (lm_n) {
+			1:	print_ret (parser) "Grabación de órdenes activada.";
+			#Ifdef TARGET_GLULX;
+			2:	print_ret (parser) "Órdenes relanzadas.";
+			3:	print_ret (parser) "Grabación de órdenes ya activada.";
+			4:	print_ret (parser) "Fallo en la grabación de órdenes.";
+			#Endif; ! TARGET_
+		}
+
+	CommandsRead:
+		switch (lm_n) {
+			1:	print_ret (parser) "Relanzando acciones.";
+			#Ifdef TARGET_GLULX;
+			2:	print_ret (parser) "Las órdenes ya están siendo relanzadas.";
+			3:	print_ret (parser) "Fallo en la reejecución de órdenes:
+				grabación en curso.";
+			4:	print_ret (parser) "Fallo en la reejecución de órdenes.";
+			5:	print_ret (parser) "Acciones ejecutadas: fin del proceso.";
+			#Endif; ! TARGET_
+		}
+
+!!	FullScore: ! TODO - Mensaje del parser
+
+	LMode1:
+		!! La acción LMode1 se genera ante el comando BREVE. La librería
+		!! imprime la constante Story y a continuación este mensaje.
+		print_ret (parser) "El relato está ahora en su modo ~breve~, que da
+		sólo descripciones largas de los lugares la primera vez que son
+		visitadas, y descripciones cortas en otro caso.";
+
+	LMode2:
+		!! La acción LMode2 se genera ante el comando LARGO (o NORMAL). La
+		!! librería imprime la constante Historia y a continuación este
+		!! mensaje.
+		print_ret (parser) "El relato está ahora en su modo normal ~largo~, que
+		siempre da descripciones largas de los lugares (incluso si ya habías
+		estado antes).";
+
+	LMode3:
+		print_ret (parser) "El relato está ahora en su modo ~superbreve~, que
+		siempre da descripciones cortas de los lugares (incluso si nunca habías
+		estado antes).";
+
+
+	Miscellany:
+		!! Esta es una falsa acción, que se usa simplemente para agrupar aquí
+		!! todos los mensajes de error del parser, los mensajes ante algunos
+		!! metacommandos, o algunos mensajes de librería no relacionados con
+		!! acción alguna.
+		switch (lm_n) {
+			1:
+				!! El usuario ha especificado objetos multiples, pero el parser
+				!! tiene una lista que no admite más de 16, de modo que los
+				!! restantes objetos no serán procesados.
+				print_ret (parser) "Sólo se consideran los dieciséis
+				primeros objetos.";
+			2:
+				!! El usuario ha usado objetos múltiples, pero por alguna razón
+				!! la lista del parser está vacía.
+				print_ret (parser) "No se pudo determinar a qué objetos te has
+				referido.";
+			6:
+				!! Error si el intérprete no tiene "undo"
+				print_ret (parser) "Tu intérprete no puede ~DESHACER~
+				acciones.";
+			7:
+				#Ifdef TARGET_ZCODE; ![6/11]
+				!! Otro error si el intérprete no tiene "undo", pero no había
+				!! sido detectado correctamente.
+				print_ret (parser) "~DESHACER~ falló. (Puede que tu intérprete
+				no permita realizar esa acción).";
+				#Ifnot; ! TARGET_GLULX
+				print_ret (parser) "No puedes ~DESHACER~ más.";
+				#Endif; ! TARGET_
+			8:
+				!! Si el usuario no responde correctamente a la pregunta del
+				!! mensaje [Miscellany,5]
+				print_ret (parser) "Por favor, introduce una de las respuestas
+				anteriores.";
+			10:
+				!! Mensaje cuando el usuario introduce una linea en blanco.
+				<Look>;
+				InformLibrary.end_turn_sequence();
+				return true;
+			11:
+				!! Si el usuario intenta "undo" al principio del juego
+				print_ret (parser) "No se puede ~DESHACER~ algo que no has
+				hecho.";
+			12:
+				!! Si el usuario pone "undo" dos veces.
+				print_ret (parser) "No se puede ~DESHACER~ dos veces seguidas.";
+			13:
+				!! Éxito en el "undo".
+				print_ret (parser) "Retrocediendo al turno anterior.";
+			14:
+				!! Si el usuario pone EEPA (verbo para corregir), pero el
+				!! parser no recordaba ninguna palabra mal. Ejmplo de uso del
+				!! comando EEPA:
+				!!		> SACA MAZANA VERDE DE LA CESTA
+				!!		No vqeo eso por aquí.
+				!!		> EEPA MANZANA
+				!!		Sacas la manzana verde de la cesta de mimbre.
+				print_ret (parser) "Eso no puede corregirse.";
+			15:
+				!! Se usa EEPA sin especificar la palabra corregida.
+				print_ret (parser) "Has utilizado ~EEPA~ sin especificar qué
+				palabra deseabas corregir.";
+			16:
+				!! Si el usuario pone EEPA seguido de dos o más palabras.
+				print_ret (parser) "~EEPA~ sólo puede corregir una palabra.";
+			19:
+				!! Descripción del personaje controlado por el usuario.
+				<<Inv>>;
+			20:
+				!! Cuando el usuario pone PNJ, REPITE para que el PNJ haga otra
+				!! vez la última acción.
+				print_ret (parser) "Para repetir un comando como ~PERSONAJE,
+				SALTA~, escribe ~REPITE~, en lugar de ~PERSONAJE, REPITE~.";
+			21:
+				!! Cuando el usuario pone REPITE como primer commando del juego.
+				print_ret (parser) "No hay comando que repetir.";
+			22:
+				!! El usuario ha comenzado la frase con una coma.
+				print_ret (parser) "No se puede empezar una frase con una
+				coma.";
+			23:
+				!! Cuando el usuario pone, por ejemplo; PEPE, COGE HACHA, pero
+				!! no hay un objeto que responda al name PEPE.
+				print_ret (parser) "Parece que has tratado de hablar con
+				alguien, pero no se pudo identificar con quién.";
+			24:
+				!! Si el usuario intenta hablar con un objeto que no es
+				!! "animate" ni "talkable" ("talkable" debe ponerse a objetos
+				!! inanimates con los que se podría hablar, como un micrófono).
+				st = PrintParserPrefix();
+				print "No es posible hablar con ", (the) lm_o, ".";
+				PrintParserSufix(st);
+				new_line;
+				return true;
+			25:
+				!! XXX - Mensaje personalizado para el sistema de conversación.
+				!! Hay palabras no comprendidas entre el nombre de un PNJ y la
+				!! coma, ej: PEPE ZAFDSRGG, SALTA.
+				print_ret (parser) "Para iniciar una conversación, intenta
+				órdenes del tipo: PERSONAJE, HOLA.";
+			47:
+				!! El usuario ha respondido "TODOS" o "AMBOS" a una pregunta
+				!! aclaratoria como la anterior, pero el verbo no admite
+				!! objetos múltiples.
+				print (parser) "Desafortunadamente sólo puedes referirte a un
+				objeto en este caso. ¿Cuál exactamente?";
+				new_line;
+				PreguntaCualExactamente=1;
+			48:
+				! TODO - Editar mensaje: "Tienes que indicar a quién..."
+				!! El usuario ha escrito una frase u orden a PSI incompleta,
+				!! como BESA (verbo aplicado sobre PSIs normalmente). El parser
+				!! le pregunta para que complete la frase.
+				st = PrintParserPrefix();
+				PreguntaCualExactamente = 1;
+				if (IniciarPregunta() ==0 ) print "A quién";
+				if (actor ~= player) print " tiene que ";
+				else print " quieres ";
+				IdiomaImprimirComando();
+				if (actor~=player) print " ", (the) actor;
+				print "?";
+				PrintParserSufix(st);
+				new_line;
+			49:
+				! TODO - Editar mensaje: "Tienes que indicar a quién..."
+				!! El usuario ha escrito una frase u orden incompleta, como
+				!! COGE (verbo aplicado sobre objetos normalmente). El parser
+				!! le pregunta para que complete la frase.
+				st = PrintParserPrefix();
+				PreguntaCualExactamente = 1;
+				if (IniciarPregunta() ==0 ) print "Qué";
+				if (actor ~= player) print " tiene que ";
+				else print " quieres ";
+				IdiomaImprimirComando();
+				if (actor~=player) print " ", (the) actor;
+				print "?";
+				PrintParserSufix(st);
+				new_line;
+			51:
+				!! El usuario ha intentado una acción con objeto múltiple
+				!! (como COGE TODO). Esta acción es convertida por el parser en
+				!! una serie de actiones COGE OBJETO1, COGE OBJETO2, etc... Si
+				!! en la ejecución de alguna de estas actiones encuentra que la
+				!! localidad del player ha cambiado, debe abortar el proceso.
+				!! Este mensaje informa de ello al usuario.
+				print_ret (parser) "Se ha producido un evento inesperado que ha
+				obligado a recortar la lista de objetos sobre los que
+				actuabas.";
+			54:
+				print_ret (parser) "Comentario guardado.";
+			55:
+				print_ret (parser) "Comentario NO guardado.";
+		}
+
+	NotifyOff:
+		print_ret (parser) "Notificación de puntuación desactivada.";
+
+	Pronouns:
+		!! Esta acción (generada por el verbo PRONOMBRES) muestra una lista
+		!! de qué significa en ese momento para el parser cada pronombre:
+		!! -lo, -la, -los, -las...
+		!!
+		!!	1:	Texto introductorio.
+		!!	2:	La palabra "es".
+		!!	3:	Texto a mostrar si el pronombre no está definido.
+		!!	4:	Si el juego no define pronombres.
+		!!	5:	[6/11].
+		switch (lm_n) {
+			1:	st = PrintParserPrefix();
+				print "En este momento, ";
+			2:	print "es ";
+			3:	print "no está definido";
+			4:	print "el juego no conoce ningún pronombre.";
+				PrintParserSufix(st);
+				new_line;
+			5:	print ".";
+				PrintParserSufix(st);
+				new_line;
+		}
+		return true;
+
+	Prompt:
+		!! El prompt aparece justo antes de pedir una nueva línea al usuario.
+		!! Puede definirse para que sea una frase, o se genere una frase
+		!! aleatoria en cada turno, por ejemplo.
+		new_line;
+		print (emph) "> ";
+		return true;
+
+	Quit:
+		!!	1:	Respuesta al comando FIN.
+		!!	2:	Respuesta si el jugador escribe algo distinto de "si" o "no".
+		switch (lm_n) {
+			1:	st = PrintParserPrefix();
+				print "Por favor, responde ";
+				CreateLink("SÍ");
+				print " o ";
+				CreateLink("NO");
+				print ":";
+				PrintParserSufix(st);
+				print " ";
+			2:	st = PrintParserPrefix();
+				print "¿Realmente quieres abandonar el relato? (";
+				CreateLink("SÍ");
+				print "/";
+				CreateLink("NO");
+				print ")";
+				PrintParserSufix(st);
+				print " ";
+		}
+		return true;
+
+	Restart:
+		!!	1:	Respuesta al comando REINICIAR.
+		!!	2:	Si no se puede reiniciar.
+		switch (lm_n) {
+			1:	st = PrintParserPrefix();
+				print "¿Realmente quieres reiniciar el relato? (";
+				CreateLink("SÍ");
+				print "/";
+				CreateLink("NO");
+				print ")";
+				PrintParserSufix(st);
+				print " ";
+				return true;
+			2:	print_ret (parser) "Error al reiniciar la partida.";
+		}
+
+	Restore:
+		!!	1:	Si no se pudo cargar la partida con LOAD.
+		!!	2:	Éxito (no llega a mostrarse, porque en caso de éxito el estado
+		!!		del juego cambia al momento en que se salvó. El "Ok" que se ve
+		!!		entonces es el del comando Salvar.
+		switch (lm_n) {
+			1:	print_ret (parser) "Error. No se pudo recuperar la
+				partida.";
+			2:	print (parser) "Partida cargada.";
+				new_line;
+				new_line;
+				<<Look>>;
+		}
+
+	Save:
+		!!	1:	Si no se pudo guardar el juego.
+		!!	2:	Éxito.
+		switch (lm_n) {
+			1:	print_ret (parser) "Error. No se pudo guardar la partida.";
+			2:	print_ret (parser) "Partida guardada.";
+		}
+
+	Score:
+		!! Puntuación del juego. Puede activarse porque el usuario lo pide
+		!! (con el verbo "PUNTUACION") o porque el juego ha terminado. En
+		!! este ultimo caso, la variable "deadflag" valdrá true.
+		switch (lm_n) {
+			1:	st = PrintParserPrefix();
+				if (deadflag) print "En este juego, tu puntuación ha sido ";
+				else print "Hasta el momento tu puntuación es ";
+				print score, " de un total de ", MAX_SCORE,
+				", en ", turns, " turno";
+				if (turns>1) print "s";
+				print ".";
+				PrintParserSufix(st);
+				new_line;
+				return true;
+			2:	print_ret (parser) "Este relato no tiene conteo de
+				puntuación.";
+		}
+
+	ScriptOff:
+		!!	1:	Error ya estaba desactivada la transcrcipción.
+		!!	2:	Éxito.
+		switch (lm_n) {
+			1:	print_ret (parser) "La transcripción ya estaba
+				desactivada.";
+			2:	new_line; print_ret (parser) "Fin de la transcripción.";
+			3:	print_ret (parser) "Intento fallido de finalización de
+				transcripción.";
+		}
+
+	ScriptOn:
+		!!	1:	Error, ya estaba activada la transcrcipción.
+		!!	2:	Éxito (parte inicial del mensaje, la librería añade el título
+		!!		del juego obtenido de la constante Historia).
+		switch (lm_n) {
+			1:	print_ret (parser) "La transcripción ya estaba activada.";
+			2:	print_ret (parser) "Iniciando la transcripción de:";
+			3:	print_ret (parser) "Intento fallido de comienzo de la
+				transcripción.";
+		}
+
+	Strong:
+		!! Respuesta si se usa como primera palabra algún taco.
+		!! TODO - Cambiar por un mensaje más apropiado (¿recomendar AYUDA?)
+		st = PrintParserPrefix();
+		print "No ";
+		switch (_grammatical_inflection) {
+			FIRST_PERSON_PRESENT,
+			SECOND_PERSON_PRESENT,
+			THIRD_PERSON_PRESENT:
+				print "es";
+			FIRST_PERSON_PAST,
+			SECOND_PERSON_PAST,
+			THIRD_PERSON_PAST:
+				print "era";
+			FIRST_PERSON_FUTURE,
+			SECOND_PERSON_FUTURE,
+			THIRD_PERSON_FUTURE:
+				print "será";
+		}
+		print " necesario utilizar ese vocabulario.";
+		PrintParserSufix(st);
+		new_line;
+		return true;
+
+	VagueGo:
+		!! El usuario ha dicho IR sin especificar a dónde
+		!! TODO - Se podrían mostrar las salidas
+		print_ret (parser) "Tienes que especificar en qué dirección ir.";
+
+	Verify:
+		!!	1:	Éxito.
+		!!	2:	Error en la verificación.
+		switch (lm_n) {
+			1:	print_ret (parser) "Fichero de juego verificado e
+				intacto.";
+			2:	print_ret (parser) "El fichero de juego no parece intacto,
+				puede estar corrompido (a menos que estés jugando con un
+				intérprete muy primitivo que no sea capaz de realizar la
+				comprobación).";
+		}
+
+	Yes:
+		print_ret (parser) "La instrucción ~SÍ~ no tiene sentido en esta
+		situación.";
+
+];
+
+
+!!==============================================================================
+!! Para errores SCENERY (el usuario a utilizado una palabra de la propiedad
+!! NAME de la localidad actual) provocados por una operación de tipo EXAMINAR,
+!! se lanza la acción ##Look que imprime una descripción de la localidad.
+!!------------------------------------------------------------------------------
+[ Handle_SCENERY_PE;
+	if (action_to_be == ##Examine or ##Search or ##Consult) {
+		<Look>;
+		InformLibrary.end_turn_sequence();
+		return true;
+	}
+	print_ret (parser) "No es necesario referirse a eso para terminar
+	la historia.";
+];
+
+
+!!==============================================================================
+!! Errores del parser
+!!------------------------------------------------------------------------------
+[ ParserError pe
+	j st;
+	switch (pe) {
+		STUCK_PE:
+				!! #27: El parser se ha atascado. Es el tipo de error más
+				!! genérico. Si el parser puede, dará un error más concreto.
+				print_ret (parser) "No se pudo entender esa instrucción.";
+		UPTO_PE:
+				!! #28: Al parser le sobran palabras, aunque ha entendido gran
+				!! parte de la orden.
+				st = PrintParserPrefix();
+				print "Intenta de nuevo porque solo se pudo entender que
+				quieres ~";
+				PrintCommand();
+				print "~.";
+				PrintParserSufix(st);
+				new_line;
+				return true;
+		NUMBER_PE:
+				!! #29: El parser esperaba un token de tipo número.
+				print_ret (parser) "No se pudo comprender ese número.";
+		CANTSEE_PE:
+				!! #30: El parser no ha comprendido el nombre del objeto al que
+				!! se refiere el usuario, o ese objeto no está aquí.
+				print_ret (parser) "Te has referido a algo con lo que
+				no se puede interactuar en este momento.";
+		TOOLIT_PE:
+				!! #31: Este error parece que no se genera nunca. Un posible
+				!! bug de libreria, o restos de versiones arcaicas.
+				print_ret (parser) "Parece que falta información en esa
+				instrucción.";
+		NOTHELD_PE:
+				!! #32: El objeto que el usuario intenta usar no está en su
+				!! poder. El parser ha intentado "cogerlo de forma automatica",
+				!! pero ha fallado.
+				"No ", (lm_tienes) player, " eso.";
+		MULTI_PE:
+				!! #33: El usuario ha intentado usar objetos múltiples (o
+				!! "TODO") con un verbo que en su gramática no lo admite.
+				st = PrintParserPrefix();
+				print "No se pueden especificar objetos múltiples con ~",
+				(address) verb_word, "~.";
+				PrintParserSufix(st);
+				new_line;
+				return true;
+		MMULTI_PE:
+				!! #34: El usuario ha intentado objetos multiples para "noun" y
+				!! para "second", como en METE TODO EN TODO.
+				print_ret (parser) "Sólo se pueden especificar objetos
+				múltiples una vez en cada línea.";
+		VAGUE_PE:
+				!! #35: El usuario ha usado un pronombre, como CÓMELO, pero el
+				!! parser no tiene asignado un valor a ese pronombre.
+				st = PrintParserPrefix();
+				print "No está claro a qué te refieres con ~",
+				(address) pronoun_word ,"~.";
+				PrintParserSufix(st);
+				new_line;
+				return true;
+		EXCEPT_PE:
+				!! #36: El usuario ha puesto una lista de objetos y ha usado la
+				!! palabra EXCEPTO para exceptuar algo que no estaba incluido
+				!! en la lista, por ejemplo: COGE TODAS LAS MONEDAS EXCEPTO EL
+				!! SACO.
+				print_ret (parser) "Has exceptuado algo que no estaba
+				incluido.";
+		ANIMA_PE:
+				!! #37: La gramática de un verbo obliga a que el objeto sobre
+				!! el que se actúe sea animate (tiene un token de tipo
+				!! "creature"), pero el usuario lo ha intentado sobre un objeto
+				!! que no es animate.
+				print_ret (parser) "Sólo se puede hacer eso con seres
+				animados.";
+		VERB_PE:
+				!! #38: La primera palabra usada por el usuario es desconocida
+				!! (o la primera palabra tras la comma, si se trata de una
+				!! orden a un PNJ).
+				st = PrintParserPrefix();
+				print "La instrucción ~";
+				for (j = 0: j < WordLength(1): j++)
+					print (char) WordAddress(1) -> j;
+				print "~ no está definida.";
+				PrintParserSufix(st);
+				new_line;
+				return true;
+		SCENERY_PE:
+				!! #39: El usuario intenta actiones sobre las palabras que
+				!! están en la propiedad "irrelevante" de la localidad.
+				return Handle_SCENERY_PE();
+		ITGONE_PE:
+				!! #40: El usuario ha usado un proname, como EXAMÍNALO, pero el
+				!! pronombre se refiere a un objeto que ya no está visible.
+				st = PrintParserPrefix();
+				print "Ahora mismo no se puede encontrar lo que representa el pronombre ~", (address) pronoun_word ,"~ (", (the) pronoun_obj,
+				").";
+				PrintParserSufix(st);
+				new_line;
+				return true;
+		JUNKAFTER_PE:
+				!! #41: Este error no sale nunca. Probablemente sigue aquí por
+				!! razones de compatibilidad, o por despiste de Graham ¿Tal vez
+				!! ha sido sustituido en versiones mas recientes por el mensaje
+				!! número 28?
+				print_ret (parser) "No se pudo entender la última parte de
+				la instrucción.";
+		TOOFEW_PE:
+				!! #42: El usuario ha solicitado un número de objetos en una
+				!! lista de objetos múltiples, pero el parser no es capaz de
+				!! encontrar tantos. Por ejemplo: COGE SEIS MONEDAS.
+				st = PrintParserPrefix();
+				if (multi_had == 0) print "No hay suficientes disponibles.";
+				else {
+					print "Sólo hay ", (number) multi_had ," disponible";
+					if ( multi_had ~= 1 ) print "s";
+					print ".";
+				}
+				PrintParserSufix(st);
+				new_line;
+				return true;
+		NOTHING_PE:
+				!! #43: El usuario ha puesto TODO como objeto múltiple, pero el
+				!! parser no ha encontrado ningún objeto. En realidad este
+				!! error parece no producirse nunca y el que acaba generándose
+				!! siempre es el siguiente (#44, ASKSCOPE_PE):
+				print_ret (parser) "No se puede encontrar nada con lo que
+				hacer eso.";
+		default:
+				!! Error was NOT handled by this routine.
+				return false;
+	}
+];
