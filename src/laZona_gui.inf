@@ -1,0 +1,381 @@
+
+
+!!==============================================================================
+!!
+!!	LA ZONA
+!!	Definición de la interfaz gráfica (sólo en GLULX)
+!!
+!!==============================================================================
+!!
+!!	Archivo:		laZona_gui.inf
+!!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Castellano)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		GLULX
+!!	Versión:		0.0
+!!	Fecha:			2017/12/16
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte del relato interactivo LA ZONA.
+!!
+!!	LA ZONA es software libre: usted puede redistribuirlo y/o
+!!	modificarlo bajo los términos de la Licencia Pública General GNU
+!!	publicada por la Fundación para el Software Libre, ya sea la versión
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
+!!
+!!	LA ZONA se distribuye con la esperanza de que sea útil, pero
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
+!!	la Licencia Pública General GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU
+!!	junto a LA ZONA. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2018, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	0.0: 2016/06/18	Inicio del desarrollo.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# TABLA DE CONTENIDOS
+!!
+!!	1)	Configuración de la interfaz
+!!	2)	Librerías y extensiones
+!!	3)	Definición de la interfaz
+!!	4)	Inicialización de las ventanas
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	1)	Configuración de la interfaz
+!!
+!!------------------------------------------------------------------------------
+
+Default STYLE_USR1_BG $909090;
+Default STYLE_USR1_FG $000000;
+Default STYLE_USR2_BG $B08080;
+Default STYLE_USR2_FG $000000;
+
+Object	GUIConfig "(GUI Configuration)"
+ with	!!----------------------------------------------------------------------
+		!! Valores generales
+		!!----------------------------------------------------------------------
+		graphic_win_flag true,
+		margin_bottom_height 0, ! px
+		margin_top_height 0, ! px
+		padding_bottom_height 2, ! px
+		status_bar_height 1, ! filas
+		!!----------------------------------------------------------------------
+		!! Configuración A. Anchura total: 0px
+		!!----------------------------------------------------------------------
+		window_configuration_a 0,
+		graphic_win_a 0,
+		margin_left_a 0,
+		margin_right_a 0,
+		padding_left_a 0,
+		padding_right_a 0,
+		!!----------------------------------------------------------------------
+		!! Configuración B. Anchura total: 460px
+		!!----------------------------------------------------------------------
+		window_configuration_b 460,
+		graphic_win_b 0,
+		margin_left_b 6,
+		margin_right_b 6,
+		padding_left_b 0,
+		padding_right_b 0,
+		!!----------------------------------------------------------------------
+		!! Configuración C. Anchura total: 660px
+		!!----------------------------------------------------------------------
+		window_configuration_c 660,
+		graphic_win_c 0,
+		margin_left_c 12,
+		margin_right_c 12,
+		padding_left_c 0,
+		padding_right_c 0,
+		!!----------------------------------------------------------------------
+		!! Configuración D. Anchura total: 900px
+		!!----------------------------------------------------------------------
+		window_configuration_d 900,
+		graphic_win_d 0,
+		margin_left_d 24,
+		margin_right_d 8,
+		padding_left_d 0,
+		padding_right_d 0,
+		!!----------------------------------------------------------------------
+		!! Configuración E. Anchura total: 1050px
+		!!----------------------------------------------------------------------
+		window_configuration_e 1050,
+		graphic_win_e 0,
+		margin_left_e 32,
+		margin_right_e 10,
+		padding_left_e 0,
+		padding_right_e 0,
+		!!----------------------------------------------------------------------
+		!! Configuración F. Anchura total: 1224px
+		!!----------------------------------------------------------------------
+		window_configuration_f 1224,
+		graphic_win_f 0,
+		margin_left_f 42,
+		margin_right_f 8,
+		padding_left_f 0,
+		padding_right_f 0,
+		!!----------------------------------------------------------------------
+		!! Configuración G. Anchura total: 1400px
+		!!----------------------------------------------------------------------
+		window_configuration_g 1400,
+		graphic_win_g 0,
+		margin_left_g 46,
+		margin_right_g 46,
+		padding_left_g 0,
+		padding_right_g 0,
+;
+
+
+!!==============================================================================
+!!
+!!	2)	Librerías y extensiones
+!!
+!!------------------------------------------------------------------------------
+
+Include "gimage.h";				! GWindows: Image Window Widget
+Include "gstatusX.h";			! GWindows: Modified Status Window Widget
+Include "gtile.h";				! GWindows: Tiled Image Window Widget
+
+
+!!==============================================================================
+!!
+!!	3)	Definición de la interfaz
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	+---------------------------------------+	> A: textWindow
+!!	|					I					|	> B: paddingLeft
+!!	+---+---------------------------+---+---+	> C: paddingRight
+!!	|   |			  D				|	|   |	> D: statusBar
+!!	|   +---------------------------+	|   |	> E: paddingBottom
+!!	|   |   |					|   |   |   |	> F: graphicWindow
+!!	|   |   |					|	|   |   |	> G: marginLeft
+!!	|   |   |					|	|   |   |	> H: marginRight
+!!	|   |   |					|	|   |   |	> I: marginTop
+!!	| G | B |		  A 		| C | F | H |	> J: marginBottom
+!!	|   |   |					|	|   |   |
+!!	|   |   |					|	|   |   |
+!!	|   |   |					|	|   |   |
+!!	|   |   |					|	|   |   |
+!!	|	|---+-----------------------+	|	|
+!!	|   |   		  E				|	|   |
+!!	+---+---------------------------+---+---+
+!!	|					J					|
+!!	+---------------------------------------+
+!!
+!!------------------------------------------------------------------------------
+
+WindowPair rootUI;
+WindowPair -> secondaryAreaA;
+WindowPair -> -> secondaryAreaB;
+WindowPair -> -> -> secondaryAreaC;
+WindowPair -> -> -> -> secondaryAreaD;
+WindowPair -> -> -> -> -> secondaryAreaE;
+WindowPair -> -> -> -> -> -> secondaryAreaF;
+WindowPair -> -> -> -> -> -> -> secondaryAreaG;
+WindowPair -> -> -> -> -> -> -> -> secondaryAreaH;
+
+TextBuffer -> -> -> -> -> -> -> -> -> textWindow;
+
+GraphWin -> -> -> -> -> -> -> -> -> paddingLeft
+ with	split 0,
+ 		split_dir winmethod_Left,
+ has	abssplit;
+
+GraphWin -> -> -> -> -> -> -> -> paddingRight
+  with	split 0,
+		split_dir winmethod_Right,
+  has	abssplit;
+
+GStatusXWin -> -> -> -> -> -> -> statusBar
+  with	split 0,
+		split_dir winmethod_Above;
+
+GraphWin -> -> -> -> -> -> paddingBottom
+  with	split 0,
+		split_dir winmethod_Below;
+
+GImageWin -> -> -> -> -> graphicWindow
+  with	split 0,
+		split_dir winmethod_Right,
+		col $222222,
+		click_event [; cmd_override="mirar"; ],
+  has	abssplit on;
+
+GraphWin -> -> -> -> marginLeft
+  with	split 0,
+		split_dir winmethod_Left;
+
+GraphWin -> -> -> marginRight
+  with	split 0,
+		split_dir winmethod_Right;
+
+GraphWin -> -> marginTop
+  with	split 0,
+		split_dir winmethod_Above;
+
+GraphWin -> marginBottom
+  with	split 0,
+		split_dir winmethod_Below,
+		redraw [
+			graph_width mleft_width mright_width pleft_width pright_width;
+			if (self.width > GUIConfig.window_configuration_g) {
+				graph_width = GUIConfig.graphic_win_g;
+				mleft_width = GUIConfig.margin_left_g;
+				mright_width = GUIConfig.margin_right_g;
+				pleft_width = GUIConfig.padding_left_g;
+				pright_width = GUIConfig.padding_right_g;
+			} else if (self.width > GUIConfig.window_configuration_f) {
+				graph_width = GUIConfig.graphic_win_f;
+				mleft_width = GUIConfig.margin_left_f;
+				mright_width = GUIConfig.margin_right_f;
+				pleft_width = GUIConfig.padding_left_f;
+				pright_width = GUIConfig.padding_right_f;
+			} else if (self.width > GUIConfig.window_configuration_e) {
+				graph_width = GUIConfig.graphic_win_e;
+				mleft_width = GUIConfig.margin_left_e;
+				mright_width = GUIConfig.margin_right_e;
+				pleft_width = GUIConfig.padding_left_e;
+				pright_width = GUIConfig.padding_right_e;
+			} else if (self.width > GUIConfig.window_configuration_d) {
+				graph_width = GUIConfig.graphic_win_d;
+				mleft_width = GUIConfig.margin_left_d;
+				mright_width = GUIConfig.margin_right_d;
+				pleft_width = GUIConfig.padding_left_d;
+				pright_width = GUIConfig.padding_right_d;
+			} else if (self.width > GUIConfig.window_configuration_c) {
+				graph_width = GUIConfig.graphic_win_c;
+				mleft_width = GUIConfig.margin_left_c;
+				mright_width = GUIConfig.margin_right_c;
+				pleft_width = GUIConfig.padding_left_c;
+				pright_width = GUIConfig.padding_right_c;
+			} else if (self.width > GUIConfig.window_configuration_b) {
+				graph_width = GUIConfig.graphic_win_b;
+				mleft_width = GUIConfig.margin_left_b;
+				mright_width = GUIConfig.margin_right_b;
+				pleft_width = GUIConfig.padding_left_b;
+				pright_width = GUIConfig.padding_right_b;
+			} else {
+				graph_width = GUIConfig.graphic_win_a;
+				mleft_width = GUIConfig.margin_left_a;
+				mright_width = GUIConfig.margin_right_a;
+				pleft_width = GUIConfig.padding_left_a;
+				pright_width = GUIConfig.padding_right_a;
+			}
+			self.rearrange_window_configuration(mleft_width, mright_width,
+				pleft_width, pright_width, graph_width);
+			glk_window_get_size(statusBar.winid,
+				statusBar.&width,
+				statusBar.&height);
+			statusBar.update();
+		],
+ private
+		rearrange_window_configuration [ marginLeftValue marginRightValue
+			paddingLeftValue paddingRightValue graphicWindowWidth;
+			!! Comprueba que la ventana gráfica esté activada:
+			if (~~GUIConfig.graphic_win_flag()) {
+				graphicWindowWidth = 0;
+				paddingLeftValue = 0;
+				paddingRightValue = 0;
+			}
+			!! Redimensiona el padding interior izquierdo:
+			glk_window_set_arrangement(parent(paddingLeft).winid,
+				winmethod_Left | winmethod_Fixed,
+				paddingLeftValue,
+				paddingLeft.winid);
+			paddingLeft.split = paddingLeftValue;
+			!! Redimensiona el padding interior derecho:
+			glk_window_set_arrangement(parent(paddingRight).winid,
+				winmethod_Right | winmethod_Fixed,
+				paddingRightValue,
+				paddingRight.winid);
+			paddingRight.split = paddingRightValue;
+			!! Redimensiona el padding interior inferior:
+			glk_window_set_arrangement(parent(paddingBottom).winid,
+				winmethod_Below | winmethod_Proportional,
+				GUIConfig.padding_bottom_height(),
+				paddingBottom.winid);
+			paddingBottom.split = GUIConfig.padding_bottom_height();
+			!! Redimensiona la barra de estado:
+			glk_window_set_arrangement(parent(statusBar).winid,
+				winmethod_Above | winmethod_Fixed,
+				GUIConfig.status_bar_height(),
+				statusBar.winid);
+			statusBar.split = GUIConfig.status_bar_height();
+			!! Redimensiona la ventana gráfica:
+			glk_window_set_arrangement(parent(graphicWindow).winid,
+				winmethod_Right | winmethod_Fixed,
+				graphicWindowWidth,
+				graphicWindow.winid);
+			graphicWindow.split = graphicWindowWidth;
+			!! Redimensiona el margen izquierdo
+			glk_window_set_arrangement(parent(marginLeft).winid,
+				winmethod_Left | winmethod_Proportional,
+				marginLeftValue,
+				marginLeft.winid);
+			marginLeft.split = marginLeftValue;
+			!! Redimensiona el margen derecho
+			glk_window_set_arrangement(parent(marginRight).winid,
+				winmethod_Right | winmethod_Proportional,
+				marginRightValue,
+				marginRight.winid);
+			marginRight.split = marginRightValue;
+			!! Redimensiona el margen superior:
+			glk_window_set_arrangement(parent(marginTop).winid,
+				winmethod_Above | winmethod_Proportional,
+				GUIConfig.margin_top_height(),
+				marginTop.winid);
+			marginTop.split = GUIConfig.margin_top_height();
+			!! Redimensiona el margen inferior:
+			glk_window_set_arrangement(parent(marginBottom).winid,
+				winmethod_Below | winmethod_Proportional,
+				GUIConfig.margin_bottom_height(),
+				marginBottom.winid);
+			marginBottom.split = GUIConfig.margin_bottom_height();
+		],
+;
+
+
+!!==============================================================================
+!!
+!!	4)	Inicialización de las ventanas
+!!
+!!------------------------------------------------------------------------------
+
+[ InitGWindows;
+	Active_UI = rootUI;
+	Main_GWindow = textWindow;
+
+	!! Definición de estilo de texto de usuario 1:
+	glk_stylehint_set(wintype_TextBuffer, style_User1,
+		stylehint_BackColor, STYLE_USR1_BG);
+	glk_stylehint_set(wintype_TextBuffer, style_User1,
+		stylehint_TextColor, STYLE_USR1_FG);
+	glk_stylehint_set(wintype_TextBuffer, style_User1,
+		stylehint_Oblique, 0);
+	glk_stylehint_set(wintype_TextBuffer, style_User1,
+		stylehint_Weight, 0);
+
+	!! Definición de estilo de texto de usuario 2:
+	glk_stylehint_set(wintype_TextBuffer, style_User2,
+		stylehint_BackColor, STYLE_USR2_BG);
+	glk_stylehint_set(wintype_TextBuffer, style_User2,
+		stylehint_TextColor, STYLE_USR2_FG);
+	glk_stylehint_set(wintype_TextBuffer, style_User2,
+		stylehint_Oblique, 0);
+	glk_stylehint_set(wintype_TextBuffer, style_User2,
+		stylehint_Weight, 0);
+];
