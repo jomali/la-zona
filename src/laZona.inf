@@ -1,0 +1,886 @@
+!% -SD
+!% +language_name=Spanish
+!% $MAX_LABELS=5000
+!% $MAX_STATIC_DATA=15000
+!% $MAX_ZCODE_SIZE=75000
+!% $list
+
+
+!!==============================================================================
+!!
+!!	LA ZONA
+!!
+!!==============================================================================
+!!
+!!	Archivo:		laZona.inf
+!!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Castellano)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		GLULX
+!!	Versión:		0.0
+!!	Fecha:			2017/12/16
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte del relato interactivo LA ZONA.
+!!
+!!	LA ZONA es software libre: usted puede redistribuirlo y/o
+!!	modificarlo bajo los términos de la Licencia Pública General GNU
+!!	publicada por la Fundación para el Software Libre, ya sea la versión
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
+!!
+!!	LA ZONA se distribuye con la esperanza de que sea útil, pero
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
+!!	la Licencia Pública General GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU
+!!	junto a LA ZONA. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2018, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	0.0: 2016/06/18	Inicio del desarrollo.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# TABLA DE CONTENIDOS
+!!
+!!	1)	Constantes y variables globales del relato
+!!	2)	Reemplazos de rutinas utilizadas por la librería Inform
+!!	3)	Librerías y extensiones (parte 1 de 2)
+!!	4)	Puntos de entrada Glk con GWindows (sólo en GLULX)
+!!	5)	Librerías y extensiones (parte 2 de 2)
+!!	6)	Puntos de entrada del relato
+!!	7)	Otras rutinas
+!!	8)	Gramática estándar y extendida
+!!	9)	Definición de atributos, clases y objetos
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	1)	Constantes y variables globales del relato
+!!
+!!------------------------------------------------------------------------------
+!!	-	Información bibliográfica
+!!	-	Constantes de la librería Inform
+!!	-	Constantes y variables de la extensión 'types'
+!!	-	Constantes de la extensión 'cset'
+!!	-	Constantes y variables de soporte para el sistema de hipervínculos
+!!	-	Constantes y variables del sistema de palabras resaltadas
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! Información bibliográfica.
+!!------------------------------------------------------------------------------
+
+Constant Story
+"LA ZONA";
+
+Constant Headline
+"Un bucle interactivo. Copyright (c) 2017^
+Por José Francisco Martín Lisaso";
+
+Constant Checking 0;
+Release 0;						! v0.0
+
+!!------------------------------------------------------------------------------
+!! Constantes de la librería Inform.
+!!------------------------------------------------------------------------------
+
+Constant MANUAL_PRONOUNS;		! Los pronoms. refieren a objetos ya mencionados
+Constant MAX_CARRIED 3;			! Máx. de objetos que se pueden llevar en mano
+Constant NO_PLACES;				! Acciones LUGARES y OBJETOS desactivadas
+Constant NO_SCORE;				! No se lleva conteo de puntuación
+Constant SIN_MENSAJES;			! Se omiten los mensajes por defecto de la lib.
+
+!!------------------------------------------------------------------------------
+!! Constantes y variables de la extensión 'types'.
+!!------------------------------------------------------------------------------
+!! La extensión 'types' define 6 constantes para identificar estilos de texto
+!! que pueden ser utilizados en el relato:
+!!	1.	_RST_, romana
+!!	2.	_IST_, itálica
+!!	3.	_BST_, negrita
+!!	4.	_MST_, monoespaciada
+!!	5.	_1ST_, estilo de usuario 1
+!!	6.	_2ST_, estilo de usuario 2
+!! Estas constantes se pueden utilizar igualmente para establecer el estilo de
+!! los textos de la extensión 'cset' así como los estilos utilizados por el
+!! sistema de palabras resaltadas.
+!!------------------------------------------------------------------------------
+
+Constant PARSER_PREFIX "[";		! Define texto inicial de los mens. del parser
+Constant PARSER_SUFIX "]";		! Define texto final de los mens. del parser
+Constant STYLE_USR1_BG $909090;	! Colores de texto tipo resaltado
+Constant STYLE_USR1_FG $000000;
+Constant STYLE_USR2_BG $A0A0A0;	! Colores de texto tipo parser
+Constant STYLE_USR2_FG $606060;
+
+Global _parser_style = _2ST_;	! Selecciona estilo de los mensajes del parser
+
+!!------------------------------------------------------------------------------
+!! Constantes de la extensión 'cset'.
+!!------------------------------------------------------------------------------
+
+Constant CSET_STYLE _BST_;		! Estilo de los mensajes de 'cset'
+Constant CSET_PREFIX "[";		! Define el texto inicial de los mensajes
+Constant CSET_SUFIX "]";		! Define el texto final de los mensajes
+Constant CSET_MSG1 "";			! Texto del mensaje MSG1
+Constant CSET_MSG2 "";			! Texto del mensaje MSG2
+Constant CSET_COMMA " / ";		! Separador general del listado de opciones
+Constant CSET_OR " / ";			! Último separador del listado de opciones
+Constant CSET_NO_MSG "No hay más opciones";
+
+!!------------------------------------------------------------------------------
+!! Constantes y variables de soporte para el sistema de hipervínculos.
+!!------------------------------------------------------------------------------
+
+Global _hyperlinks_system = true; ! Indica si los hipervínculos están activados
+Constant _HYPERLINK_BUFFER_SIZE = 32;
+Array _temp_array --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_0 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_1 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_2 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_3 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_4 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_5 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_6 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_7 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_8 --> _HYPERLINK_BUFFER_SIZE;
+Array _hyperlink_action_9 --> _HYPERLINK_BUFFER_SIZE;
+
+!!------------------------------------------------------------------------------
+!! Constantes y variables del sistema de palabras resaltadas.
+!!------------------------------------------------------------------------------
+
+Global _keyword_st1 = _BST_;	! Estilo resaltado de OBJETOS
+Global _keyword_st2 = _IST_;	! Estilo resaltado de DIRECCIONES
+Global _keyword_st3 = _RST_;	! Estilo resaltado de OTROS OBJETOS
+
+!!------------------------------------------------------------------------------
+!! Variables usadas por la librería de mensajes por defecto.
+!!------------------------------------------------------------------------------
+
+Global FORMER__TX	= "tu antiguo ~yo~";
+Global YOURSELF__TX	= "ti mismo";
+Global CANTGO__TX	= "No puedes ir por ahí.";
+Global IS__TX		= " ves";
+Global ARE__TX		= " ves";
+Global IS2__TX		= "ves ";
+Global ARE2__TX		= "ves ";
+Global YOU__TX		= "Tú";
+Global PARTICULA_TE	= "te";
+
+
+!!==============================================================================
+!!
+!!	2)	Reemplazos de rutinas utilizadas por la librería Inform
+!!
+!!------------------------------------------------------------------------------
+
+! FIXME
+
+
+!!==============================================================================
+!!
+!!	3)	Librerías y extensiones (parte 1 de 2)
+!!
+!!------------------------------------------------------------------------------
+
+#Ifdef TARGET_GLULX;
+Include "gwindefs.h";			! GWindows: Definiciones
+#Endif; ! TARGET_GLULX;
+
+Include "Parser.h";				! Decodifica la entrada del teclado
+Include "SpanishLM.h";			! Mensajes de la librería
+Include "types.h";				! Rutinas para modificar estilo de los textos
+Include ">chico_lib.inf";		! Personalizaciones de la librería Inform
+Include ">chico_langLM.inf";	! Mensajes personalizados de la librería
+Include ">chico_langOM.inf";	! Mensajes de los objetos
+
+#Ifdef TARGET_GLULX;
+Include "gwincls.h";			! GWindows: Window Class Framework
+#Endif; ! TARGET_GLULX;
+
+
+!!==============================================================================
+!!
+!!	4)	Puntos de entrada Glk con GWindows (sólo en GLULX)
+!!
+!!------------------------------------------------------------------------------
+!!	GWindows hace uso de los puntos de entrada Glk por defecto, por lo cuál
+!!	define los suyos propios para reemplazar aquellos de la librería:
+!!	-	GWindowsGlkEvent(): Reemplaza HandleGlkEvent()
+!!	-	GWindowsGlkIdentify(): Reemplaza IdentifyGlkObject()
+!!------------------------------------------------------------------------------
+
+#Ifdef TARGET_GLULX;
+
+!!------------------------------------------------------------------------------
+!! Punto de entrada para manejar eventos Glk con la librería GWindows.
+!! Reemplaza al habitual 'HandleGlkEvent()''.
+!!
+!!	@param {array} ev - Array con la información acerca del evento Glk que se
+!!		ha producido
+!!	@param {integer} context - 0 si el evento se ha producido durante una
+!!		entrada de línea (como ante introducción de un comando normal; la
+!!		aplicación debe esperar a que el usuario pulse INTRO antes de dar
+!!		respuesta a la entrada). 1 si se ha producido durante una entrada de
+!!		carácter (como sucede en los menús, por ejemplo; la aplicación responde
+!!		ante cada pulsación de tecla)
+!!------------------------------------------------------------------------------
+[ GWindowsGlkEvent ev context
+	abortres i st;
+	!! Se notifica el efecto de fade en tiempo real:
+	Damusix.NotificarFade(ev);
+	!! Se gestiona el evento Glk:
+	switch (ev-->0) {
+		0:	! evtype_None		 - none
+		1:	! evtype_Timer		 - event repeated at fixed intervals
+			AimingManager.run();
+		2:	! evtype_CharInput	 - keystroke input in a window
+		3:	! evtype_LineInput	 - full line of input in a window
+		4:	! evtype_MouseInput	 - mouse input in a window
+		5:	! evtype_Arrange	 - some windows need redrawing
+		6:	! evtype_Redraw		 - graphic windows need redrawing
+		7:	! evtype_SoundNotify - sound finished playing
+		8:	! evtype_Hyperlink	 - selection of a hyperlink in a window
+			!! Tras reconocer y reaccionar con éxito la selección de un
+			!! hipervínculo, la aplicación deja de esperar nuevos eventos de
+			!! este tipo. De modo que hay que activar otra vez su escucha.
+			!! (Para poder recibir por primera vez un evento de selección de
+			!! hipervínculo, se debe activar su escucha también en la rutina
+			!! 'Initialise()'):
+			glk_request_hyperlink_event(gg_mainwin);
+			!! Se cancelan los inputs de teclado:
+			glk_cancel_char_event(gg_mainwin);
+			glk_cancel_line_event(gg_mainwin, 0);
+			!! ev-->2 almacena el parámetro sobre el que se ha creado el
+			!! hipervínculo. Si se trata de un array, se muestra en pantalla y
+			!! se copia sobre el array abortres. En cualquier otro caso, se
+			!! deben cargar los contenidos del parámetro ev-->2 sobre el array:
+			if (metaclass(ev-->2) == 0) {
+				for (i = 0 : i <= (ev-->2)-->0 : i++) {
+					abortres-->i = (ev-->2)-->i;
+				}
+				st = PrintParserPrefix();
+				PrintCharacterArray(abortres);
+				PrintParserSufix(st);
+				new_line;
+			} else PrintToBuffer(abortres, _HYPERLINK_BUFFER_SIZE, ev-->2);
+			return 2;
+	}
+	context = 0; ! (por evitar alertas del compilador)
+];
+
+!!------------------------------------------------------------------------------
+!! 'GWindowsGlkIdentify() permite conocer qué objetos Glk existen; útil para
+!! gestionar los comandos RESTORE, RESTART y UNDO, puesto que tras ellos las
+!! variables globales que contengan objetos Glk pueden mantener valores
+!! equivocados. Se encarga de reinicializar el gestor de audio Damusix y
+!! recuperar los canales de audio. (Sin esta rutina, al reiniciar la aplicación
+!! la música de la nueva partida se solaparía con aquella que se estuviese
+!! reproduciendo durante la partida anterior).
+!!
+!!	@param phase
+!!	@param type
+!!	@param ref
+!!	@param rock
+!!------------------------------------------------------------------------------
+[ GWindowsGlkIdentify phase type ref rock;
+	!! Se identifican todos los Objetos de Sonido gestionados por Damusix:
+	Damusix.IdentificarSonidos(phase);
+	phase = type + ref + rock; ! (por evitar alertas del compilador)
+];
+
+#Endif; ! TARGET_GLULX;
+
+
+!!==============================================================================
+!!
+!!	5)	Librerías y extensiones (parte 2 de 2)
+!!
+!!------------------------------------------------------------------------------
+
+#Ifdef TARGET_GLULX;
+Include "infglk.h";				! Envoltura sobre las funciones Glk
+Include "damusix.h";			! Administrador unificado de sonido en GLULX
+Include "gwindows.h";			! GWindows: Reemplazos de la librería
+Include ">laZona.bli";			! Recursos multimedia de la aplicación
+Include ">laZona_gui.inf";		! Definición de la interfaz gráfica
+#Ifnot;	! TARGET_ZCODE;
+Default PIC_TUNEL_A		0;
+Default PIC_TUNEL_B		1;
+Default PIC_CANAL1_A	2;
+Default PIC_CANAL1_B	3;
+Default PIC_CALLEJON_A	4;
+Default PIC_CALLEJON_B	5;
+Default PIC_AZOTEA_A	6;
+Default PIC_AZOTEA_B	7;
+Default PIC_CALLE1_A	8;
+Default PIC_CALLE1_B	9;
+Default PIC_CALLE2_A	10;
+Default PIC_CALLE2_B	11;
+Default PIC_CALLE2_C	12;
+#Endif; ! TARGET_GLULX;
+
+Include "aimAndFire.h";			! Sistema de apuntado y disparo QTE
+Include "choiceSet.h";			! Sistema de selección de elecciones
+Include "pPreprocessor.h";		! Preprocesador del parser
+Include "receptacles.h";		! Contenedores con límites de capacidad
+
+Include "VerbLib.h";			! Define cómo trabajan las acciones
+
+
+!!==============================================================================
+!!
+!!	6)	Puntos de entrada del relato
+!!
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! Punto de entrada invocado justo tras la impresión del inductor (prompt); es
+!! decir, después de que todas las impresiones en pantalla derivadas del turno
+!! actual hayan finalizado. Se encarga de gestionar los cambios de imagen de la
+!! ventana gráfica (en GLULX).
+!!
+!!	@returns Nada
+!!------------------------------------------------------------------------------
+Global _current_location = 0;
+[ AfterPrompt
+	i;
+	#Ifdef TARGET_GLULX;
+	if (_current_location == real_location) return;
+	_current_location = real_location;
+	if (location provides images) {
+		i = random((location.#images)/WORDSIZE) - 1;
+		DrawSceneImage(location.&images-->i);
+	}
+	#Endif; ! TARGET_GLULX;
+];
+
+!!------------------------------------------------------------------------------
+!! Permite manipular la entrada de usuario antes de que sea analizada por la
+!! librería. Es invocada después de que el sistema haya leído la entrada de
+!! texto y haya definido ya las tablas 'buffer' y 'parser', pero aún no ha
+!! hecho nada más salvo establecer el contador de palabras 'wn' a 1. La rutina
+!! puede manipular estas tablas libremente mientras permanezcan consistentes la
+!! una con la otra, y puede dejar el contador de palabras en cualquier punto.
+!!
+!!	@returns Nada
+!!------------------------------------------------------------------------------
+[ BeforeParsing;
+	ChoiceSetManager.run();
+	ParsingPreprocessor.run();
+];
+
+!!------------------------------------------------------------------------------
+!! Inicializaciones del relato. Esta rutina es obligatoria y, entre otras
+!! posibles inicializaciones, DEBE ESTABLECER LA LOCALIDAD INICIAL del usuario
+!! (o el objeto accesible sobre o dentro del que empieza).
+!!
+!!	@returns {boolean|integer} Verdadero o falso para continuar con la
+!!		ejecución normal del relato, o 2 para suprimir la impresión de los
+!!		créditos de la aplicación, que de otra manera se imprimirían
+!!		inmediatamente después de llamar a la rutina
+!!------------------------------------------------------------------------------
+[ Initialise;
+	EraseWindow();
+
+	!! Comprobaciones del intérprete -------------------------------------------
+	#Ifdef TARGET_GLULX;
+	!! Comprobaciones de las capacidades de tiempo real:
+	if (~~glk_gestalt(gestalt_Timer, 0)) {
+		print (strong) "ERROR:", " Esta aplicación utiliza eventos de tiempo
+		real, pero tu intérprete GLULX no los soporta. Para ejecutar la
+		aplicación necesitarás un intérprete adecuado.^";
+		new_line;
+		print (parser) "Pulsa una tecla para salir.";
+		PressAnyKey();
+		quit;
+	}
+	!! Comprobaciones de las capacidades multimedia:
+	if (~~(glk_gestalt(gestalt_Sound, 0) && glk_gestalt(gestalt_SoundMusic, 0)
+		&& glk_gestalt(gestalt_Graphics, 0))) {
+		print (strong) "ADVERTENCIA:", " Esta aplicación incluye contenidos
+		gráficos y de audio, pero tu intérprete GLULX no los soporta
+		adecuadamente. La aplicación se iniciará con parte o la totalidad de
+		sus recursos multimedia desactivados.^";
+		new_line;
+		print (parser) "Pulsa una tecla para continuar.";
+		PressAnyKey();
+		EraseWindow();
+	}
+	#Endif; ! TARGET_GLULX;
+
+	!! Inicializaciones del relato ---------------------------------------------
+	location = LIMBO;			! Establece la localidad inicial del relato
+	lookmode = 2;				! Lookmode largo
+
+	return 2;
+];
+
+!!------------------------------------------------------------------------------
+!! Definición del foco del usuario; permite cambiar en el sistema la definición
+!! de lo que se encuentra al alcance del PJ. Utiliza las rutinas de la librería
+!! 'ScopeWithin()' y 'PlaceInScope()' para establecer cuál debería ser el foco.
+!!
+!!	@returns {boolean} Falso para indicar al sistema que añada todos los
+!!		objetos que suelen estar por defecto al alcance, o verdadero para
+!!		indicar que no se debe añadir nada más al foco
+!!------------------------------------------------------------------------------
+[ InScope person
+	item;
+	!! Aseguramos que la localidad actual esté siempre en el foco del PJ:
+	PlaceInScope(real_location);
+	!! En la oscuridad, se mueven al foco todos aquellos objetos que hayan sido
+	!! manipulados ya previamente por el PJ:
+	if ((person == player) && (location == thedark)) {
+		objectloop(item in parent(self))
+			if (item has moved) PlaceInScope(item);
+	}
+
+	return false;
+];
+
+!!------------------------------------------------------------------------------
+!! Permite cambiar el verbo que imprime el sistema al hacer al usuario
+!! preguntas del tipo: "Intenta de nuevo porque sólo se pudo entender que
+!! quieres <lo que sea>.", en caso de que se haya definido alguna acción
+!! inusual por medio de la rutina 'UnknownVerb()''.
+!!
+!!	@param {address} word - Dirección de diccionario del verbo
+!!	@returns {boolean} Verdadero para indicar al sistema que se ha imprimido el
+!!		verbo, o falso para continuar con la ejecución normal y que el sistema
+!!		imprima el verbo de la forma habitual
+!!------------------------------------------------------------------------------
+[ PrintVerb word;
+	if (word == 'no.verb' or 'teleport.verb') {
+		print "hacer algo con";
+		return true;
+	}
+
+	return false;
+];
+
+!!------------------------------------------------------------------------------
+!! Invocada por el sistema cuando se encuentra con un verbo desconocido, de
+!! forma que pueda cambiarse por uno definido en el relato. Se utiliza para
+!! contemplar las siguientes situaciones:
+!!
+!! 1) Desplazarse automáticamente a una localidad adyacente a la localidad
+!! actual tecleando simplemente su nombre.
+!!
+!! 2) Lanzar una acción por defecto sobre un objeto cuando se teclea únicamente
+!! su nombre. En este caso se sigue la implementación propuesta en
+!! <http://rec.arts.int-fiction.narkive.com/Cz9j184N/inform-6-parser-question>,
+!! con modificaciones para que sólo se intente lanzar la acción sobre objetos
+!! que existen realmente y están presentes dentro del foco del PJ. De otra
+!! forma, siempre se intentaría lanzar la acción ##DefaultAction aún cuando la
+!! intención del usuario no fuese manipular un objeto sino utilizar una acción
+!! que en realidad no está definida. (Tenemos que asegurarnos de que la
+!! localidad) actual se encuentra dentro del foco del PJ para que pueda
+!! referirse a ella ---ver rutina *InScope()*---).
+!!
+!!	@returns {boolean} Falso para permitir que el sistema continúe con la
+!!		ejecución normal e imprima un mensaje de error, o un valor de
+!!		diccionario del verbo a utilizar en lugar del verbo desconocido
+!!------------------------------------------------------------------------------
+[ UnknownVerb
+	obj;
+	obj = ParsingPreprocessor.get_selected_object();
+	if (obj ~= real_location && obj ofclass Room) {
+		verb_wordnum = 0;
+		return 'teleport.verb';
+	}
+	if (TestScope(obj, player)) {
+		verb_wordnum = 0;
+		return 'no.verb';
+	}
+
+	return false;
+];
+
+
+!!==============================================================================
+!!
+!!	7)	Otras rutinas
+!!
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! Dado un array de caracteres, capitaliza la primera letra de cada palabra de
+!! éste ---útil por ejemplo si el array almacena el nombre de una persona
+!! (Paul O'Brian, Jean-Paul Sartre,...) o de una localidad (Weston-Super-Mare,
+!! Los Angeles,...)---.
+!!
+!!	@param {Array} character_array - El array de caracteres sobre el que se
+!!		realizará la capitalización
+!!	@returns {boolean} Verdadero
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+[ CapitaliseCharacterArray character_array
+	i c flg;
+	for (i = 0, flg = true : i < character_array-->0 : i++) {
+		c = character_array->(i+WORDSIZE);
+		if (c >= 'a' && c <= 'z') {
+			if (flg) character_array->(i+WORDSIZE) = UpperCase(c);
+			flg = false;
+ 		} else flg = true;
+	}
+];
+
+!!------------------------------------------------------------------------------
+!! Dados dos arrays de caracteres: 'array_a' y 'array_b', modifica el primero
+!! de forma que se convierte en la concatenación de los dos. Puede
+!! especificarse además un caracter extra opcional que será introducido como
+!! delimitador entre los dos arrays (si no se especifica este caracter extra,
+!! el segundo array se añade inmediatamente a continuación del primero).
+!!
+!!	@param {Array} array_a - Primer array de caracteres; sobre el que queda el
+!!		resultado de la concatenación
+!!	@param {Array} array_b - Segundo array de caracteres; el que se concatena
+!!		a continuación de 'array_a'
+!!	@param {char} [c=false] - Caracter opcional que puede introducirse como
+!!		delimitador de los dos arrays
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+[ ConcatenateArrays array_a array_b c
+	len i;
+	len = array_a-->0;
+	if (c ~= 0 || metaclass(c) ~= nothing) {
+		array_a->(WORDSIZE+len) = c;
+		(array_a->(WORDSIZE-1))++;
+		len = array_a-->0;
+	}
+	for (i = 0 : i < array_b->(WORDSIZE-1) : i++) {
+		array_a->(WORDSIZE+len+i) = array_b->(WORDSIZE+i);
+		(array_a->(WORDSIZE-1))++;
+	}
+	return true;
+];
+
+!!------------------------------------------------------------------------------
+!! Crea un hipervínculo seleccionable por el usuario (siempre que se haya
+!! activado la escucha de hipervínculos) a partir del elemento pasado como
+!! parámetro. Este elemento puede tratarse indistintamente de un objeto, una
+!! cadena de caracteres (string), otra rutina, o un array de caracteres.
+!! Admite además otros dos parámetros opcionales: una cadena de caracteres
+!! alternativa que imprimir como texto del hipervínculo; y un código con el que
+!! especificar e formato con el que imprimir el hipervínculo.
+!!
+!!	@param {Object|String|Routine|Array} item
+!!	@param {String} [alt] - Cadena de caracteres alternativa.
+!!	@param {integer} [style=3] - Código numérico que indica el estilo de texto
+!!		utilizado al imprimir el hipervínculo:
+!!			1 - Hipervínculos asociados con elementos destacados del relato.
+!!			2 - Hipervínculos asociados con direcciones de desplazamiento.
+!!			3 - Otros elementos.
+!!		Si no se especifica un estilo concreto, se selecciona el estilo 3 por
+!!		defecto o, en caso de que el item se trate de un objeto, se trata de
+!!		seleccionar el estilo adecuado en función de la clase que instancie ese
+!!		objeto.
+!!	@returns {boolean} Falso si no se pasa un elemento adecuado sobre el que
+!!		crear el hipervínculo; verdadero en caso contrario
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+[ CreateLink item alt style
+	st;
+	!! Comprueba que 'item' sea un parámetro válido:
+	if (item == 0) return false;
+	!! Establece inicio del hipervínculo:
+	#Ifdef TARGET_GLULX;
+	if (_hyperlinks_system) glk_set_hyperlink(item);
+	#Endif; ! TARGET_GLULX;
+	!! Selecciona estilo de texto resaltado:
+	st = _current_style;
+	if (style >= 1 && style <= 3) SetTextStyle(style);
+	if (style == 0) {
+		SetTextStyle(_keyword_st3); ! Por defecto: estilo para otros objetos
+		if (metaclass(item) == Object) {
+			if (item has remarkable)
+				SetTextStyle(_keyword_st1); ! Estilo para objetos importantes
+			else if ((item ofclass Room or CompassDirection) || (item has door))
+				SetTextStyle(_keyword_st2); ! Estilo para direcciones
+		}
+	}
+	!! Imprime texto del hipervínculo:
+	if (metaclass(alt) == String) item = alt;
+	switch (metaclass(item)) {
+		Routine:
+			item();
+		String:
+			print (string) item;
+		Object:
+			if (indef_mode && item.&short_name_indef ~= 0
+				&& PrintOrRun(item, short_name_indef, 1) ~= 0)
+				jump linkTextPrinted;
+			if (item.&short_name ~=0 && PrintOrRun(item, short_name, 1) ~= 0)
+				jump linkTextPrinted;
+			print (object) item;
+		default:
+			PrintCharacterArray(item);
+	}
+	.linkTextPrinted;
+	!! Reestablece el estilo de texto:
+	SetTextStyle(st);
+	!! Establece final del hipervínculo:
+	#Ifdef TARGET_GLULX;
+	glk_set_hyperlink(0);
+	#Endif; ! TARGET_GLULX;
+
+	return true;
+];
+
+!!------------------------------------------------------------------------------
+!! Deja la ventana en blanco.
+!!
+!!	@returns {boolean} Verdadero
+!!------------------------------------------------------------------------------
+[ EraseWindow;
+    #Ifdef TARGET_ZCODE;
+    @erase_window -1;
+    #Ifnot; ! TARGET_GLULX
+    if (gg_quotewin) {
+		glk($0024, gg_quotewin, 0); ! close_window
+		gg_quotewin = 0;
+    }
+    glk($002A, gg_mainwin); ! window_clear
+    if (gg_statuswin) glk($002A, gg_statuswin); ! window_clear
+    #Endif;
+	return true;
+];
+
+!!------------------------------------------------------------------------------
+!! Espera una pulsación de tecla del usuario o, si se introduce un valor
+!! 'delay', espera a que pase esa cantidad de décimas de segundo antes de
+!! continuar con la ejecución normal del relato.
+!!
+!!	@param {integer} [delay] - Si se introduce un entero, espera a que se
+!!		cumpla la cantidad 'delay' de décimas de segundo antes de continuar.
+!!		En caso contrario, espera a una pulsación de tecla del usuario
+!!	@returns {char} Caracter introducido por el usuario
+!!------------------------------------------------------------------------------
+[ PressAnyKey delay
+	result;
+	#Ifdef TARGET_GLULX;
+	if (Damusix.EnFade()) delay = 0;
+	#Endif; ! TARGET_GLULX;
+	if (delay > 0) result = KeyDelay(delay);
+	else result = KeyCharPrimitive();
+	return result;
+];
+
+!!------------------------------------------------------------------------------
+!! Imprime en pantalla un array de caracteres, caracter a caracter.
+!!
+!!	@param {array} character_array - Array de caracteres a imprimir
+!!------------------------------------------------------------------------------
+[ PrintCharacterArray character_array
+	i;
+	for (i = 0 : i < character_array->(WORDSIZE-1) : i++) {
+		print (char) character_array->(WORDSIZE+i);
+	}
+];
+
+!!------------------------------------------------------------------------------
+!! Lee de un fichero de texto externo los parámetros de configuración
+!! establecidos en una partida previa.
+!!
+!!	@returns {boolean} Verdadero si lee el fichero con éxito. Falso en
+!!		caso contrario
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+#Ifdef TARGET_GLULX;
+Array Config_File_Name -> $E0 'C' 'O' 'N' 'F' 'I' 'G';
+#Endif; ! TARGET_GLULX;
+
+[ ReadConfigFile
+	file_ref str ch;
+	#Ifdef TARGET_GLULX;
+	file_ref = glk_fileref_create_by_name(
+		fileusage_Data + fileusage_BinaryMode,
+		ChangeAnyToCString(Config_File_Name),
+		0);
+	if (file_ref ~= 0) {
+		str = glk_stream_open_file(file_ref, filemode_Read, 0);
+		glk_fileref_destroy(file_ref);
+		!! Lee el código de verificación del archivo de decisiones:
+		!! (48 es el código de '0', 49 de '1',... 57 de '9':
+		do ch = glk_get_char_stream(str);
+		until ((ch == null) || (ch >= 48 && ch <= 57));
+		if (ch == null) return false;
+		!! Estilo de resaltado de objetos importantes:
+		do ch = glk_get_char_stream(str);
+		until ((ch == null) || (ch >= 48 && ch <= 57));
+		if (ch == null) jump ReadConfigFileEnd;
+		_keyword_st1 = (ch - 48);
+		!! Estilo de resaltado de direcciones:
+		do ch = glk_get_char_stream(str);
+		until ((ch == null) || (ch >= 48 && ch <= 57));
+		if (ch == null) jump ReadConfigFileEnd;
+		_keyword_st2 = (ch - 48);
+		!! Estilo de resaltado de otros objetos:
+		do ch = glk_get_char_stream(str);
+		until ((ch == null) || (ch >= 48 && ch <= 57));
+		if (ch == null) jump ReadConfigFileEnd;
+		_keyword_st3 = (ch - 48);
+		!! Cierra el archivo y termina la operación:
+		.ReadConfigFileEnd;
+		glk_stream_close(str, 0);
+		return true;
+	}
+	#Endif; ! TARGET_GLULX;
+	return false;
+];
+
+!!------------------------------------------------------------------------------
+!! Dado un objeto como parámetro, retorna su antecesor más lejano en el árbol
+!! de objetos del modelo de mundo.
+!!
+!!	@param {Object} obj - Objeto del que se desea averiguar su antecesor
+!!		más lejano
+!!	@returns {Object} Antecesor más lejano del objeto pasado como parámetro
+!!------------------------------------------------------------------------------
+[ TopHolder obj
+	aux;
+	while (parent(obj) ~= 0) {
+		aux = ObjectScopedBySomething(obj);
+		if (aux == 0) aux = parent(obj);
+		obj = aux;
+	}
+	return obj;
+];
+
+!!------------------------------------------------------------------------------
+!! Guarda en un fichero externo un registro con los parámetros de configuración
+!! de la partida.
+!!
+!!	@returns {boolean} Verdadero si escribe el fichero con éxito. Falso en
+!!		caso contrario
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+[ WriteConfigFile
+	file_ref str;
+	#Ifdef TARGET_GLULX;
+	!! Crea el fichero externo y redirige el flujo de salida a él:
+	file_ref = glk_fileref_create_by_name(
+		fileusage_Data + fileusage_BinaryMode,
+		ChangeAnyToCString(Config_File_Name),
+		0);
+	if (file_ref ~= 0) {
+		str = glk_stream_open_file(file_ref, filemode_Write, 0);
+		glk_fileref_destroy(file_ref);
+		glk_stream_set_current(str);
+		!! Código de verificación del archivo de decisiones:
+		print "1";
+		!! Estilo de resaltado de objetos importantes:
+		print _keyword_st1;
+		!! Estilo de resaltado de direcciones:
+		print _keyword_st2;
+		!! Estilo de resaltado de otros objetos:
+		print _keyword_st3;
+		!! Cierra el archivo y termina la operación:
+		new_line;
+		glk_set_window(gg_mainwin);
+		glk_stream_close(str, 0);
+		return true;
+	}
+	#Endif; ! TARGET_GLULX;
+	return false;
+];
+
+!!==============================================================================
+!!
+!!	8)	Gramática estándar y extendida
+!!
+!!------------------------------------------------------------------------------
+!!	IMPORTANTE: Los mensajes de algunas de las acciones que se añaden requieren
+!!	la extensión 'SpanishLM.h'. Acciones añadidas o modificadas:
+!!------------------------------------------------------------------------------
+
+Include "SpanishG.h";			! Gramática española
+Include "SpanishEG.h";			! Gramática española extendida
+
+!!------------------------------------------------------------------------------
+!! ##Audio / ##AudioOn / ##AudioOff
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! ##DefaultAction
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!!	##Graphics / ##GraphicsOn / ##GraphicsOff
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!!	##GoBack / ##GoForward
+!!------------------------------------------------------------------------------
+
+Verb 'vuelve'
+	*								-> GoBack
+	* noun							-> Enter
+	* 'por' noun					-> Enter
+; VerboIrregular "volver" with imperativo 'vuelve';
+
+Verb 'continua' 'sigue'
+	*								-> GoForward
+	* noun							-> Enter
+	* 'por' noun					-> Enter
+; VerboIrregular "seguir" with imperativo 'sigue';
+
+[ GoBackSub;
+	<<Go b_obj>>;
+];
+
+[ GoForwardSub;
+	<<Go f_obj>>;
+];
+
+!!------------------------------------------------------------------------------
+!! ##Highlight / ##HighlightOn / ##HighlightOff
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! ##LMode2
+!!------------------------------------------------------------------------------
+
+Extend only 'normal' replace
+    *								-> LMode2
+;
+
+!!------------------------------------------------------------------------------
+!! ##NoSuchVerb
+!! Permite eliminar acciones definidas automáticamente por la librería Inform.
+!! Código extraído de <http://www.firthworks.com/roger/informfaq/vv.html#6>.
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! ##ShootAt
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! ##TalkOn / ##TalkTo
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
+!! ##Teleport
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	9)	Definición de atributos, clases y objetos
+!!
+!!------------------------------------------------------------------------------
+
+Include ">laZona_classes.inf";
+Include ">laZona_objects.inf";
