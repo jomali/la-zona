@@ -1,0 +1,122 @@
+
+
+!!==============================================================================
+!!
+!!	LA ZONA
+!!	Definición de localidades y objetos
+!!
+!!==============================================================================
+!!
+!!	Archivo:		laZona_objects.inf
+!!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Castellano)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		GLULX
+!!	Versión:		0.0
+!!	Fecha:			2017/12/16
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	0.0: 2016/06/18	Inicio del desarrollo.
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte del relato interactivo LA ZONA.
+!!
+!!	LA ZONA es software libre: usted puede redistribuirlo y/o
+!!	modificarlo bajo los términos de la Licencia Pública General GNU
+!!	publicada por la Fundación para el Software Libre, ya sea la versión
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
+!!
+!!	LA ZONA se distribuye con la esperanza de que sea útil, pero
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
+!!	la Licencia Pública General GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU
+!!	junto a LA ZONA. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2018, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# TABLA DE CONTENIDOS
+!!
+!!	1)	LIMBO
+!!	2)	TUNEL
+!!	3)	CANAL
+!!	4)	CALLEJON
+!!	5)	AZOTEA
+!!	6)	CALLE_OESTE
+!!	7)	CALLE_ESTE
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	1)	LIMBO
+!!
+!!------------------------------------------------------------------------------
+
+Room	LIMBO "En algún lugar"
+ with	name_f	'babia',
+		name_m	'limbo' 'lugar' 'sueno' 'vacio',
+		gender	G_MASCULINO,
+		description [; return O__M(self, 1); ],
+		clarification 0,
+ has	male;
+
+ Object	DungeonMaster "(Dungeon Master)";
+
+ NPC	-> Stalker "Stalker"
+  with	name_m	'personaje' 'protagonista' 'stalker',
+		gender	G_MASCULINO,
+		adjectives 'principal',
+		description [; <<Inv>>; ],
+ has	male proper;
+
+
+!!==============================================================================
+!!
+!!	2)	TUNEL
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	3)	CANAL
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	4)	CALLEJON
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	5)	AZOTEA
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	6)	CALLE_OESTE
+!!
+!!------------------------------------------------------------------------------
+
+
+!!==============================================================================
+!!
+!!	7)	CALLE_ESTE
+!!
+!!------------------------------------------------------------------------------
