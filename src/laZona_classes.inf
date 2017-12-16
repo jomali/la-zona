@@ -17,12 +17,6 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	# HISTORIAL DE VERSIONES
-!!
-!!	0.0: 2016/06/18	Inicio del desarrollo.
-!!
-!!------------------------------------------------------------------------------
-!!
 !!	Este archivo forma parte del relato interactivo LA ZONA.
 !!
 !!	LA ZONA es software libre: usted puede redistribuirlo y/o
@@ -40,6 +34,12 @@
 !!	<http://www.gnu.org/licenses/>.
 !!
 !!	Copyright (c) 2018, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	# HISTORIAL DE VERSIONES
+!!
+!!	0.0: 2016/06/18	Inicio del desarrollo.
 !!
 !!------------------------------------------------------------------------------
 !!

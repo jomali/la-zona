@@ -1,0 +1,59 @@
+
+
+
+
+
+[ LanguageOM_present obj n;
+	switch (obj) {
+
+LIMBO: switch (n) {
+1:	! ##Examine (#1)
+print "Est", (lm_as) player, " más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
+return true;
+2:	! ##Examine (#2)
+print " ", (emph) "¿Qué? ¿Cómo?... ¿cómo he llegado aquí?", "";
+return true;
+}
+
+	}
+];
+
+
+
+[ LanguageOM_past obj n x1;
+	switch (obj) {
+
+LIMBO: return LanguageOM_present(obj, n, x1);
+
+	}
+];
+
+
+
+[ LanguageOM_future obj n x1;
+	switch (obj) {
+
+LIMBO: return LanguageOM_present(obj, n, x1);
+
+	}
+];
+
+
+
+[ O__M obj n x1;
+	if (n == 0) n = 1;
+	switch (_grammatical_inflection) {
+		FIRST_PERSON_PRESENT,
+		SECOND_PERSON_PRESENT,
+		THIRD_PERSON_PRESENT:
+			LanguageOM_present(obj, n, x1);
+		FIRST_PERSON_PAST,
+		SECOND_PERSON_PAST,
+		THIRD_PERSON_PAST:
+			LanguageOM_past(obj, n, x1);
+		FIRST_PERSON_FUTURE,
+		SECOND_PERSON_FUTURE,
+		THIRD_PERSON_FUTURE:
+			LanguageOM_future(obj, n, x1);
+	}
+];

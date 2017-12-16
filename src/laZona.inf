@@ -185,7 +185,17 @@ Global PARTICULA_TE	= "te";
 !!
 !!------------------------------------------------------------------------------
 
-! FIXME
+Replace Banner;					! Créditos generales de la aplicación
+Replace ChangePlayer;			! Rutina para cambiar el objeto jugable PJ
+Replace DrawStatusLine;			! Dibuja la barra de estado
+Replace ExamineSub;				! Rutina para la acción ##Examine
+Replace GetGNAOfObject;			! Rutina para obtener el GNA de un objeto
+Replace LMode1Sub;				! Lookmode 1: Breve
+Replace LMode2Sub;				! Lookmode 2: Largo (establecido por defecto)
+Replace LMode3Sub;				! Lookmode 3: Superbreve
+Replace LookSub;				! Rutina para la acción ##Look
+Replace PSN__;					! Rutina para imprimir nombre corto de un obj.
+Replace VersionSub;				! Créditos detallados de la aplicación
 
 
 !!==============================================================================
@@ -201,9 +211,9 @@ Include "gwindefs.h";			! GWindows: Definiciones
 Include "Parser.h";				! Decodifica la entrada del teclado
 Include "SpanishLM.h";			! Mensajes de la librería
 Include "types.h";				! Rutinas para modificar estilo de los textos
-Include ">chico_lib.inf";		! Personalizaciones de la librería Inform
-Include ">chico_langLM.inf";	! Mensajes personalizados de la librería
-Include ">chico_langOM.inf";	! Mensajes de los objetos
+Include ">laZona_lib.inf";		! Personalizaciones de la librería Inform
+Include ">laZona_langLM.inf";	! Mensajes personalizados de la librería
+Include ">laZona_langOM.inf";	! Mensajes de los objetos
 
 #Ifdef TARGET_GLULX;
 Include "gwincls.h";			! GWindows: Window Class Framework
@@ -318,21 +328,20 @@ Include ">laZona_gui.inf";		! Definición de la interfaz gráfica
 #Ifnot;	! TARGET_ZCODE;
 Default PIC_TUNEL_A		0;
 Default PIC_TUNEL_B		1;
-Default PIC_CANAL1_A	2;
-Default PIC_CANAL1_B	3;
+Default PIC_CANAL_A		2;
+Default PIC_CANAL_B		3;
 Default PIC_CALLEJON_A	4;
 Default PIC_CALLEJON_B	5;
 Default PIC_AZOTEA_A	6;
 Default PIC_AZOTEA_B	7;
-Default PIC_CALLE1_A	8;
-Default PIC_CALLE1_B	9;
-Default PIC_CALLE2_A	10;
-Default PIC_CALLE2_B	11;
-Default PIC_CALLE2_C	12;
+Default PIC_CALLE_OESTE_A	8;
+Default PIC_CALLE_OESTE_B	9;
+Default PIC_CALLE_ESTE_A	10;
+Default PIC_CALLE_ESTE_B	11;
+Default PIC_CALLE_ESTE_C	12;
 #Endif; ! TARGET_GLULX;
 
 Include "aimAndFire.h";			! Sistema de apuntado y disparo QTE
-Include "choiceSet.h";			! Sistema de selección de elecciones
 Include "pPreprocessor.h";		! Preprocesador del parser
 Include "receptacles.h";		! Contenedores con límites de capacidad
 
@@ -377,8 +386,9 @@ Global _current_location = 0;
 !!	@returns Nada
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
-	ChoiceSetManager.run();
+	#Ifdef TARGET_GLULX;
 	ParsingPreprocessor.run();
+	#Endif; ! TARGET_GLULX;
 ];
 
 !!------------------------------------------------------------------------------
@@ -421,6 +431,7 @@ Global _current_location = 0;
 	#Endif; ! TARGET_GLULX;
 
 	!! Inicializaciones del relato ---------------------------------------------
+	SetGrammaticalInflection(FIRST_PERSON_FUTURE);
 	location = LIMBO;			! Establece la localidad inicial del relato
 	lookmode = 2;				! Lookmode largo
 
@@ -640,6 +651,21 @@ Global _current_location = 0;
 ];
 
 !!------------------------------------------------------------------------------
+!! Pinta la imagen pasada como parámetro en la ventana gráfica *graphicWindow*
+!! (sólo en GLULX).
+!!
+!!	@param {Picture} img - Imagen Blorb que se pintará en la ventana
+!!		gráfica 'graphicWindow'
+!!	@returns {boolean} Verdadero
+!!------------------------------------------------------------------------------
+[ DrawSceneImage img;
+	#Ifdef TARGET_GLULX;
+!	graphicWindow.setImage(img);
+	#Endif; ! TARGET_GLULX;
+	return true;
+];
+
+!!------------------------------------------------------------------------------
 !! Deja la ventana en blanco.
 !!
 !!	@returns {boolean} Verdadero
@@ -813,9 +839,167 @@ Include "SpanishEG.h";			! Gramática española extendida
 !! ##Audio / ##AudioOn / ##AudioOff
 !!------------------------------------------------------------------------------
 
+#Ifdef TARGET_GLULX;
+Verb meta 'audio' 'music' 'musica' 'sonido' 'sonidos'
+	*								-> Audio
+	* 'on' / 'si'					-> AudioOn
+	* 'encendido' / 'activado'		-> AudioOn
+	* 'off' / 'no'					-> AudioOff
+	* 'apagado' / 'desactivado'		-> AudioOff
+;
+VerboIrregular "establecer la reproducción de audio" with imperativo
+	'audio' 'music' 'musica' 'sonido' 'sonidos';
+
+[ AudioSub;
+	if (Damusix.HayAudio()) <<AudioOff>>;
+	else <<AudioOn>>;
+];
+
+[ AudioOnSub;
+	if (Damusix.HayAudio())
+		print_ret (parser) "La reproducción de audio ya estaba activada.";
+	Damusix.ActivarAudio();
+	print_ret (parser) "Reproducción de audio activada.";
+];
+
+[ AudioOffSub;
+	if (~~Damusix.HayAudio())
+		print_ret (parser) "La reproducción de audio ya estaba desactivada.";
+	Damusix.DesactivarAudio();
+	print_ret (parser) "Reproducción de audio desactivada.";
+];
+#Endif; ! TARGET_GLULX;
+
 !!------------------------------------------------------------------------------
 !! ##DefaultAction
 !!------------------------------------------------------------------------------
+!!	Los objetos pueden definir una propiedad: 'action_set', con un array de
+!!	acciones evidentes que pueden realizarse sobre ese objeto. Si definen esta
+!!	propiedad, la acción por defecto imprime el listado de acciones. En caso
+!!	contrario, la acción por defecto se limita a invocar la acción ##Examine
+!!	sobre ese objeto.
+!!------------------------------------------------------------------------------
+
+Verb 'no.verb'
+	* noun							-> DefaultAction
+;
+
+[ FilterActionSet obj i;
+	if (obj.&action_set-->i == ##Close && obj hasnt open)
+		return false;
+	if (obj.&action_set-->i == ##Drop && ~~IndirectlyContains(player, obj))
+		return false;
+	if (obj.&action_set-->i == ##Open && obj has open)
+		return false;
+	if (obj.&action_set-->i == ##SwitchOff && obj hasnt on)
+		return false;
+	if (obj.&action_set-->i == ##SwitchOn && obj has on)
+		return false;
+	if (obj.&action_set-->i == ##Take && IndirectlyContains(player, obj))
+		return false;
+	return true;
+];
+[ DefaultActionSub
+	i len1 len2 st;
+	if (noun provides action_set && noun.action_set ~= 0) {
+		PrintToBuffer(_hyperlink_action_0, _HYPERLINK_BUFFER_SIZE, noun);
+		PrintToBuffer(_temp_array, _HYPERLINK_BUFFER_SIZE, noun);
+		st = PrintParserPrefix();
+		CapitaliseCharacterArray(_hyperlink_action_0);
+		PrintCharacterArray(_hyperlink_action_0);
+		print ": ";
+		for ( i = 0 : i < noun.#action_set/WORDSIZE : i++) {
+			if (FilterActionSet(noun, i)) len1++;
+		}
+		for ( i = 0 : i < noun.#action_set/WORDSIZE : i++) {
+			if (~~FilterActionSet(noun, i)) continue;
+			len2++;
+			if (i == 0) {
+				PrintToBuffer(_hyperlink_action_0, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_0, _temp_array, ' ');
+				CreateLink(_hyperlink_action_0,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 1) {
+				PrintToBuffer(_hyperlink_action_1, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_1, _temp_array, ' ');
+				CreateLink(_hyperlink_action_1,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 2) {
+				PrintToBuffer(_hyperlink_action_2, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_2, _temp_array, ' ');
+				CreateLink(_hyperlink_action_2,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 3) {
+				PrintToBuffer(_hyperlink_action_3, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_3, _temp_array, ' ');
+				CreateLink(_hyperlink_action_3,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 4) {
+				PrintToBuffer(_hyperlink_action_4, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_4, _temp_array, ' ');
+				CreateLink(_hyperlink_action_4,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 5) {
+				PrintToBuffer(_hyperlink_action_5, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_5, _temp_array, ' ');
+				CreateLink(_hyperlink_action_5,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 6) {
+				PrintToBuffer(_hyperlink_action_6, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_6, _temp_array, ' ');
+				CreateLink(_hyperlink_action_6,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 7) {
+				PrintToBuffer(_hyperlink_action_7, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_7, _temp_array, ' ');
+				CreateLink(_hyperlink_action_7,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 8) {
+				PrintToBuffer(_hyperlink_action_8, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_8, _temp_array, ' ');
+				CreateLink(_hyperlink_action_8,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (i == 9) {
+				PrintToBuffer(_hyperlink_action_9, _HYPERLINK_BUFFER_SIZE,
+					GetActionVerb(noun.&action_set-->i));
+				ConcatenateArrays(_hyperlink_action_9, _temp_array, ' ');
+				CreateLink(_hyperlink_action_9,
+					GetActionVerb(noun.&action_set-->i));
+			}
+			if (len2 < len1) print ", ";
+		}
+		print ".";
+		PrintParserSufix(st);
+		new_line;
+		return true;
+	} else {
+		st = PrintParserPrefix();
+		print "Examinar ";
+		PrintToBuffer(_temp_array, _HYPERLINK_BUFFER_SIZE, noun);
+		PrintCharacterArray(_temp_array);
+		PrintParserSufix(st);
+		new_line;
+		<<Examine noun>>;
+	}
+];
 
 !!------------------------------------------------------------------------------
 !!	##Graphics / ##GraphicsOn / ##GraphicsOff
@@ -859,21 +1043,171 @@ Extend only 'normal' replace
 
 !!------------------------------------------------------------------------------
 !! ##NoSuchVerb
+!!------------------------------------------------------------------------------
 !! Permite eliminar acciones definidas automáticamente por la librería Inform.
 !! Código extraído de <http://www.firthworks.com/roger/informfaq/vv.html#6>.
 !!------------------------------------------------------------------------------
+
+[ Anything; ! Se ignora el resto de la entrada de usuario
+	while (NextWordStopped() ~= -1);
+	return GPR_PREPOSITION;
+];
+
+Extend	'perdona' replace
+	* Anything						-> NoSuchVerb
+;
+
+Extend	'nada' replace
+	* Anything						-> NoSuchVerb
+;
+
+[ NoSuchVerbSub; return ParserError(VERB_PE); ];
 
 !!------------------------------------------------------------------------------
 !! ##ShootAt
 !!------------------------------------------------------------------------------
 
+
 !!------------------------------------------------------------------------------
 !! ##TalkOn / ##TalkTo
 !!------------------------------------------------------------------------------
 
+Extend	'habla' replace
+	* noun							-> TalkTo
+	* 'a'/'con' noun				-> TalkTo
+	* creature						-> TalkTo
+	* 'a'/'con' creature			-> TalkTo
+	* 'por' noun					-> TalkOn
+	* 'por' creature				-> TalkOn
+;
+
+Verb	'conversa' 'platica'
+	* noun							-> TalkTo
+	* 'a'/'con' noun				-> TalkTo
+	* creature						-> TalkTo
+	* 'a'/'con' creature			-> TalkTo
+	* 'por' noun					-> TalkOn
+	* 'por' creature				-> TalkOn
+;
+
+[ TalkOnSub
+	st;
+	st = PrintParserPrefix();
+	print "Hablar con ", (name) noun;
+	PrintParserSufix(st);
+	new_line;
+	<<TalkTo noun second>>;
+];
+
+[ TalkToSub;
+	!! 1) El personaje intenta hablar consigo mismo:
+	if ( noun == player ) {
+		print "Hablar ", (lm_contigo) player, " mism", (o) player, " ";
+		switch (_grammatical_inflection) {
+			FIRST_PERSON_PRESENT,
+			SECOND_PERSON_PRESENT,
+			THIRD_PERSON_PRESENT:
+				"no resulta especialmente divertido.";
+			FIRST_PERSON_PAST,
+			SECOND_PERSON_PAST,
+			THIRD_PERSON_PAST:
+				"no resultaba especialmente divertido.";
+			FIRST_PERSON_FUTURE,
+			SECOND_PERSON_FUTURE,
+			THIRD_PERSON_FUTURE:
+				"no resultará especialmente divertido.";
+		}
+	}
+	!! 2) El personaje intenta hablar con un objeto inanimado:
+	if ( noun hasnt animate ) {
+		switch (_grammatical_inflection) {
+			FIRST_PERSON_PRESENT,
+			SECOND_PERSON_PRESENT,
+			THIRD_PERSON_PRESENT:
+				"Sería más interesante intentar hablar con cosas que puedan
+				devolver una respuesta.";
+			FIRST_PERSON_PAST,
+			SECOND_PERSON_PAST,
+			THIRD_PERSON_PAST:
+				"Hubiese sido más interesante intentar hablar con cosas que
+				pudiesen devolver una respuesta.";
+			FIRST_PERSON_FUTURE,
+			SECOND_PERSON_FUTURE,
+			THIRD_PERSON_FUTURE:
+				"Será más interesante intentar hablar con cosas que puedan
+				devolver una respuesta.";
+		}
+	}
+	!! 3) El personaje intenta hablar con un objeto animado:
+	switch (_grammatical_inflection) {
+		FIRST_PERSON_PRESENT,
+		SECOND_PERSON_PRESENT,
+		THIRD_PERSON_PRESENT:
+			print (The) noun, " no parecen", (n) noun;
+		FIRST_PERSON_PAST,
+		SECOND_PERSON_PAST,
+		THIRD_PERSON_PAST:
+			print (The) noun, " no parecía", (n) noun;
+		FIRST_PERSON_FUTURE,
+		SECOND_PERSON_FUTURE,
+		THIRD_PERSON_FUTURE:
+			print (The) noun, " no parecerá", (n) noun;
+	}
+	" interesad", (o) noun, " en hablar ", (lm_contigo) player, ".";
+];
+
 !!------------------------------------------------------------------------------
 !! ##Teleport
 !!------------------------------------------------------------------------------
+
+[ TeleportScope
+	obj adjacent_location;
+	switch (scope_stage) {
+		1:	return false;
+		2:	objectloop (obj in Compass) {
+				keep_silent = true;
+				adjacent_location = real_location.(obj.door_dir)();
+				keep_silent = false;
+				if (adjacent_location ~= 0) {
+					PlaceInScope(adjacent_location);
+				}
+			}
+		3:	print_ret (parser) "No puedes llegar hasta ahí desde donde te
+			encuentras en estos momentos.";
+	}
+];
+
+Extend 've' last
+	* scope=TeleportScope			-> Teleport
+	* 'a//' scope=TeleportScope		-> Teleport
+	* 'hacia' scope=TeleportScope	-> Teleport
+;
+
+Extend 'entra' last
+	* scope=TeleportScope			-> Teleport
+	* 'a//' scope=TeleportScope		-> Teleport
+	* 'en' scope=TeleportScope		-> Teleport
+;
+
+Verb 'teleport.verb'
+	* scope=TeleportScope			-> Teleport
+;
+
+[ TeleportSub
+	obj adjacent_location;
+	objectloop (obj in Compass) {
+		keep_silent = true;
+		adjacent_location = real_location.(obj.door_dir)();
+		keep_silent = false;
+		if (adjacent_location ~= 0) {
+			if (noun == adjacent_location) {
+				<<Go obj>>;
+			}
+		}
+	}
+
+	PlayerTo(noun, 2);
+];
 
 
 !!==============================================================================

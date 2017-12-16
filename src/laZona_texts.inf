@@ -17,12 +17,6 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	HISTORIAL DE VERSIONES
-!!
-!!	0.0: 2016/06/18	Inicio del desarrollo.
-!!
-!!------------------------------------------------------------------------------
-!!
 !!	Este archivo forma parte del relato interactivo LA ZONA.
 !!
 !!	LA ZONA es software libre: usted puede redistribuirlo y/o
@@ -42,19 +36,58 @@
 !!	Copyright (c) 2018, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
+!!
+!!	HISTORIAL DE VERSIONES
+!!
+!!	0.0: 2016/06/18	Inicio del desarrollo.
+!!
+!!------------------------------------------------------------------------------
 
 
-[ LanguageOM obj n x1;
+!!==============================================================================
+!!	Mensajes de los objetos en presente
+!!------------------------------------------------------------------------------
+
+[ LanguageOM_present obj n;
 	switch (obj) {
 
 !!------------------------------------------------------------------------------
-LIMBO: switch (action) {
-1:	! ##Examine
-print "Más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
-if (obj hasnt visited) print " *¿Qué? ¿Cómo?... ¿cómo he llegado aquí?*";
-new_line;
+LIMBO: switch (n) {
+1:	! ##Examine (#1)
+print "Est", (lm_as) player, " más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
+return true;
+2:	! ##Examine (#2)
+print " *¿Qué? ¿Cómo?... ¿cómo he llegado aquí?*";
 return true;
 }
+
+	}
+];
+
+
+!!==============================================================================
+!!	Mensajes de los objetos en pasado
+!!------------------------------------------------------------------------------
+
+[ LanguageOM_past obj n x1;
+	switch (obj) {
+
+!!------------------------------------------------------------------------------
+LIMBO: return LanguageOM_present(obj, n, x1);
+
+	}
+];
+
+
+!!==============================================================================
+!!	Mensajes de los objetos en futuro
+!!------------------------------------------------------------------------------
+
+[ LanguageOM_future obj n x1;
+	switch (obj) {
+
+!!------------------------------------------------------------------------------
+LIMBO: return LanguageOM_present(obj, n, x1);
 
 	}
 ];
@@ -66,5 +99,18 @@ return true;
 
 [ O__M obj n x1;
 	if (n == 0) n = 1;
-	LanguageOM(obj, n, x1);
+	switch (_grammatical_inflection) {
+		FIRST_PERSON_PRESENT,
+		SECOND_PERSON_PRESENT,
+		THIRD_PERSON_PRESENT:
+			LanguageOM_present(obj, n, x1);
+		FIRST_PERSON_PAST,
+		SECOND_PERSON_PAST,
+		THIRD_PERSON_PAST:
+			LanguageOM_past(obj, n, x1);
+		FIRST_PERSON_FUTURE,
+		SECOND_PERSON_FUTURE,
+		THIRD_PERSON_FUTURE:
+			LanguageOM_future(obj, n, x1);
+	}
 ];

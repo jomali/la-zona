@@ -104,38 +104,38 @@ Object	GUIConfig "(GUI Configuration)"
 		!! Configuración D. Anchura total: 900px
 		!!----------------------------------------------------------------------
 		window_configuration_d 900,
-		graphic_win_d 0,
+		graphic_win_d 225,
 		margin_left_d 24,
 		margin_right_d 8,
 		padding_left_d 0,
-		padding_right_d 0,
+		padding_right_d 20,
 		!!----------------------------------------------------------------------
 		!! Configuración E. Anchura total: 1050px
 		!!----------------------------------------------------------------------
 		window_configuration_e 1050,
-		graphic_win_e 0,
+		graphic_win_e 225,
 		margin_left_e 32,
 		margin_right_e 10,
 		padding_left_e 0,
-		padding_right_e 0,
+		padding_right_e 20,
 		!!----------------------------------------------------------------------
 		!! Configuración F. Anchura total: 1224px
 		!!----------------------------------------------------------------------
 		window_configuration_f 1224,
-		graphic_win_f 0,
+		graphic_win_f 225,
 		margin_left_f 42,
 		margin_right_f 8,
 		padding_left_f 0,
-		padding_right_f 0,
+		padding_right_f 20,
 		!!----------------------------------------------------------------------
 		!! Configuración G. Anchura total: 1400px
 		!!----------------------------------------------------------------------
 		window_configuration_g 1400,
-		graphic_win_g 0,
+		graphic_win_g 225,
 		margin_left_g 46,
 		margin_right_g 46,
 		padding_left_g 0,
-		padding_right_g 0,
+		padding_right_g 20,
 ;
 
 
