@@ -45,27 +45,6 @@
 
 
 !!==============================================================================
-!!	Mensajes de los objetos en presente
-!!------------------------------------------------------------------------------
-
-[ LanguageOM_present obj n;
-	switch (obj) {
-
-!!------------------------------------------------------------------------------
-LIMBO: switch (n) {
-1:	! ##Examine (#1)
-print "Est", (lm_as) player, " más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
-return true;
-2:	! ##Examine (#2)
-print " *¿Qué? ¿Cómo?... ¿cómo he llegado aquí?*";
-return true;
-}
-
-	}
-];
-
-
-!!==============================================================================
 !!	Mensajes de los objetos en pasado
 !!------------------------------------------------------------------------------
 
@@ -73,7 +52,136 @@ return true;
 	switch (obj) {
 
 !!------------------------------------------------------------------------------
-LIMBO: return LanguageOM_present(obj, n, x1);
+LIMBO: switch (n) {
+1:	! ##Examine (#1)
+print "Est", (lm_estas) player, " más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
+return true;
+2:	! ##Examine (#2)
+print " *¿Qué? ¿Cómo?... ¿cómo he llegado aquí?*";
+return true;
+}
+
+!!------------------------------------------------------------------------------
+limbo_fusil: switch (n) {
+1:	! ##Examine (#1 - manchado de tiza)
+print "Un fusil semiautomático largo. Tenía restos de tiza en la culata de madera.";
+new_line;
+return true;
+2:	! ##Examine (#2 - limpio)
+print "Un fusil semiautomático largo con culata de madera.";
+new_line;
+return true;
+3:	! ##Touch
+print "Se había acostumbrado a llevar aquel arma entre las manos. Su peso, la suaviadad de la culata, el tacto del gatillo. Iba a sentirse extraño cuando saliese de aquel lugar y se pudiese olvidar de él.";
+new_line;
+return true;
+4:	! ##Rub (#1 - la primera vez)
+print "Era imposible mantener el fusil limpio por mucho cuidado que pusiese. De todas formas frotó la culata con la manga, intentando quitarle el polvo y las manchas de tiza.";
+new_line;
+return true;
+5:	! ##Rub (#2)
+print "No tenía forma de limpiarlo mejor. Él mismo estaba cubierto entero de polvo y barro. Como mucho iba a conseguir ensuciarlo aún más.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+TUNEL: switch (n) {
+1:	! ##Examine (#1)
+print "Había estado caminando en la oscuridad más absoluta, siguiendo a ciegas el muro que tenía a su derecha para no desorientarse. Una estrategia que había terminado por funcionarle. Algo más adelante veía recortarse finalmente un pequeño semicírculo de luz; estaba a punto de alcanzar la salida.";
+new_line;
+return true;
+2:	! ##Examine (#2 - Si se permite que Stalker vuelva a entrar al túnel)
+return true;
+3:	! ataque al corazón #1
+print "Un repentino pinchazo en el pecho le hizo encogerse sobre sí mismo. Cayó de rodillas por culpa del dolor.";
+new_line;
+return true;
+4:	! ataque al corazón #2
+print "La presión punzante irradiaba desde la altura del esternón y se extendía por los hombros y el cuello, atenazándole los brazos y la mandíbula. Aún en el suelo, con la espalda empapada por completo de un sudor frío, hizo un esfuerzo por ignorar la angustia y controlar la respiración desbocada. A medida que recuperaba poco a poco el aliento logró ir apartando el dolor en un rincón. Eso estaba bien. No podía detenerse. Tanteó a su alrededor hasta encontrar el fusil que se le había caído de las manos y se levantó de nuevo. Tenía que continuar.";
+new_line;
+return true;
+5:	! disparo #1
+print "Un disparo quebró el silencio con su estallido sordo. Él cayó al suelo apenas una fracción de segundo después.";
+new_line;
+return true;
+6:	! disparo #2
+print "Se había convertido en un acto reflejo desde el mismo momento en que habían puesto el pie en aquella ciudad; cada vez que escuchaban la detonación de un disparo o el silbido de un obús en vuelo habían interiorizado que debían echar el cuepo a tierra y pronto empezaron a hacerlo automáticamente, antes siquiera de que su cerebro llegase a procesar por completo el sonido. Incluso aunque el disparo sonase lejano, como aquel, y él estuviese oculto en las sombras. Todavía se mantuvo unos segundos quieto en el suelo, intentando escuchar más sonidos del exterior. Cuando pareció que todo volvía a estar tranquilo se levantó de nuevo, aunque inconscientemente ahora apretaba el fusil contra sí mismo con más fuerza que antes.";
+new_line;
+return true;
+7:	! cant_go
+print "Era imposible orientarse bien en la oscuridad, por eso había estado usando las paredes del túnel como referencia con la que guiarse. Así, se limitaba a seguir [f_obj] o [b_obj] a lo largo del muro.";
+new_line;
+return true;
+8:	! ##Go: b_obj
+print "En aquella dirección ya no quedaba más que un vacío negro.";
+new_line;
+return true;
+9:	! ##Listen (#1 - ataque al corazón)
+print "Silencio. Salvo por el sonido esporádico de las gotas de agua cayendo entre las sombras y por el eco de sus propias botas contra el suelo. Ni siquiera las ratas parecían habitar aquel lugar.";
+new_line;
+return true;
+10:	! ##Listen (#2 - disparo)
+print "Se detuvo por completo, tratando de escuchar nuevas señales de combate a lo lejos...
+^^
+Nada. Volvía a reinar un silencio absoluto, casi asfixiante, roto tan sólo por las gotas de agua que caían entre las sombras. Ni siquiera las ratas parecían habitar aquel lugar.";
+new_line;
+return true;
+11:	! ##Listen (#3 - disparo)
+print "Volvía a reinar un silencio absoluto, roto tan sólo por las gotas de agua que caían entre las sombras.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+tunel_muro: switch (n) {
+1:	! ##Touch
+print "Aunque no ", (lo) obj, " podía ver, notaba los húmedos ladrillos a su lado.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+tunel_oscuridad: switch (n) {
+1:	! ##Examine
+print "No podía ver nada. Aparte de aquella luz que se recortaba algo más [f_obj].";
+new_line;
+return true;
+2:	! ##Drop (x1)
+print "Si dejaba [el x1] allí era posible que después no pudiese encontrar", (lo) x1, " de nuevo en [la tunel_oscuridad]. Era mejor quedárse", (lo) x1, " consigo por el momento.";
+new_line;
+return true;
+3:	! ##Rub (x1)
+print "Era imposible limpiar [el x1], o cualquier otra cosa, si no podía ver", (lo) x1, ".";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+tunel_salida: switch (n) {
+1:	! ##Examine
+print "El final del túnel. Sólo tenía que continuar hacia [f_obj] un poco más.";
+new_line;
+return true;
+2:	! default
+print "No necesitaba preocuparse por ";
+SpanishNominativePronoun(obj);
+".";
+}
+
+	}
+];
+
+
+!!==============================================================================
+!!	Mensajes de los objetos en presente
+!!------------------------------------------------------------------------------
+
+[ LanguageOM_present obj n x1;
+	switch (obj) {
+
+!!------------------------------------------------------------------------------
+default: return LanguageOM_past(obj, n, x1);
 
 	}
 ];
@@ -87,7 +195,7 @@ LIMBO: return LanguageOM_present(obj, n, x1);
 	switch (obj) {
 
 !!------------------------------------------------------------------------------
-LIMBO: return LanguageOM_present(obj, n, x1);
+default: return LanguageOM_past(obj, n, x1);
 
 	}
 ];

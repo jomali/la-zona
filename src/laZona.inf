@@ -129,7 +129,7 @@ Global _parser_style = _2ST_;	! Selecciona estilo de los mensajes del parser
 !! Constantes de la extensión 'cset'.
 !!------------------------------------------------------------------------------
 
-Constant CSET_STYLE _BST_;		! Estilo de los mensajes de 'cset'
+Constant CSET_STYLE _IST_;		! Estilo de los mensajes de 'cset'
 Constant CSET_PREFIX "[";		! Define el texto inicial de los mensajes
 Constant CSET_SUFIX "]";		! Define el texto final de los mensajes
 Constant CSET_MSG1 "";			! Texto del mensaje MSG1
@@ -342,6 +342,7 @@ Default PIC_CALLE_ESTE_C	12;
 #Endif; ! TARGET_GLULX;
 
 Include "aimAndFire.h";			! Sistema de apuntado y disparo QTE
+Include "choiceSet.h";			! Sistema de selección de acciones sobre lista
 Include "pPreprocessor.h";		! Preprocesador del parser
 Include "receptacles.h";		! Contenedores con límites de capacidad
 
@@ -352,6 +353,13 @@ Include "VerbLib.h";			! Define cómo trabajan las acciones
 !!
 !!	6)	Puntos de entrada del relato
 !!
+!!------------------------------------------------------------------------------
+!!	-	AfterPrompt()
+!!	-	BeforeParsing()
+!!	-	Initialise()
+!!	-	InScope()
+!!	-	PrintVerb()
+!!	-	UnknownVerb()
 !!------------------------------------------------------------------------------
 
 !!------------------------------------------------------------------------------
@@ -387,6 +395,7 @@ Global _current_location = 0;
 !!------------------------------------------------------------------------------
 [ BeforeParsing;
 	#Ifdef TARGET_GLULX;
+	ChoiceSetManager.run();
 	ParsingPreprocessor.run();
 	#Endif; ! TARGET_GLULX;
 ];
@@ -430,9 +439,24 @@ Global _current_location = 0;
 	}
 	#Endif; ! TARGET_GLULX;
 
+	!! Inicializaciones multimedia ---------------------------------------------
+	#Ifdef TARGET_GLULX;
+	!! Establece la escucha de eventos glk para el uso de hipervínculos:
+	glk_request_hyperlink_event(gg_mainwin);
+	!! Inicializa los canales de audio (10 reales + 10 virtuales):
+	!Damusix.AsignarCanal(SONIDO, CANAL, VOLUMEN, REPETICIONES);
+	!! Inicializa los parámetros del gestor del sistema de apuntado:
+	AimingManager.set_status_window(statusBar.winid);
+	!! Establece la imagen inicial presente durante el menu:
+	DrawSceneImage(PIC_CALLE_ESTE_C);
+	!! Lee el fichero de configuración:
+	ReadConfigFile();
+	#Endif; ! TARGET_
+
 	!! Inicializaciones del relato ---------------------------------------------
 	SetGrammaticalInflection(THIRD_PERSON_PAST);
-	location = LIMBO;			! Establece la localidad inicial del relato
+	ChangePlayer(Stalker);		! Establece el personaje controlado por el usr.
+	location = TUNEL;			! Establece la localidad inicial del relato
 	lookmode = 2;				! Lookmode largo
 
 	return 2;
@@ -524,6 +548,17 @@ Global _current_location = 0;
 !!
 !!	7)	Otras rutinas
 !!
+!!------------------------------------------------------------------------------
+!!	-	CapitaliseCharacterArray()
+!!	-	ConcatenateArrays()
+!!	-	CreateLink()
+!!	-	DrawSceneImage()
+!!	-	EraseWindow()
+!!	-	MainMenu()
+!!	-	PressAnyKey()
+!!	-	ReadConfigFile()
+!!	-	TopHolder()
+!!	-	WriteConfigFile()
 !!------------------------------------------------------------------------------
 
 !!------------------------------------------------------------------------------
@@ -660,7 +695,7 @@ Global _current_location = 0;
 !!------------------------------------------------------------------------------
 [ DrawSceneImage img;
 	#Ifdef TARGET_GLULX;
-!	graphicWindow.setImage(img);
+	graphicWindow.setImage(img);
 	#Endif; ! TARGET_GLULX;
 	return true;
 ];

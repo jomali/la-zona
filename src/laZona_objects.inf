@@ -77,14 +77,41 @@ Room	LIMBO "En algún lugar"
 				PIC_CALLE_OESTE_A PIC_CALLE_ESTE_A,
  has	male;
 
- Object	DungeonMaster "(Dungeon Master)";
+Object	DungeonMaster "(Dungeon Master)"
+ with
+		!!----------------------------------------------------------------------
+		!! Indica si el Stalker ha muerto de un ataque al corazón en la
+		!! iteración anterior del bucle.
+		!!----------------------------------------------------------------------
+		heart_attack_loop true,
+;
 
- NPC	Stalker "Stalker" LIMBO
-  with	name_m	'personaje' 'protagonista' 'stalker',
+NPC	Stalker "Stalker" LIMBO
+ with	name_m	'personaje' 'protagonista' 'stalker',
 		gender	G_MASCULINO,
 		adjectives 'principal',
 		description [; <<Inv>>; ],
  has	male proper;
+
+!!	 -	'general' se activa después de haber limpiado el arma por primera vez.
+Item	-> -> limbo_fusil "fusil"
+ with	name_f	'arma',
+		name_m	'fusil' 'rifle',
+		gender	G_MASCULINO,
+		description [;
+			if (self has general) return O__M(self, 2);
+			else return O__M(self, 1);
+		],
+		before [;
+			Rub:
+				if (self has general) return O__M(self, 5);
+				give self general;
+				return O__M(self, 4);
+			Touch:
+				return O__M(self, 3);
+		],
+		!! action_set ##Examine ##Take ##Drop,
+ has	male remarkable;
 
 
 !!==============================================================================
@@ -93,12 +120,135 @@ Room	LIMBO "En algún lugar"
 !!
 !!------------------------------------------------------------------------------
 
+Indoors	TUNEL "Interior del túnel"
+ with	name_f	'alcantarilla' 'cloaca' 'galeria',
+		name_fp	'alcantarillas' 'cloacas',
+		name_m	'corredor' 'pasadizo' 'pasaje' 'tunel',
+		gender	G_MASCULINO,
+		adjectives
+			'dentro' 'interior' 'negra' 'negro' 'oscura' 'oscuro' 'subterranea'
+			'subterraneo',
+		initial [; if (self hasnt visited) {
+			new_line;
+			new_line;
+			if (DungeonMaster.heart_attack_loop) {
+				O__M(self, 3);
+				new_line;
+				O__M(self, 4);
+			} else {
+				O__M(self, 5);
+				new_line;
+				O__M(self, 6);
+			}
+			new_line;
+			return true;
+		}],
+		description [; return O__M(self, 1); ],
+		before [;
+			Listen:
+				if (DungeonMaster.heart_attack_loop) return O__M(self, 9);
+				if (~~self.listened) {
+					self.listened = true;
+					return O__M(self, 10);
+				}
+				return O__M(self, 11);
+		],
+		f_to	tunel_salida,
+		b_to	[; return O__M(self, 8); ],
+		out_to	[; return self.f_to(); ],
+		cant_go	[; return O__M(self, 7); ],
+		images	PIC_TUNEL_A,
+ private
+		listened false,
+ has	male;
+
+!!	 -	'general' se activa para evitar las comprobaciones de la rutina
+!!		'react_before' del objeto
+Atrezzo	-> tunel_oscuridad "oscuridad"
+ with	name_f	'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
+		name_fp	'penumbras' 'sombras' 'tinieblas',
+		gender	G_FEMENINO,
+		article "la",
+		adjectives
+			'absoluta' 'absolutas' 'densa' 'densas' 'espesa' 'espesas'
+			'impenetrable' 'impenetrables' 'inescrutabe' 'inescrutables'
+			'insondable' 'insondables',
+		description [; return O__M(self, 1); ],
+		react_before [;
+			if (self has general) return false;
+			Consult, Examine, Look, LookUnder, Read, Search:
+				if (noun == nothing) return false;
+				if (noun == self) return false;
+				if (noun == parent(self)) return false;
+				if (noun == tunel_muro) return false;
+				if (noun == tunel_salida) return false;
+				return O__M(self, 1);
+			DefaultAction: return false;
+			Drop:
+				if (noun == nothing) return false;
+				if (~~IndirectlyContains(player, noun)) return false;
+				return O__M(self, 2, noun);
+			Inv, InvTall, InvWide:
+				return O__M(self, 1);
+			Rub:
+				if (noun == nothing) return false;
+				if (noun == self) return false;
+				if (noun == parent(self)) return false;
+				if (noun == tunel_muro) return false;
+				if (noun == tunel_salida) return false;
+				return O__M(self, 3, noun);
+		],
+ has	female;
+
+Atrezzo	-> tunel_muro "muro"
+ with	name_f	'pared' 'tapia',
+		name_fp	'paredes' 'tapias',
+		name_m	'muro',
+		name_mp	'muros',
+		gender	G_MASCULINO,
+		adjectives
+			'humeda' 'humedas' 'humedo' 'humedos' 'ladrillo',
+		before [;
+			Examine, Touch: return O__M(self, 1);
+		],
+ has	male;
+
+Furniture	-> tunel_salida "salida"
+ with	name_f	'abertura' 'boca' 'claridad' 'luminosidad' 'luz' 'salida',
+		name_m	'final' 'resplandor' 'semicirculo',
+		gender	G_FEMENINO,
+		adjectives
+			'luminosa' 'luminoso' 'tunel',
+		describe [; return true; ],
+		description [; return O__M(self, 1); ],
+		before [;
+			DefaultAction:
+				<<Go self>>;
+			Enter, Examine, Go, Search:
+				return false;
+			default:
+				return O__M(self, 2);
+		],
+		door_dir f_to,
+		door_to CANAL,
+ has	door female open remarkable;
+
 
 !!==============================================================================
 !!
 !!	3)	CANAL
 !!
 !!------------------------------------------------------------------------------
+
+Outdoors	CANAL "canal"
+ with	name_f	'acequia',
+		name_m	'acueducto' 'canal',
+		gender	G_MASCULINO,
+		initial [; if (self hasnt visited) {
+		}],
+		s_to	TUNEL,
+		images	PIC_CANAL_A PIC_CANAL_B,
+ has	male;
 
 
 !!==============================================================================
