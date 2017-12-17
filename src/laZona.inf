@@ -431,7 +431,7 @@ Global _current_location = 0;
 	#Endif; ! TARGET_GLULX;
 
 	!! Inicializaciones del relato ---------------------------------------------
-	SetGrammaticalInflection(FIRST_PERSON_FUTURE);
+	SetGrammaticalInflection(THIRD_PERSON_PAST);
 	location = LIMBO;			! Establece la localidad inicial del relato
 	lookmode = 2;				! Lookmode largo
 

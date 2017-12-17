@@ -12,8 +12,8 @@
 !!	Idioma:			ES (Castellano)
 !!	Sistema:		Inform-INFSP 6
 !!	Plataforma:		GLULX
-!!	Versión:		0.0
-!!	Fecha:			2017/12/16
+!!	Versión:		0.2
+!!	Fecha:			2017/12/17
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -40,6 +40,11 @@
 !!	# HISTORIAL DE VERSIONES
 !!
 !!	0.0: 2016/06/18	Inicio del desarrollo.
+!!	0.1: 2017/09/19	Actualización del modelo 'responsive' y de los estilos de
+!!					texto. Creación del objeto de configuración 'GUIConfig'.
+!!	0.2: 2017/12/17	Renombrado de atributos en el objeto de configuración. Los
+!!					atributos para determinar márgenes y paddings ahora son
+!!					arrays de dos elementos: izquierdo y derecho.
 !!
 !!------------------------------------------------------------------------------
 !!
@@ -68,74 +73,72 @@ Object	GUIConfig "(GUI Configuration)"
  with	!!----------------------------------------------------------------------
 		!! Valores generales
 		!!----------------------------------------------------------------------
-		graphic_win_flag true,
-		margin_bottom_height 0, ! px
-		margin_top_height 0, ! px
-		padding_bottom_height 2, ! px
-		status_bar_height 1, ! filas
+		graphic_win_flag true,	! estado de la ventana gráfica
+		margin_bottom_height 0,	! altura del margen inferior (en px)
+		margin_top_height 0,	! altura del margen superior (en px)
+		padding_bottom_height 2, ! altura del padding inferior (en px)
+		status_bar_height 1,	! altura de la barra de estado (en filas)
 		!!----------------------------------------------------------------------
-		!! Configuración A. Anchura total: 0px
+		!! La interfaz admite hasta 7 distribuciones configurables en función
+		!! del ancho de ventana de la aplicación. La distribución a utilizar se !! selecciona comparando el ancho actual de la ventana con el ancho
+		!! prefijado para cada configuración, en orden de mayor a menor ---es
+		!! decir, desde la configuración 7 hasta la 1---. De tal forma que si
+		!! la ventana tiene un ancho superior al límite de la configuración 7,
+		!! la utiliza. En caso contrario, compara el ancho con el límite de la
+		!! configuración 6, y así sucesivamente. Por esto, para que la interfaz
+		!! se comporte del modo esperable, si se desean modificar los valores
+		!! conviene establecer siempre los límites de mayor a menor:
+		!! lim. 7 > lim. 6 > lim. 5 > ... > lim. 1, tal y como se hace con las
+		!! configuraciones por defecto.
 		!!----------------------------------------------------------------------
-		window_configuration_a 0,
-		graphic_win_a 0,
-		margin_left_a 0,
-		margin_right_a 0,
-		padding_left_a 0,
-		padding_right_a 0,
+		!! Configuración 7. Ancho de ventana: >= 1400px
 		!!----------------------------------------------------------------------
-		!! Configuración B. Anchura total: 460px
+		configuration_limit_7 1400,
+		graphic_window_width_7 225,
+		margin_7 46 0,
+		padding_7 0 20,
 		!!----------------------------------------------------------------------
-		window_configuration_b 460,
-		graphic_win_b 0,
-		margin_left_b 6,
-		margin_right_b 6,
-		padding_left_b 0,
-		padding_right_b 0,
+		!! Configuración 6. Ancho de ventana: (1400, 1224]px
 		!!----------------------------------------------------------------------
-		!! Configuración C. Anchura total: 660px
+		configuration_limit_6 1224,
+		graphic_window_width_6 225,
+		margin_6 36 0,
+		padding_6 0 20,
 		!!----------------------------------------------------------------------
-		window_configuration_c 660,
-		graphic_win_c 0,
-		margin_left_c 12,
-		margin_right_c 12,
-		padding_left_c 0,
-		padding_right_c 0,
+		!! Configuración 5. Ancho de ventana: (1224, 1050]px
 		!!----------------------------------------------------------------------
-		!! Configuración D. Anchura total: 900px
+		configuration_limit_5 1050,
+		graphic_window_width_5 225,
+		margin_5 28 0,
+		padding_5 0 20,
 		!!----------------------------------------------------------------------
-		window_configuration_d 900,
-		graphic_win_d 225,
-		margin_left_d 24,
-		margin_right_d 8,
-		padding_left_d 0,
-		padding_right_d 20,
+		!! Configuración 4. Ancho de ventana: (1050, 900]px
 		!!----------------------------------------------------------------------
-		!! Configuración E. Anchura total: 1050px
+		configuration_limit_4 900,
+		graphic_window_width_4 225,
+		margin_4 18 0,
+		padding_4 0 20,
 		!!----------------------------------------------------------------------
-		window_configuration_e 1050,
-		graphic_win_e 225,
-		margin_left_e 32,
-		margin_right_e 10,
-		padding_left_e 0,
-		padding_right_e 20,
+		!! Configuración 3. Ancho de ventana: (900, 660]px
 		!!----------------------------------------------------------------------
-		!! Configuración F. Anchura total: 1224px
+		configuration_limit_3 660,
+		graphic_window_width_3 225,
+		margin_3 6 0,
+		padding_3 0 20,
 		!!----------------------------------------------------------------------
-		window_configuration_f 1224,
-		graphic_win_f 225,
-		margin_left_f 42,
-		margin_right_f 8,
-		padding_left_f 0,
-		padding_right_f 20,
+		!! Configuración 2. Ancho de ventana: (660, 460]px
 		!!----------------------------------------------------------------------
-		!! Configuración G. Anchura total: 1400px
+		configuration_limit_2 460,
+		graphic_window_width_2 0,
+		margin_2 6 6,
+		padding_2 0 0,
 		!!----------------------------------------------------------------------
-		window_configuration_g 1400,
-		graphic_win_g 225,
-		margin_left_g 46,
-		margin_right_g 46,
-		padding_left_g 0,
-		padding_right_g 20,
+		!! Configuración 1. Ancho de ventana: (460, 0]px
+		!!----------------------------------------------------------------------
+		configuration_limit_1 0,
+		graphic_window_width_1 0,
+		margin_1 0 0,
+		padding_1 0 0,
 ;
 
 
@@ -232,48 +235,48 @@ GraphWin -> marginBottom
 		split_dir winmethod_Below,
 		redraw [
 			graph_width mleft_width mright_width pleft_width pright_width;
-			if (self.width > GUIConfig.window_configuration_g) {
-				graph_width = GUIConfig.graphic_win_g;
-				mleft_width = GUIConfig.margin_left_g;
-				mright_width = GUIConfig.margin_right_g;
-				pleft_width = GUIConfig.padding_left_g;
-				pright_width = GUIConfig.padding_right_g;
-			} else if (self.width > GUIConfig.window_configuration_f) {
-				graph_width = GUIConfig.graphic_win_f;
-				mleft_width = GUIConfig.margin_left_f;
-				mright_width = GUIConfig.margin_right_f;
-				pleft_width = GUIConfig.padding_left_f;
-				pright_width = GUIConfig.padding_right_f;
-			} else if (self.width > GUIConfig.window_configuration_e) {
-				graph_width = GUIConfig.graphic_win_e;
-				mleft_width = GUIConfig.margin_left_e;
-				mright_width = GUIConfig.margin_right_e;
-				pleft_width = GUIConfig.padding_left_e;
-				pright_width = GUIConfig.padding_right_e;
-			} else if (self.width > GUIConfig.window_configuration_d) {
-				graph_width = GUIConfig.graphic_win_d;
-				mleft_width = GUIConfig.margin_left_d;
-				mright_width = GUIConfig.margin_right_d;
-				pleft_width = GUIConfig.padding_left_d;
-				pright_width = GUIConfig.padding_right_d;
-			} else if (self.width > GUIConfig.window_configuration_c) {
-				graph_width = GUIConfig.graphic_win_c;
-				mleft_width = GUIConfig.margin_left_c;
-				mright_width = GUIConfig.margin_right_c;
-				pleft_width = GUIConfig.padding_left_c;
-				pright_width = GUIConfig.padding_right_c;
-			} else if (self.width > GUIConfig.window_configuration_b) {
-				graph_width = GUIConfig.graphic_win_b;
-				mleft_width = GUIConfig.margin_left_b;
-				mright_width = GUIConfig.margin_right_b;
-				pleft_width = GUIConfig.padding_left_b;
-				pright_width = GUIConfig.padding_right_b;
+			if (self.width > GUIConfig.configuration_limit_7) {
+				graph_width = GUIConfig.graphic_window_width_7;
+				mleft_width = GUIConfig.&margin_7-->0;
+				mright_width = GUIConfig.&margin_7-->1;
+				pleft_width = GUIConfig.&padding_7-->0;
+				pright_width = GUIConfig.&padding_7-->1;
+			} else if (self.width > GUIConfig.configuration_limit_6) {
+				graph_width = GUIConfig.graphic_window_width_6;
+				mleft_width = GUIConfig.&margin_6-->0;
+				mright_width = GUIConfig.&margin_6-->1;
+				pleft_width = GUIConfig.&padding_6-->0;
+				pright_width = GUIConfig.&padding_6-->1;
+			} else if (self.width > GUIConfig.configuration_limit_5) {
+				graph_width = GUIConfig.graphic_window_width_5;
+				mleft_width = GUIConfig.&margin_5-->0;
+				mright_width = GUIConfig.&margin_5-->1;
+				pleft_width = GUIConfig.&padding_5-->0;
+				pright_width = GUIConfig.&padding_5-->1;
+			} else if (self.width > GUIConfig.configuration_limit_4) {
+				graph_width = GUIConfig.graphic_window_width_4;
+				mleft_width = GUIConfig.&margin_4-->0;
+				mright_width = GUIConfig.&margin_4-->1;
+				pleft_width = GUIConfig.&padding_4-->0;
+				pright_width = GUIConfig.&padding_4-->1;
+			} else if (self.width > GUIConfig.configuration_limit_3) {
+				graph_width = GUIConfig.graphic_window_width_3;
+				mleft_width = GUIConfig.&margin_3-->0;
+				mright_width = GUIConfig.&margin_3-->1;
+				pleft_width = GUIConfig.&padding_3-->0;
+				pright_width = GUIConfig.&padding_3-->1;
+			} else if (self.width > GUIConfig.configuration_limit_2) {
+				graph_width = GUIConfig.graphic_window_width_2;
+				mleft_width = GUIConfig.&margin_2-->0;
+				mright_width = GUIConfig.&margin_2-->1;
+				pleft_width = GUIConfig.&padding_2-->0;
+				pright_width = GUIConfig.&padding_2-->1;
 			} else {
-				graph_width = GUIConfig.graphic_win_a;
-				mleft_width = GUIConfig.margin_left_a;
-				mright_width = GUIConfig.margin_right_a;
-				pleft_width = GUIConfig.padding_left_a;
-				pright_width = GUIConfig.padding_right_a;
+				graph_width = GUIConfig.graphic_window_width_1;
+				mleft_width = GUIConfig.&margin_1-->0;
+				mright_width = GUIConfig.&margin_1-->1;
+				pleft_width = GUIConfig.&padding_1-->0;
+				pright_width = GUIConfig.&padding_1-->1;
 			}
 			self.rearrange_window_configuration(mleft_width, mright_width,
 				pleft_width, pright_width, graph_width);
