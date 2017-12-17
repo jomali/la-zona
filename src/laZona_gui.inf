@@ -79,19 +79,22 @@ Object	GUIConfig "(GUI Configuration)"
 		padding_bottom_height 2, ! altura del padding inferior (en px)
 		status_bar_height 1,	! altura de la barra de estado (en filas)
 		!!----------------------------------------------------------------------
-		!! La interfaz admite hasta 7 distribuciones configurables en función
-		!! del ancho de ventana de la aplicación. La distribución a utilizar se !! selecciona comparando el ancho actual de la ventana con el ancho
-		!! prefijado para cada configuración, en orden de mayor a menor ---es
-		!! decir, desde la configuración 7 hasta la 1---. De tal forma que si
-		!! la ventana tiene un ancho superior al límite de la configuración 7,
-		!! la utiliza. En caso contrario, compara el ancho con el límite de la
-		!! configuración 6, y así sucesivamente. Por esto, para que la interfaz
-		!! se comporte del modo esperable, si se desean modificar los valores
-		!! conviene establecer siempre los límites de mayor a menor:
-		!! lim. 7 > lim. 6 > lim. 5 > ... > lim. 1, tal y como se hace con las
-		!! configuraciones por defecto.
+		!! Las ventanas internas de la interfaz pueden variar su tamaño en
+		!! función del ancho de la ventana principal de la aplicación. Existen
+		!! en total 7 configuraciones de tamaños modificables. La configuración
+		!! concreta que se utiliza en un momento dado se selecciona comparando
+		!! el ancho actual de la ventana principal con el ancho prefijado de
+		!! cada configuración, de mayor a menor ---desde la configuración 7
+		!! hasta la 1---, de tal forma que si la ventana tiene un ancho
+		!! superior al límite de la configuración 7, la utiliza; en caso
+		!! contrario, compara el ancho con el límite de la configuración 6, y
+		!! así sucesivamente. De esta forma, aunque los valores de 
+		!! configuración pueden ser modificados libremente, para que la
+		!! interfaz se comporte correctamente conviene establecer siempre los
+		!! límites de mayor a menor. Es decir; lím.7 > lím.6 > ... > lím.1. Tal
+		!! y como se hace con los valores por defecto.
 		!!----------------------------------------------------------------------
-		!! Configuración 7. Ancho de ventana: >= 1400px
+		!! Configuración por defecto 7. Ancho de ventana: >= 1400px
 		!!----------------------------------------------------------------------
 		configuration_limit_7 1400,
 		graphic_window_width_7 225,
