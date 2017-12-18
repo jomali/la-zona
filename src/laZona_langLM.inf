@@ -456,21 +456,20 @@ Object	LibraryMessages
 		!!	1:	Error ya estaba desactivada la transcrcipción.
 		!!	2:	Éxito.
 		switch (lm_n) {
-			1:	print_ret (parser) "La transcripción ya estaba
-				desactivada.";
+			1:	print_ret (parser) "La transcripción ya estaba desactivada.";
 			2:	new_line; print_ret (parser) "Fin de la transcripción.";
-			3:	print_ret (parser) "Intento fallido de finalización de
+			3:	print_ret (parser) "Error al intentar finalizar la
 				transcripción.";
 		}
 
 	ScriptOn:
 		!!	1:	Error, ya estaba activada la transcrcipción.
-		!!	2:	Éxito (parte inicial del mensaje, la librería añade el título
-		!!		del juego obtenido de la constante Historia).
+		!!	2:	Éxito (parte inicial del mensaje, la librería imprime a
+		!!		continuación un 'Banner' con los créditos de la aplicación.
 		switch (lm_n) {
 			1:	print_ret (parser) "La transcripción ya estaba activada.";
-			2:	print_ret (parser) "Iniciando la transcripción de:";
-			3:	print_ret (parser) "Intento fallido de comienzo de la
+			2:	print_ret (parser) "Iniciando transcripción...";
+			3:	print_ret (parser) "Error al intentar iniciar la
 				transcripción.";
 		}
 

@@ -71,12 +71,6 @@ Object	DungeonMaster "(Dungeon Master)"
 		!!----------------------------------------------------------------------
 		restart [
 			obj;
-			!! Imprime el último mensaje que cierra el bucle:
-			if (self.heart_attack) O__M(self.initial_location, 3);
-			else O__M(self.initial_location, 5);
-			new_line;
-			CreateLink("[...]");
-			!! Lleva a cabo las reinicializaciones de los objetos:
 			objectloop(obj ofclass Thing) {
 				give obj ~described;
 				obj.reset();
@@ -84,26 +78,45 @@ Object	DungeonMaster "(Dungeon Master)"
 			objectloop(obj ofclass Room) {
 				give obj ~visited;
 			}
+			if (self.iteration <= self.iteration_threshold) self.iteration++;
 			self.shot_on_dartboard = false;
-			!! Coloca al usuario en la localidad de inicio:
-			PressAnyKey();
-			EraseWindow();
 			PlayerTo(self.initial_location);
 			return true;
 		],
 		!!----------------------------------------------------------------------
+		change_grammatical_tense [
+			inflection;
+			if (self.iteration == self.iteration_threshold) {
+				SetGrammaticalInflection(THIRD_PERSON_PRESENT);
+			}
+			else if (self.iteration > self.iteration_threshold) {
+				inflection = random(
+					THIRD_PERSON_PRESENT,
+					THIRD_PERSON_PAST,
+					THIRD_PERSON_FUTURE);
+				print "", inflection, "^";
+				SetGrammaticalInflection(inflection);
+			}
+		],
+		!!----------------------------------------------------------------------
 		!! Otras propiedades
 		!!----------------------------------------------------------------------
-		!! Indica si el Stalker ha muerto de un ataque al corazón en la
-		!! iteración anterior del bucle/si va a morir de un ataque al corazón
-		!! en la iteración actual.
+		!! El Stalker ha muerto de un ataque al corazón en la iteración
+		!! anterior del bucle/si va a morir de un ataque al corazón en la
+		!! iteración actual:
 		heart_attack true,
-		!! Indica si el Stalker ha disparado sobre la diana en la iteración
-		!! actual del bucle.
+		!! Contador de iteraciones del bucle (sólo registra las primeras):
+		iteration 0,
+		!! El Stalker ha disparado sobre la diana en la iteración actual:
 		shot_on_dartboard false,
+		!! El Stalker ha descubierto la máquina de tabaco del callejón:
+		waste_described false,
  private
-		!! Localidad inicial del bucle
+		!! Localidad inicial del bucle:
 		initial_location TUNEL,
+		!! Número de iteraciones a partir de las que el narrador cambia
+		!! aleatoriamente de formas temporales:
+		iteration_threshold 4,
 ;
 
 Room	LIMBO "En algún lugar"
@@ -129,9 +142,10 @@ NPC		-> Stalker "Stalker"
 
 !!	 -	'general' se activa después de haber limpiado el arma por primera vez.
 Item	-> -> limbo_fusil "fusil"
- with	name_f	'arma',
-		name_m	'fusil' 'rifle',
+ with	name_f	'arma' 'culata',
+		name_m	'canon' 'fusil' 'gatillo' 'rifle',
 		gender	G_MASCULINO,
+		adjectives 'madera' 'manchada' 'manchado' 'tiza',
 		description [;
 			if (self has general) return O__M(self, 2);
 			else return O__M(self, 1);
@@ -153,8 +167,7 @@ Atrezzo	limbo_cielo "cielo"
 		name_fp	'nubes',
 		name_m	'cielo' 'dia' 'firmamento' 'sol',
 		gender	G_MASCULINO,
-		adjectives
-			'cerrado' 'encapotado' 'plomizo',
+		adjectives 'cerrado' 'encapotado' 'plomizo',
 		description [; return O__M(self, 1); ],
 		react_before [;
 			Examine, Search:
@@ -189,17 +202,13 @@ Indoors	TUNEL "Interior del túnel"
 			'dentro' 'interior' 'negra' 'negro' 'oscura' 'oscuro' 'subterranea'
 			'subterraneo',
 		initial [; if (self hasnt visited) {
+			if (DungeonMaster.heart_attack) O__M(self, 3);
+			else O__M(self, 5);
+			if (DungeonMaster.iteration > 0) PressAnyKey();
+			DungeonMaster.change_grammatical_tense();
 			new_line;
-			new_line;
-			if (DungeonMaster.heart_attack) {
-				O__M(self, 3);
-				new_line;
-				O__M(self, 4);
-			} else {
-				O__M(self, 5);
-				new_line;
-				O__M(self, 6);
-			}
+			if (DungeonMaster.heart_attack) O__M(self, 4);
+			else O__M(self, 6);
 			new_line;
 			return true;
 		}],
@@ -266,8 +275,7 @@ Atrezzo	-> tunel_muro "muro"
 		name_m	'muro',
 		name_mp	'muros',
 		gender	G_MASCULINO,
-		adjectives
-			'humeda' 'humedas' 'humedo' 'humedos' 'ladrillo',
+		adjectives 'humeda' 'humedas' 'humedo' 'humedos' 'ladrillo',
 		before [;
 			Examine, Touch: return O__M(self, 1);
 		],
@@ -278,8 +286,7 @@ Furniture	-> tunel_salida "salida"
  				'salida',
 		name_m	'final' 'resplandor' 'semicirculo',
 		gender	G_FEMENINO,
-		adjectives
-			'luminosa' 'luminoso' 'tunel',
+		adjectives 'luminosa' 'luminoso' 'tunel',
 		describe [; return true; ],
 		description [; return O__M(self, 1); ],
 		before [;
@@ -314,7 +321,13 @@ Outdoors	CANAL "canal"
 		}],
 		description [; return O__M(self, 1); ],
 		s_to	TUNEL, ! TODO crear entrada a túnel
-		e_to	[; return O__M(self, 8); ], !7
+		e_to	[;
+			if (canal_edificios hasnt described) {
+				<Examine canal_edificios>;
+				return O__M(self, 7);
+			}
+			return O__M(self, 8);
+		],
 		w_to	[; return self.e_to(); ],
 		u_to	canal_escalera,
 		f_to	[; return self.u_to(); ],
@@ -352,9 +365,11 @@ Atrezzo	-> canal_edificios "edificios"
 		name_m	'edificio' 'metropoli',
 		name_mp	'edificios',
 		gender	G_MASCULINO + G_PLURAL,
-		adjectives
-			'destrozada' 'destrozado' 'ruinosa' 'ruinoso' 'ruinosos',
-		description [; return O__M(self, 1); ],
+		adjectives 'destrozada' 'destrozado' 'ruinosa' 'ruinoso' 'ruinosos',
+		description [;
+			if (self hasnt described) O__M(self, 1);
+			return O__M(self, 2);
+		],
  has	male pluralname;
 
 Atrezzo	-> canal_rio "río"
@@ -398,6 +413,9 @@ Furniture	-> callejon_puerta "puerta"
 		name_m	'umbral',
 		gender	G_FEMENINO,
 		describe [;
+			new_line;
+			if (~~DungeonMaster.waste_described) return O__M(self, 2);
+			return O__M(self, 3);
 		],
 		description [; return O__M(self, 1); ],
 		before [;
@@ -430,16 +448,25 @@ Atrezzo	-> callejon_basura "montones de desperdicios"
 		name_m	'carton' 'desperdicio' 'escombro' 'mueble',
 		name_mp	'cartones' 'desperdicios' 'escombros' 'muebles',
 		gender	G_MASCULINO + G_PLURAL,
-		description [; return O__M(self, 1); ],
+		description [;
+			O__M(self, 1);
+			if (DungeonMaster.waste_described) return O__M(self, 2);
+			else {
+				DungeonMaster.waste_described = true;
+				new_line;
+				new_line;
+				return O__M(self, 3);
+			}
+		],
  has	male pluralname;
 
-Atrezzo	-> callejon_maquina_tabaco "máquina de tabaco"
+Furniture	-> callejon_maquina_tabaco "máquina de tabaco"
  with	name_f	'maquina',
 		name_m	'mueble' 'tabaco',
 		name_mp	'muebes',
 		gender	G_FEMENINO,
 		description [; return O__M(self, 1); ],
- has	~open female;
+ has	concealed female ~open;
 
 Item	limbo_moneda "moneda de plata" LIMBO
  with	name_f	'moneda',
@@ -650,29 +677,28 @@ Furniture	limbo_cadaver_a "cadáver" LIMBO
 			return O__M(self, 2);
 		],
 		before [;
-			if (self hasnt on) return O__M(self, 6);
-			else {
-				! TODO
-				self.registered = true;
-				return O__M(self, 7);
-			}
+			Search:
+				if (self hasnt on) return O__M(self, 6);
+				else {
+					! TODO
+					self.registered = true;
+					return O__M(self, 7);
+				}
 		],
 		react_before [;
+			if (self hasnt on) return false;
 			Search:
 				if (~~self.registered) return false;
-				return self.reset();
+				return DungeonMaster.restart();
 			default:
-				return self.reset();
+				return DungeonMaster.restart();
+		],
+		reset [;
+			give self ~on;
+			self.discovered = false;
+			self.registered = false;
 		],
  private
-		reset [;
-			if (self has on) {
-				give self ~on;
-				self.discovered = false;
-				self.registered = false;
-				return DungeonMaster.restart();
-			}
-		],
 		discovered false,
 		registered false,
  has	male remarkable;
@@ -694,19 +720,19 @@ Furniture	limbo_cadaver_b "cadáver" LIMBO
 			return O__M(self, 2);
 		],
 		react_before [;
+			if (self hasnt on) return false;
 			Search:
 				if (~~self.registered) return false;
 				return self.reset();
 			default:
 				return self.reset();
 		],
- private
 		reset [;
-			if (self has on) {
-				give self ~on;
-				return DungeonMaster.restart();
-			}
+			give self ~on;
+			self.discovered = false;
+			self.registered = false;
 		],
+ private
 		discovered false,
 		registered false,
  has	male remarkable;

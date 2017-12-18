@@ -463,6 +463,9 @@ Global _current_location = 0;
 	location = initial_location; ! Establece la localidad inicial
 	lookmode = 2;				! Lookmode largo
 
+	new_line;
+	HorizontalRule();
+	new_line;
 	return 2;
 ];
 
