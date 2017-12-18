@@ -84,7 +84,7 @@ Constant Story
 "LA ZONA";
 
 Constant Headline
-"Un bucle interactivo. Copyright (c) 2017^
+"Un relato interactivo. Copyright (c) 2018^
 Por José Francisco Martín Lisaso";
 
 Constant Checking 0;
@@ -326,19 +326,19 @@ Include "gwindows.h";			! GWindows: Reemplazos de la librería
 Include ">laZona.bli";			! Recursos multimedia de la aplicación
 Include ">laZona_gui.inf";		! Definición de la interfaz gráfica
 #Ifnot;	! TARGET_ZCODE;
-Default PIC_TUNEL_A		0;
-Default PIC_TUNEL_B		1;
-Default PIC_CANAL_A		2;
-Default PIC_CANAL_B		3;
-Default PIC_CALLEJON_A	4;
-Default PIC_CALLEJON_B	5;
-Default PIC_AZOTEA_A	6;
-Default PIC_AZOTEA_B	7;
-Default PIC_CALLE_OESTE_A	8;
-Default PIC_CALLE_OESTE_B	9;
-Default PIC_CALLE_ESTE_A	10;
-Default PIC_CALLE_ESTE_B	11;
-Default PIC_CALLE_ESTE_C	12;
+Default PIC_HELL_A 0;
+Default PIC_HELL_B 1;
+Default PIC_TUNEL_A 2;
+Default PIC_CANAL_A 3;
+Default PIC_CANAL_B 4;
+Default PIC_CALLEJON_A 5;
+Default PIC_CALLEJON_B 6;
+Default PIC_AZOTEA_A 7;
+Default PIC_AZOTEA_B 8;
+Default PIC_CALLE_OESTE_A 9;
+Default PIC_CALLE_OESTE_B 10;
+Default PIC_CALLE_ESTE_A 11;
+Default PIC_CALLE_ESTE_B 12;
 #Endif; ! TARGET_GLULX;
 
 Include "aimAndFire.h";			! Sistema de apuntado y disparo QTE
@@ -410,7 +410,8 @@ Global _current_location = 0;
 !!		créditos de la aplicación, que de otra manera se imprimirían
 !!		inmediatamente después de llamar a la rutina
 !!------------------------------------------------------------------------------
-[ Initialise;
+[ Initialise
+	initial_location;
 	EraseWindow();
 
 	!! Comprobaciones del intérprete -------------------------------------------
@@ -448,15 +449,18 @@ Global _current_location = 0;
 	!! Inicializa los parámetros del gestor del sistema de apuntado:
 	AimingManager.set_status_window(statusBar.winid);
 	!! Establece la imagen inicial presente durante el menu:
-	DrawSceneImage(PIC_CALLE_ESTE_C);
+	DrawSceneImage(PIC_HELL_A);
 	!! Lee el fichero de configuración:
 	ReadConfigFile();
 	#Endif; ! TARGET_
 
 	!! Inicializaciones del relato ---------------------------------------------
 	SetGrammaticalInflection(THIRD_PERSON_PAST);
+	!! Se lanza el menú antes de establecer el personaje protagonista para
+	!! evitar que se imprima un nombre de localidad en la barra de estado
+	initial_location = MainMenu();
 	ChangePlayer(Stalker);		! Establece el personaje controlado por el usr.
-	location = TUNEL;			! Establece la localidad inicial del relato
+	location = initial_location; ! Establece la localidad inicial
 	lookmode = 2;				! Lookmode largo
 
 	return 2;
@@ -556,6 +560,7 @@ Global _current_location = 0;
 !!	-	EraseWindow()
 !!	-	MainMenu()
 !!	-	PressAnyKey()
+!!	-	PrintCharacterArray()
 !!	-	ReadConfigFile()
 !!	-	TopHolder()
 !!	-	WriteConfigFile()
@@ -686,12 +691,13 @@ Global _current_location = 0;
 ];
 
 !!------------------------------------------------------------------------------
-!! Pinta la imagen pasada como parámetro en la ventana gráfica *graphicWindow*
+!! Pinta la imagen pasada como parámetro en la ventana gráfica 'graphicWindow'
 !! (sólo en GLULX).
 !!
 !!	@param {Picture} img - Imagen Blorb que se pintará en la ventana
 !!		gráfica 'graphicWindow'
 !!	@returns {boolean} Verdadero
+!!	@version 1.0
 !!------------------------------------------------------------------------------
 [ DrawSceneImage img;
 	#Ifdef TARGET_GLULX;
@@ -704,6 +710,7 @@ Global _current_location = 0;
 !! Deja la ventana en blanco.
 !!
 !!	@returns {boolean} Verdadero
+!!	@version 1.0
 !!------------------------------------------------------------------------------
 [ EraseWindow;
     #Ifdef TARGET_ZCODE;
@@ -720,6 +727,92 @@ Global _current_location = 0;
 ];
 
 !!------------------------------------------------------------------------------
+!! Menú principal de la aplicación. Permite al usuario lanzar funciones de
+!! configuración, cargar una partida guardada o salir de la aplicación, además
+!! de iniciar el relato. Si la aplicación se encuentra en modo depuración,
+!! permite seleccionar la localidad inicial.
+!!
+!!	@retuns {Object} Localidad inicial del relato
+!!	@version 1.0
+!!------------------------------------------------------------------------------
+[ MainMenu
+	i key result width;
+	.mainMenu;
+	EraseWindow();
+	width = ScreenWidth();
+	PrintStoryTitle();
+	PrintHeadline();
+	SetTextStyle(_MST_);
+	new_line;
+	!! Menú de opciones:
+	if (width > 32) {
+		print "Empezar el relato  ";
+			for (i=0 : i<(width - 30) : i++) print ".";
+			print "  [ESPACIO]^";
+		print "Configuración  ";
+			for (i=0 : i<(width - 18) : i++) print ".";
+			print "  C^";
+		print "Recuperar partida guardada  ";
+			for (i=0 : i<(width - 31) : i++) print ".";
+			print "  R^";
+		print "Salir de la aplicación  ";
+			for (i=0 : i<(width - 27) : i++) print ".";
+			print "  Q^";
+	} else {
+		print "Empezar el relato:^";
+			print " ";
+			for (i=0 : i < 4 : i++) print ".";
+			print " [ESPACIO]^";
+		print "Configuración:^";
+			print " ";
+			for (i=0 : i < 8 : i++) print ".";
+			print " C^";
+		print "Recuperar partida guardada:^";
+			print " ";
+			for (i=0 : i < 8 : i++) print ".";
+			print " R^";
+		print "Salir de la aplicación:^";
+			print " ";
+			for (i=0 : i < 8 : i++) print ".";
+			print " Q^";
+	}
+	new_line;
+	spaces (width - 13);
+	print "v";
+	PrintVersionNumber();
+	print " / ";
+	PrintSerialNumber();
+	SetTextStyle(_RST_);
+	key = PressAnyKey();
+	!! Reacción a la selección del usuario:
+	switch (key) {
+		32, -6:		result = TUNEL; ! Intro/Espacio
+		#Ifdef DEBUG;
+		'1':		result = TUNEL;
+		'2':		result = CANAL;
+		'3':		result = CALLEJON;
+		'4':		result = AZOTEA;
+		'5':		result = CALLE_OESTE;
+		'6':		result = CALLE_ESTE;
+		#Endif; ! DEBUG;
+		'C', 'c':	HighlightSub();
+					jump mainMenu;
+		'R', 'r':	EraseWindow();
+					print (parser) "Cargando partida...";
+					new_line;
+					<Restore>;
+					PressAnyKey();
+					jump mainMenu;
+		'Q', 'q':	print (parser) "Pulsa una tecla para salir";
+					new_line;
+					quit;
+		default:	jump mainMenu;
+	}
+	EraseWindow();
+	return result;
+];
+
+!!------------------------------------------------------------------------------
 !! Espera una pulsación de tecla del usuario o, si se introduce un valor
 !! 'delay', espera a que pase esa cantidad de décimas de segundo antes de
 !! continuar con la ejecución normal del relato.
@@ -728,6 +821,7 @@ Global _current_location = 0;
 !!		cumpla la cantidad 'delay' de décimas de segundo antes de continuar.
 !!		En caso contrario, espera a una pulsación de tecla del usuario
 !!	@returns {char} Caracter introducido por el usuario
+!!	@version 1.0
 !!------------------------------------------------------------------------------
 [ PressAnyKey delay
 	result;
@@ -743,6 +837,7 @@ Global _current_location = 0;
 !! Imprime en pantalla un array de caracteres, caracter a caracter.
 !!
 !!	@param {array} character_array - Array de caracteres a imprimir
+!!	@version 1.0
 !!------------------------------------------------------------------------------
 [ PrintCharacterArray character_array
 	i;
@@ -858,6 +953,7 @@ Array Config_File_Name -> $E0 'C' 'O' 'N' 'F' 'I' 'G';
 	return false;
 ];
 
+
 !!==============================================================================
 !!
 !!	8)	Gramática estándar y extendida
@@ -865,6 +961,16 @@ Array Config_File_Name -> $E0 'C' 'O' 'N' 'F' 'I' 'G';
 !!------------------------------------------------------------------------------
 !!	IMPORTANTE: Los mensajes de algunas de las acciones que se añaden requieren
 !!	la extensión 'SpanishLM.h'. Acciones añadidas o modificadas:
+!!	-	##Audio / ##AudioOn / ##AudioOff
+!!	-	##DefaultAction
+!!	-	##GoBack / ##GoForward
+!!	-	##Highlight / ##HighlightOn / ##HighlightOff
+!!	-	##LMode2
+!!	-	##NoSuchVerb --- Permite eliminar las acciones:
+!!		-	##Sorry
+!!	-	##ShootAt
+!!	-	##TalkOn / ##TalkTo
+!!	-	##Teleport
 !!------------------------------------------------------------------------------
 
 Include "SpanishG.h";			! Gramática española
@@ -1037,10 +1143,6 @@ Verb 'no.verb'
 ];
 
 !!------------------------------------------------------------------------------
-!!	##Graphics / ##GraphicsOn / ##GraphicsOff
-!!------------------------------------------------------------------------------
-
-!!------------------------------------------------------------------------------
 !!	##GoBack / ##GoForward
 !!------------------------------------------------------------------------------
 
@@ -1068,6 +1170,81 @@ Verb 'continua' 'sigue'
 !! ##Highlight / ##HighlightOn / ##HighlightOff
 !!------------------------------------------------------------------------------
 
+Verb meta 'highlight' 'resaltado'
+	*								-> Highlight
+;
+VerboIrregular "establecer estilo de texto resaltado" with imperativo
+	'highlight' 'resaltado';
+
+[ HighlightSub
+	flag st;
+	while (flag == false) {
+		EraseWindow();
+		print (string) Story;
+		print " utiliza un sistema de palabras clave para destacar objetos
+		interactivos del relato. Hay tres clases de palabras clave: 1) nombres
+		de objetos importantes en la historia, 2) objetos o direcciones hacia
+		las que te puedes desplazar, y 3) nombres de otros objetos
+		interactivos. Introduce el número de la clase de palabra clave para
+		rotar entre los estilos de resaltado disponibles y seleccionar aquel
+		que se adeque mejor a tus preferencias personales:";
+		new_line;
+		new_line;
+		print "1) Objetos importantes: ";
+		st = SetTextStyle(_keyword_st1);
+		switch (_keyword_st1) {
+			_RST_:	print "sin estilo";
+			_IST_:	print "cursiva";
+			_BST_:	print "negrita";
+			_MST_:	print "monoespaciada";
+			_1ST_:	print "color de fondo";
+		}
+		SetTextStyle(st);
+		print ".^";
+		print "2) Direcciones: ";
+		st = SetTextStyle(_keyword_st2);
+		switch (_keyword_st2) {
+			_RST_:	print "sin estilo";
+			_IST_:	print "cursiva";
+			_BST_:	print "negrita";
+			_MST_:	print "monoespaciada";
+			_1ST_:	print "color de fondo";
+		}
+		SetTextStyle(st);
+		print ".^";
+		print "3) Otros objetos: ";
+		st = SetTextStyle(_keyword_st3);
+		switch (_keyword_st3) {
+			_RST_:	print "sin estilo";
+			_IST_:	print "cursiva";
+			_BST_:	print "negrita";
+			_MST_:	print "monoespaciada";
+			_1ST_:	print "color de fondo";
+		}
+		SetTextStyle(st);
+		print ".^";
+		new_line;
+		print (parser) "Pulsa INTRO para aceptar y salir.";
+		new_line;
+		switch (PressAnyKey()) {
+			32, -6:
+				flag = true;
+			'1':
+				_keyword_st1++;
+				if (_keyword_st1 > _1ST_) _keyword_st1 = _RST_;
+			'2':
+				_keyword_st2++;
+				if (_keyword_st2 > _1ST_) _keyword_st2 = _RST_;
+			'3':
+				_keyword_st3++;
+				if (_keyword_st3 > _1ST_) _keyword_st3 = _RST_;
+		}
+	}
+	WriteConfigFile();
+	EraseWindow();
+	<<Look>>;
+];
+
 !!------------------------------------------------------------------------------
 !! ##LMode2
 !!------------------------------------------------------------------------------
@@ -1092,16 +1269,21 @@ Extend	'perdona' replace
 	* Anything						-> NoSuchVerb
 ;
 
-Extend	'nada' replace
-	* Anything						-> NoSuchVerb
-;
-
 [ NoSuchVerbSub; return ParserError(VERB_PE); ];
 
 !!------------------------------------------------------------------------------
 !! ##ShootAt
 !!------------------------------------------------------------------------------
 
+Verb	'dispara'
+	* noun							-> ShootAt
+	* 'a' noun						-> ShootAt
+;
+
+[ ShootAtSub;
+	!! FIXME
+	"Disparo.";
+];
 
 !!------------------------------------------------------------------------------
 !! ##TalkOn / ##TalkTo

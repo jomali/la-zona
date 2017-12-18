@@ -81,7 +81,53 @@ Object	LibraryMessages
 			#Endif; ! TARGET_
 		}
 
+	!! XXX - Mensaje personalizado del narrador
+	Dance:
+		switch (_grammatical_inflection) {
+			FIRST_PERSON_PRESENT,
+			SECOND_PERSON_PRESENT,
+			THIRD_PERSON_PRESENT:
+				"No es momento para bailes. Tal vez cuando logre salir de
+				aquel sitio.";
+			FIRST_PERSON_PAST,
+			SECOND_PERSON_PAST,
+			THIRD_PERSON_PAST:
+				"No era momento para bailes. Tal vez cuando lograse salir de
+				aquel sitio.";
+			FIRST_PERSON_FUTURE,
+			SECOND_PERSON_FUTURE,
+			THIRD_PERSON_FUTURE:
+				"No será momento para bailes. Tal vez cuando logre salir de
+				aquel sitio.";
+		}
+
 !!	FullScore: ! TODO - Mensaje del parser
+
+	!! XXX - Mensaje personalizado del narrador
+	Listen:
+	switch (_grammatical_inflection) {
+		FIRST_PERSON_PRESENT,
+		SECOND_PERSON_PRESENT,
+		THIRD_PERSON_PRESENT:
+			print_ret (string) random(
+				"No se escucha absolutamente nada en aquel lugar.",
+				"El silencio es tal que resulta lúgubre."
+			);
+		FIRST_PERSON_PAST,
+		SECOND_PERSON_PAST,
+		THIRD_PERSON_PAST:
+			print_ret (string) random(
+				"No se escuchaba absolutamente nada en aquel lugar.",
+				"El silencio era tal que resultaba lúgubre."
+			);
+		FIRST_PERSON_FUTURE,
+		SECOND_PERSON_FUTURE,
+		THIRD_PERSON_FUTURE:
+			print_ret (string) random(
+				"No se escuchará absolutamente nada en aquel lugar.",
+				"El silencio será tal que resultará lúgubre."
+			);
+	}
 
 	LMode1:
 		!! La acción LMode1 se genera ante el comando BREVE. La librería
@@ -262,6 +308,38 @@ Object	LibraryMessages
 	NotifyOff:
 		print_ret (parser) "Notificación de puntuación desactivada.";
 
+	!! XXX - Mensaje personalizado del narrador
+	Pray:
+		switch (_grammatical_inflection) {
+			FIRST_PERSON_PRESENT,
+			SECOND_PERSON_PRESENT,
+			THIRD_PERSON_PRESENT:
+				"Por primera vez en mucho tiempo vuelve a tener en la cabeza
+				la idea de Dios... en mucho tiempo. Sabe que desde que ha
+				puesto el pie en aquella ciudad está a sólo un paso de
+				descubrir si se había equivocado al no creer en Él. Tal vez
+				es un buen momento para pensar qué decirle si finalmente se
+				lo encuentra cara a cara.";
+			FIRST_PERSON_PAST,
+			SECOND_PERSON_PAST,
+			THIRD_PERSON_PAST:
+				"Por primera vez en mucho tiempo volvía a tener en la cabeza
+				la idea de Dios... en mucho tiempo. Sabía que desde que había
+				puesto el pie en aquella ciudad estaba a sólo un paso de
+				descubrir si se había equivocado al no creer en Él. Tal vez
+				era un buen momento para pensar qué decirle si finalmente se
+				lo encontraba cara a cara.";
+			FIRST_PERSON_FUTURE,
+			SECOND_PERSON_FUTURE,
+			THIRD_PERSON_FUTURE:
+				"Por primera vez en mucho tiempo volverá a tener en la cabeza
+				la idea de Dios... en mucho tiempo. Sabrá que desde que
+				pusiera el pie en aquella ciudad estará a sólo un paso de
+				descubrir si se había equivocado al no creer en Él. Tal vez
+				será un buen momento para pensar qué decirle si finalmente se
+				lo encontrara cara a cara.";
+		}
+
 	Pronouns:
 		!! Esta acción (generada por el verbo PRONOMBRES) muestra una lista
 		!! de qué significa en ese momento para el parser cada pronombre:
@@ -394,6 +472,26 @@ Object	LibraryMessages
 			2:	print_ret (parser) "Iniciando la transcripción de:";
 			3:	print_ret (parser) "Intento fallido de comienzo de la
 				transcripción.";
+		}
+
+	!! XXX - Mensaje personalizado del narrador
+	Sing:
+		switch (_grammatical_inflection) {
+			FIRST_PERSON_PRESENT,
+			SECOND_PERSON_PRESENT,
+			THIRD_PERSON_PRESENT:
+				"Quizá es absurdo; aún así no puede evitar pensar un
+				sacrilegio el romper aquel silencio.";
+			FIRST_PERSON_PAST,
+			SECOND_PERSON_PAST,
+			THIRD_PERSON_PAST:
+				"Quizá era absurdo; aún así no podía evitar pensar un
+				sacrilegio el romper aquel silencio.";
+			FIRST_PERSON_FUTURE,
+			SECOND_PERSON_FUTURE,
+			THIRD_PERSON_FUTURE:
+				"Quizá será absurdo; aún así no podrá evitar pensar un
+				sacrilegio el romper aquel silencio.";
 		}
 
 	Strong:

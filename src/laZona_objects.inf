@@ -52,6 +52,8 @@
 !!	5)	AZOTEA
 !!	6)	CALLE_OESTE
 !!	7)	CALLE_ESTE
+!!	8)	INFIERNO_NEGRO
+!!	9)	INFIERNO_BLANCO
 !!
 !!------------------------------------------------------------------------------
 
@@ -61,6 +63,48 @@
 !!	1)	LIMBO
 !!
 !!------------------------------------------------------------------------------
+
+Object	DungeonMaster "(Dungeon Master)"
+ with	!!----------------------------------------------------------------------
+		!! Reinicia el bucle del relato, colocando al usuario de nuevo en la
+ 		!! localidad inicial.
+		!!----------------------------------------------------------------------
+		restart [
+			obj;
+			!! Imprime el último mensaje que cierra el bucle:
+			if (self.heart_attack) O__M(self.initial_location, 3);
+			else O__M(self.initial_location, 5);
+			new_line;
+			CreateLink("[...]");
+			!! Lleva a cabo las reinicializaciones de los objetos:
+			objectloop(obj ofclass Thing) {
+				give obj ~described;
+				obj.reset();
+			}
+			objectloop(obj ofclass Room) {
+				give obj ~visited;
+			}
+			self.shot_on_dartboard = false;
+			!! Coloca al usuario en la localidad de inicio:
+			PressAnyKey();
+			EraseWindow();
+			PlayerTo(self.initial_location);
+			return true;
+		],
+		!!----------------------------------------------------------------------
+		!! Otras propiedades
+		!!----------------------------------------------------------------------
+		!! Indica si el Stalker ha muerto de un ataque al corazón en la
+		!! iteración anterior del bucle/si va a morir de un ataque al corazón
+		!! en la iteración actual.
+		heart_attack true,
+		!! Indica si el Stalker ha disparado sobre la diana en la iteración
+		!! actual del bucle.
+		shot_on_dartboard false,
+ private
+		!! Localidad inicial del bucle
+		initial_location TUNEL,
+;
 
 Room	LIMBO "En algún lugar"
  with	name_f	'babia',
@@ -73,20 +117,10 @@ Room	LIMBO "En algún lugar"
 			return true;
 		],
 		clarification 0,
-		images	PIC_TUNEL_A PIC_CANAL_A PIC_CALLEJON_A PIC_AZOTEA_A
-				PIC_CALLE_OESTE_A PIC_CALLE_ESTE_A,
+		images	PIC_HELL_A,
  has	male;
 
-Object	DungeonMaster "(Dungeon Master)"
- with
-		!!----------------------------------------------------------------------
-		!! Indica si el Stalker ha muerto de un ataque al corazón en la
-		!! iteración anterior del bucle.
-		!!----------------------------------------------------------------------
-		heart_attack_loop true,
-;
-
-NPC	Stalker "Stalker" LIMBO
+NPC		-> Stalker "Stalker"
  with	name_m	'personaje' 'protagonista' 'stalker',
 		gender	G_MASCULINO,
 		adjectives 'principal',
@@ -113,6 +147,32 @@ Item	-> -> limbo_fusil "fusil"
 		!! action_set ##Examine ##Take ##Drop,
  has	male remarkable;
 
+Atrezzo	limbo_cielo "cielo"
+ with	found_in [; if (location ofclass Outdoors) return true; ],
+		name_f	'nube',
+		name_fp	'nubes',
+		name_m	'cielo' 'dia' 'firmamento' 'sol',
+		gender	G_MASCULINO,
+		adjectives
+			'cerrado' 'encapotado' 'plomizo',
+		description [; return O__M(self, 1); ],
+		react_before [;
+			Examine, Search:
+				if (noun == u_obj) {
+					<<Examine self>>;
+				}
+		],
+ has	male;
+
+Atrezzo	limbo_polvo "polvo"
+ with	found_in [; if (location ofclass Outdoors) return true; ],
+		name_f	'ceniza',
+		name_fp	'cenizas',
+		name_m	'polvo',
+		gender	G_MASCULINO,
+		description [; return O__M(self, 1); ],
+ has	male;
+
 
 !!==============================================================================
 !!
@@ -131,7 +191,7 @@ Indoors	TUNEL "Interior del túnel"
 		initial [; if (self hasnt visited) {
 			new_line;
 			new_line;
-			if (DungeonMaster.heart_attack_loop) {
+			if (DungeonMaster.heart_attack) {
 				O__M(self, 3);
 				new_line;
 				O__M(self, 4);
@@ -146,7 +206,7 @@ Indoors	TUNEL "Interior del túnel"
 		description [; return O__M(self, 1); ],
 		before [;
 			Listen:
-				if (DungeonMaster.heart_attack_loop) return O__M(self, 9);
+				if (DungeonMaster.heart_attack) return O__M(self, 9);
 				if (~~self.listened) {
 					self.listened = true;
 					return O__M(self, 10);
@@ -214,7 +274,8 @@ Atrezzo	-> tunel_muro "muro"
  has	male;
 
 Furniture	-> tunel_salida "salida"
- with	name_f	'abertura' 'boca' 'claridad' 'luminosidad' 'luz' 'salida',
+ with	name_f	'abertura' 'boca' 'claridad' 'entrada' 'luminosidad' 'luz'
+ 				'salida',
 		name_m	'final' 'resplandor' 'semicirculo',
 		gender	G_FEMENINO,
 		adjectives
@@ -245,10 +306,66 @@ Outdoors	CANAL "canal"
 		name_m	'acueducto' 'canal',
 		gender	G_MASCULINO,
 		initial [; if (self hasnt visited) {
+			if (DungeonMaster.heart_attack) O__M(self, 2);
+			else O__M(self, 3);
+			O__M(self, 4);
+			new_line;
+			return true;
 		}],
-		s_to	TUNEL,
+		description [; return O__M(self, 1); ],
+		s_to	TUNEL, ! TODO crear entrada a túnel
+		e_to	[; return O__M(self, 8); ], !7
+		w_to	[; return self.e_to(); ],
+		u_to	canal_escalera,
+		f_to	[; return self.u_to(); ],
+		b_to	[; return self.s_to(); ],
+		cant_go	[; return O__M(self, 5); ],
 		images	PIC_CANAL_A PIC_CANAL_B,
  has	male;
+
+Furniture	-> canal_escalera "escalones"
+ with	name_f	'cuesta' 'escalera' 'escalerilla' 'escalinata' 'pendiente',
+		name_fp	'escaleras' 'escalerillas',
+		name_m	'escalon' 'peldano' 'terraplen',
+		name_mp	'escalones' 'peldanos',
+		gender	G_MASCULINO + G_PLURAL,
+		describe [;
+			new_line;
+			return O__M(self, 2);
+		],
+		description [; return O__M(self, 1); ],
+		before [;
+			DefaultAction:
+				return false;
+			Enter, Examine, Go, Search:
+				return false;
+			default:
+				return O__M(self, 3);
+		],
+		door_dir u_to,
+		door_to CALLEJON,
+ has	door male open pluralname remarkable;
+
+Atrezzo	-> canal_edificios "edificios"
+ with	name_f	'ciudad' 'ruina' 'urbe',
+		name_fp	'ruinas',
+		name_m	'edificio' 'metropoli',
+		name_mp	'edificios',
+		gender	G_MASCULINO + G_PLURAL,
+		adjectives
+			'destrozada' 'destrozado' 'ruinosa' 'ruinoso' 'ruinosos',
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
+
+Atrezzo	-> canal_rio "río"
+ with	name_f	'corriente',
+		name_fp	'aguas',
+		name_m	'agua' 'cauce' 'caudal' 'rio',
+		gender	G_MASCULINO,
+		adjectives
+			'turbia' 'turbias' 'turbio',
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
 
 
 !!==============================================================================
@@ -257,12 +374,150 @@ Outdoors	CANAL "canal"
 !!
 !!------------------------------------------------------------------------------
 
+Outdoors	CALLEJON "callejón"
+ with	name_f	'calleja' 'callejuela',
+		name_m	'callejon' 'callizo' 'pasadizo',
+		gender	G_MASCULINO,
+		initial [;
+			if (self hasnt visited) O__M(self, 2);
+			else O__M(self, 3);
+			new_line;
+			return true;
+		],
+		description [; return O__M(self, 1); ],
+		n_to	CANAL,
+		e_to	callejon_puerta,
+		s_to	CALLE_OESTE,
+		f_to	[; return self.s_to(); ],
+		b_to	[; return self.n_to(); ],
+		images	PIC_CALLEJON_A PIC_CALLEJON_B,
+ has	male;
+
+Furniture	-> callejon_puerta "puerta"
+ with	name_f	'abertura' 'entrada' 'puerta',
+		name_m	'umbral',
+		gender	G_FEMENINO,
+		describe [;
+		],
+		description [; return O__M(self, 1); ],
+		before [;
+			DefaultAction:
+				if (self has described) {
+					print (parser) "Ir hacia puerta";
+					new_line;
+					<<Go self>>;
+				}
+				print (parser) "Examinar puerta";
+				new_line;
+				<<Examine self>>;
+		],
+		door_dir e_to,
+		door_to AZOTEA,
+ has	door female open remarkable;
+
+Atrezzo	-> callejon_edificios "edificios"
+ with	name_f	'pared',
+		name_fp	'paredes',
+		name_m	'edificio' 'muro',
+		name_mp	'edificios' 'muros',
+		gender	G_MASCULINO,
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
+
+Atrezzo	-> callejon_basura "montones de desperdicios"
+ with	name_f	'basura',
+		name_fp	'basuras',
+		name_m	'carton' 'desperdicio' 'escombro' 'mueble',
+		name_mp	'cartones' 'desperdicios' 'escombros' 'muebles',
+		gender	G_MASCULINO + G_PLURAL,
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
+
+Atrezzo	-> callejon_maquina_tabaco "máquina de tabaco"
+ with	name_f	'maquina',
+		name_m	'mueble' 'tabaco',
+		name_mp	'muebes',
+		gender	G_FEMENINO,
+		description [; return O__M(self, 1); ],
+ has	~open female;
+
+Item	limbo_moneda "moneda de plata" LIMBO
+ with	name_f	'moneda',
+		gender	G_FEMENINO,
+		adjectives 'plata',
+		description [; return O__M(self, 1); ],
+ has	female remarkable;
+
 
 !!==============================================================================
 !!
 !!	5)	AZOTEA
 !!
 !!------------------------------------------------------------------------------
+
+Outdoors	AZOTEA "azotea de edificio"
+ with	name_f	'azotea' 'terraza',
+		gender	G_FEMENINO,
+		initial [;
+			if (self hasnt visited) O__M(self, 2);
+			else O__M(self, 3);
+			new_line;
+			return true;
+		],
+		description [; return O__M(self, 1); ],
+		d_to	CALLEJON,
+		b_to	[; return self.d_to(); ],
+		images	PIC_AZOTEA_A PIC_AZOTEA_B,
+ has	female;
+
+Atrezzo	-> azotea_ciudad "ciudad"
+ with	name_f	'calle' 'ciudad' 'urbe' 'vista',
+		name_fp	'calles' 'vistas',
+		name_m	'edificio',
+		name_mp	'edificios',
+		gender	G_FEMENINO,
+		description [; return O__M(self, 1); ],
+ has	female;
+
+Atrezzo	-> azotea_colillas "colillas"
+ with	name_f	'colilla',
+		name_fp	'colillas',
+		name_m	'cigarrillo' 'cigarro' 'tabaco',
+		name_mp	'cigarrillos' 'cigarros',
+		gender	G_FEMENINO + G_PLURAL,
+		adjectives
+			'consumida' 'consumidas' 'consumido' 'consumidos',
+		description [; return O__M(self, 1); ],
+ has	female pluralname;
+
+Furniture	-> azotea_puerta "puerta"
+ with	name_f	'puerta',
+		gender	G_FEMENINO,
+		description [; return O__M(self, 1); ],
+ has	female remarkable;
+
+Item	-> azotea_silla "silla"
+ with	name_f	'silla',
+		name_m	'asiento' 'mueble',
+		gender	G_FEMENINO,
+		adjectives
+			'madera' 'sencilla' 'sencillo',
+		description [; return O__M(self, 1); ],
+ has	female;
+
+Atrezzo	azotea_soldado "soldado" LIMBO
+ with	name_f	'persona',
+		name_m	'enemigo' 'hombre' 'soldado',
+		gender	G_MASCULINO,
+		description [; return O__M(self, 1); ],
+ has	male remarkable;
+
+Atrezzo	azotea_cadaver "soldado" LIMBO
+ with	name_f	'persona',
+		name_m	'cadaver' 'cuerpo' 'enemigo' 'hombre' 'soldado',
+		gender	G_MASCULINO,
+		description [; return O__M(self, 1); ],
+ has	male;
 
 
 !!==============================================================================
@@ -271,9 +526,187 @@ Outdoors	CANAL "canal"
 !!
 !!------------------------------------------------------------------------------
 
+Outdoors	CALLE_OESTE "calle"
+ with	name_f	'calle',
+		gender	G_FEMENINO,
+		adjectives 'principal',
+		initial [; if (self hasnt visited) {
+			O__M(self, 2);
+			new_line;
+			return true;
+		}],
+		description [; return O__M(self, 1); ],
+		n_to	CALLEJON,
+		e_to	CALLE_ESTE,
+		w_to	calle_edificio_desplomado,
+		f_to	[; return self.e_to(); ],
+		b_to	[; return self.n_to(); ],
+		cant_go [;
+			O__M(self, 3);
+			return O__M(self, 4);
+		],
+		images PIC_CALLE_OESTE_A PIC_CALLE_OESTE_B,
+ has	female;
+
+Atrezzo	-> calle_coches "coches"
+ with	name_m	'amasijo' 'coche' 'vehiculo',
+		name_mp	'amasijos' 'coches' 'vahiculos',
+		gender	G_MASCULINO + G_PLURAL,
+		adjectives 'calcinado' 'calcinados' 'metal',
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
+
+Atrezzo	-> calle_edificio_desplomado "edificio desplomado"
+ with	name_f	'barricada',
+		name_m	'edificio',
+		gender	G_MASCULINO,
+		adjectives 'caido' 'derrumbado' 'desplomado',
+		description [; return O__M(self, 1); ],
+		door_dir w_to,
+		door_to [; <<Examine self>>; ],
+ has	door male open;
+
+Furniture	-> calle_diana "diana"
+ with	name_f	'diana',
+		name_m	'blanco',
+		gender	G_FEMENINO,
+		adjectives 'tiza',
+		describe [;
+			new_line;
+			return O__M(self, 4);
+		],
+		description [ i;
+			if (self.attemps < 5) return O__M(self, 1);
+			i = (self.hits*100)/self.attemps;
+			if (i < self.minimum_threshold) return O__M(self, 2);
+			if (i > self.maximum_threshold) return O__M(self, 3);
+			return O__M(self, 1);
+		],
+		before [ i;
+			ShootAt:
+				O__M(self, 5);
+				new_line;
+				self.attemps++;
+				i = AimAndFire();
+				if (i == -2) {
+					! TODO Máquina-Z
+				} else if (i <= AimingManager.get_is_distance()) {
+					self.hits++;
+					return O__M(self, 8);
+				}
+				return O__M(self, 6);
+		],
+		restart [;
+			self.hits = 0;
+			self.attemps = 0;
+		],
+ private
+		attemps 0,				! número de intentos
+		hits 0,					! número de aciertos a la diana
+		maximum_threshold 66,	! umbral superior
+		minimum_threshold 33,	! umbral inferior
+ has	female;
+
 
 !!==============================================================================
 !!
 !!	7)	CALLE_ESTE
 !!
 !!------------------------------------------------------------------------------
+
+Outdoors	CALLE_ESTE "calle"
+ with	name_f	'calle',
+		gender	G_FEMENINO,
+		adjectives 'principal',
+		initial [; if (self hasnt visited) {
+			if (DungeonMaster.heart_attack) move limbo_cadaver_a to self;
+			else move limbo_cadaver_b to self;
+			O__M(self, 2);
+			if (DungeonMaster.shot_on_dartboard) O__M(self, 3);
+			O__M(self, 4);
+			new_line;
+			return true;
+		}],
+		description [; return O__M(self, 1); ],
+		w_to	CALLE_OESTE,
+		b_to	[; return self.w_to(); ],
+		images	PIC_CALLE_ESTE_A,
+ has	female;
+
+Furniture	limbo_cadaver_a "cadáver" LIMBO
+ with	name_f	'persona',
+		name_m	'cadaver' 'camarada' 'cuerpo' 'muerto' 'soldado',
+		gender	G_MASCULINO,
+		describe [;
+			new_line;
+			if (self has described) return O__M(self, 5);
+			if (self.discovered) return O__M(self, 4);
+			self.discovered = true;
+			return O__M(self, 3);
+		],
+		description [;
+			if (self hasnt described) return O__M(self, 1);
+			give self on;
+			return O__M(self, 2);
+		],
+		before [;
+			if (self hasnt on) return O__M(self, 6);
+			else {
+				! TODO
+				self.registered = true;
+				return O__M(self, 7);
+			}
+		],
+		react_before [;
+			Search:
+				if (~~self.registered) return false;
+				return self.reset();
+			default:
+				return self.reset();
+		],
+ private
+		reset [;
+			if (self has on) {
+				give self ~on;
+				self.discovered = false;
+				self.registered = false;
+				return DungeonMaster.restart();
+			}
+		],
+		discovered false,
+		registered false,
+ has	male remarkable;
+
+Furniture	limbo_cadaver_b "cadáver" LIMBO
+ with	name_f	'persona',
+		name_m	'cadaver' 'camarada' 'cuerpo' 'muerto' 'soldado',
+		gender	G_MASCULINO,
+		describe [;
+			new_line;
+			if (self has described) return O__M(self, 5);
+			if (self.discovered) return O__M(self, 4);
+			self.discovered = true;
+			return O__M(self, 3);
+		],
+		description [;
+			if (self hasnt described) return O__M(self, 1);
+			give self on;
+			return O__M(self, 2);
+		],
+		react_before [;
+			Search:
+				if (~~self.registered) return false;
+				return self.reset();
+			default:
+				return self.reset();
+		],
+ private
+		reset [;
+			if (self has on) {
+				give self ~on;
+				return DungeonMaster.restart();
+			}
+		],
+		discovered false,
+		registered false,
+ has	male remarkable;

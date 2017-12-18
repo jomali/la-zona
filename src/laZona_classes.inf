@@ -160,6 +160,7 @@ Class	Thing
 			}
 			" nada especial en ", (the) self, ".";
 		],
+		reset [; return true; ],
 ;
 
 

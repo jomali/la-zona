@@ -52,12 +52,327 @@
 	switch (obj) {
 
 !!------------------------------------------------------------------------------
+calle_coches: switch (n) {
+1:	! ##Examine
+print "Estaban reducidos a poco más que simples amasijos de metal ennegrecido.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+calle_diana: switch (n) {
+1:	! ##Examine (A - neutra)
+print "Pintada con tiza. Tenía un montón de agujeros de bala alrededor.";
+new_line;
+return true;
+2:	! ##Examine (B - más fallos)
+print "Testimonio mudo de la mala puntería. Eran más los agujeros de bala que había fuera de los círculos de tiza que los que quedaban dentro.";
+new_line;
+return true;
+3:	! ##Examine (C - más aciertos)
+print "La mayoría de los agujeros estaban abiertos en el interior de los círculos de tiza.";
+new_line;
+return true;
+4:	! describe
+print "Frente a él, en un edificio al otro lado de la calle, alguien había pintado una diana con tiza sobre la pared. Había un montón de agujeros de bala a su alrededor.";
+new_line;
+return true;
+5:	! ##ShootAt (apuntado)
+print (string) random(
+	"Levantó el fusil y apuntó a la diana...",
+	"Apuntó con el fusil a la diana...",
+	"Levantó el fusil y trató de controlar la respiración mientras apuntaba...",
+	"Se arrodilló y apuntó a la diana, apostando el codo sobre la rodilla...",
+	"Tomó aire y levantó el fusil lentamente...",
+);
+new_line;
+return true;
+6:	! ##ShootAt (fallo)
+print "Disparó. El estampido del arma rompió el silencio y apenas un instante después, la bala impactó con un golpe seco sobre la pared de enfrente, abriendo un agujero a varios palmos de distancia de la circunferencia más exterior de la diana. Había fallado.";
+new_line;
+return true;
+7:	! ##ShootAt (acierto perfecto)
+8:	! ##ShootAt (acierto)
+9:	! ##ShootAt (acierto por poco)
+print "El disparo provocó un gran estampido y un segundo golpe, una diminuta fracción de segundo después, cuando la bala impactó sobre la pared del edificio del otro lado de la calle. Definitivamente era un acierto; había abierto un nuevo agujero de bala dentro de la circunferencia que delimitaba la diana.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+calle_edificio_desplomado: switch (n) {
+1:	! ##Examine
+print "Uno de los edificios se había desplomado por completo sobre la calle, creando una gran barricada que impedía el paso hacia el oeste.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+CALLE_ESTE: switch (n) {
+1:	! ##Examine
+print "Un incendio debía estar consumiendo algún tejado cercano. Notó el humo irritándole la garganta y los ojos un momento antes de que empezase a ver caer ceniza a su alrededor, pausadamente, como una especie de nieve fina y reseca. En aquel punto de la calle una buena parte del pavimento se había hundido, formando un talud de cascotes que descendía en pendiente hasta el canal.";
+new_line;
+return true;
+2:	! initial (A)
+print "Caminaba lentamente, parapetado a las paredes de los edificios y aferrando el fusil con fuerza";
+return true;
+3:	! initial (B - si ha disparado)
+print " ---ahora se arrepentía de haber probado puntería sobre la diana, temiendo que alguien pudiese haber escuchado los disparos---";
+return true;
+4:	! initial (C)
+print ". Crujido de cristales rotos bajo sus botas. Los agujeros de las ventanas parecían cuencas vacías que lo observaban acusadoramente entre susurros del viento. Por lo demás imperaba el silencio.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+CALLE_OESTE: switch (n) {
+1:	! ##Examine
+print "El callejón terminaba en aquella calle principal. Se extendía paralela al canal, de oeste a este, y estaba salpicada por coches calcinados y por los cascotes desprendidos de las fachadas y los tejados cercanos. La ciudad entera parecía haber quedado reducida a un montón de ruinas.";
+new_line;
+return true;
+2:	! initial (A - ataque al corazón)
+print "Cada vez se hacía más difícil ignorar el dolor del pecho, pero no podía detenerse. Tenía que salir de allí como fuese.";
+new_line;
+return true;
+3:	! initial (B - disparo)
+!! Destacar más el dolor del pecho que en el mensaje #2, porque esta iteración
+!! del bucle no ha comenzado con un ataque inicial. De forma que si se finaliza
+!! la iteración con un ataque al corazón en lugar de con un disparo, no
+!! parezca venir de ninguna parte.
+print "Un doloroso pinchazo en el pecho le detuvo en seco. Notaba la espalda y las palmas de las manos heladas de pronto por culpa del sudor, mientras algo parecía estar presionándole directamente sobre el esternón, con mucha fuerza. Estaba aterrado, pero no podía detenerse allí, de modo que trató recobrar el aliento y apartar el dolor a un lado. Ya podría descansar cuando saliese de aquel lugar. Tenía que continuar.";
+new_line;
+return true;
+4:	! cant_go
+print "No podía ir por allí. ";
+return true;
+5:	! exits
+print "La calle se extendía de [e_obj] a [w_obj], paralela al canal. Al [n_obj] se abría el estrecho callejón por el que había venido.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+CALLEJON: switch (n) {
+1:	! ##Examine
+print "Estaba en un callejón estrecho, abierto como una herida entre dos edificios de sucias paredes de ladrillo. Montones de muebles destrozados y otros desperdicios se amontonaban a lo largo de prácticamente todo el callejón, desde la valla agujereada que franquaba el paso al canal, al norte, al extremo sur opuesto. En una de las paredes podía ver una puerta trasera a la que alguien había volado la cerradura.";
+new_line;
+return true;
+2:	! initial (#1 - primera vez)
+print "Subió por el terraplén tan rápido como le permitían sus pulmones, temiendo que pudiese haber tiradores apostados al otro lado del río.";
+new_line;
+return true;
+3:	! initial (#2)
+print "Subió por el terraplén y atravesó la valla caída que había en lo alto.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+callejon_basura: switch (n) {
+1:	! ##Examine (#1)
+print "El callejón era tan estrecho y estaba tan lleno de basura que apenas se podía atravesar; montones de muebles destrozados ---por su aspecto, debían haber sido arrojados al callejón desde las ventanas---, contenedores desbordados, viejas cajas de cartón podridas e hinchadas por la humedad y montones de cristales rotos y escombros se acumulaban contra las paredes de ladrillo.";
+return true;
+2:	! ##Examine (#2 - primera vez)
+print "Entre todos aquellos desechos le llamó la atención algo. Una máquina de tabaco, caída de lado entre los muebles, que parecía encontrarse en bastantes buenas condiciones.";
+new_line;
+return true;
+3:	! ##Examine (#3)
+print " Había una máquina de tabaco caída de lado entre los muebles.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+callejon_maquina_tabaco: switch (n) {
+1:	! ##Examine (#1)
+print "Estaba algo aplastada, pero se encontraba en mejores condiciones que la mayor parte de los muebles arrojados a su alrededor. Merecía la pena buscar dentro. Quizá aún pudiese encontrar algo de tabaco.";
+new_line;
+return true;
+2:	! describe
+print "Había una máquina de tabaco caída de lado, entre los muebles, que parecía estar en bastante buen estado.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+callejon_puerta: switch (n) {
+1:	! ##Examine
+print "Revestida de chapa, tenía la cerradura reventada de un disparo.";
+new_line;
+return true;
+2:	! ##Close
+print  "Imposible con la cerradura destrozada.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+CANAL: switch (n) {
+1:	! ##Examine
+print "Se encontraba en la parte más profunda de un ancho canal de hormigón, junto a la boca del túnel de alcantarillado abierta en uno de los terraplenes laterales. A lo largo de las orillas se levantaban penosamente unas hileras irregulares de edificios agujereados por los disparos y las bombas. El río, casi opaco por la porquería, fluía sosegado y caudaloso por el centro del canal, arrastrando al oeste los últimos restos de aquella ciudad moribunda.";
+new_line;
+return true;
+2:	! initial (#1 - ataque al corazón)
+print "Inspiró hondo, ignorando la opresión que sentía en el pecho,";
+return true;
+3:	! initial (#2 - disparo)
+print "Inspiró hondo, preguntándose qué le esperaría allí afuera,";
+return true;
+4:	! initial (#3)
+print ", y atravesó a tientas el último tramo del túnel. La intensa luz del exterior le hirió en los ojos cuando se encontró fuera, impidiéndole ver nada durante unos instantes. Mientras sus pupilas se iban acostumbrando paulatinamente a la nueva claridad, también se fue dibujando ante él lentamente el contorno sobrecogedor de la ciudad.";
+new_line;
+return true;
+5:	! cant_go
+print "No era buena idea quedarse en el canal; estaba demasiado a descubierto. Tenía que ir hacia la escalera y salir de allí.";
+new_line;
+return true;
+6:	! ##Go:n_obj|ne_obj|nw_obj
+! TODO Ir hacia el río
+new_line;
+return true;
+7:	! ##Go:e_obj|w_obj (#1 - si no se han examinado los edificios)
+print " Aunque no parecía haber signos de vida por ninguna parte, no era buena idea continuar por el canal. Demasiado a descubierto. Sería un blanco fácil en caso de que hubiese francotiradores escondidos entre las ruinas.";
+new_line;
+return true;
+8:	! ##Go:e_obj|w_obj (#2)
+print "No era buena idea continuar por el canal. Demasiado a descubierto. Sería un blanco fácil en caso de que hubiese francotiradores enemigos escondidos entre los edificios de las orillas.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+canal_edificios: switch (n) {
+1:	! ##Examine (#1 - primera vez)
+print "Agazapado junto a la entrada del túnel estudió los edificios medio derruidos que se levantaban en la orilla opuesta. ";
+return true;
+2:	! ##Examine (#3)
+print "No eran más que esqueletos destrozados por las bombas. Armazones sin fachada que dejaban al descubierto un feo damero de suelos y tabiques. Podía ver alguna columna de humo elevándose allí donde aún quedaba combustible suficiente para alimentar un fuego.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+canal_escalera: switch (n) {
+1:	! ##Examine
+print "Los escalones estaban tallados en el hormigón. Ascendían por la pendiente hasta la orilla sur del canal.";
+new_line;
+return true;
+2:	! describe
+print "A un puñado de metros podía ver una tosca escalinata labrada directamente sobre el hormigón que ascendía fuera del canal.";
+new_line;
+return true;
+3:	! default
+print "No necesitaba preocuparse por ";
+SpanishNominativePronoun(obj);
+".";
+}
+
+!!------------------------------------------------------------------------------
+canal_rio: switch (n) {
+1:	! ##Examine
+print "Plásticos, trozos de madera calcinada y otros bultos imprecisos, medio sumergidos en las aguas turbias, eran arrastrados pausadamente hacia el oeste.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
 LIMBO: switch (n) {
 1:	! ##Examine (#1)
 print "Est", (lm_estas) player, " más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
 return true;
 2:	! ##Examine (#2)
 print " *¿Qué? ¿Cómo?... ¿cómo he llegado aquí?*";
+return true;
+}
+
+!!------------------------------------------------------------------------------
+limbo_cadaver_a: switch (n) {
+1:	! ##Examine (#1 - primera vez)
+print "Un escalofrío le sacudió mientras se acercaba al cuerpo. Aún le separaba de él al menos una docena de pasos y apenas se podía distinguir nada por culpa del polvo y la ceniza, pero estaba seguro de que aquel soldado vestía un uniforme igual que el suyo... No podía recordar con claridad. Por culpa del agotamiento quizá, o por el dolor cada vez más agudo que amenazaba con ocuparlo todo. ¿Cuándo había perdido a su unidad? ¿Cuánto hacía que vagaba sólo por aquella ciudad fantasma? ¿Habían pasado horas? ¿Días? En todo este tiempo ni siquiera había visto los cadáveres que sin duda deberían haber estado desperdigados por doquier. Hasta entonces.";
+new_line;
+return true;
+2:	! ##Examine (#2)
+print "Cruzó los últimos metros que le separaban del cadáver, preguntándose si sería capaz de reconocer en él a alguno de sus antiguos compañeros. Cuando lo alcanzó, el mundo entero se detuvo. Sus manos y su espalda estaban cubiertos de un sudor que de pronto se sentía intolerablemente frío. Notaba los oídos palpitar con una potencia atroz. Las piernas bloqueadas, apenas capaces de soportar un peso que parecía haberse multiplicado. La mente embotada... Lo reconoció, desde luego. No inmediatamente, pero reconoció al soldado; era él.
+^^
+Jadeando, incrédulo, recorrió con la mirada los rasgos de aquel cuerpo idéntico al suyo que estaba tumbado en el suelo, mientras su cerebro intentaba procesar lo imposible, desbordado por una vorágine de pensamientos incoherentes. Miraba a través de sus ojos marrones los marrones ojos vidriosos perdidos en la nada que eran también suyos. No podía ser de ninguna manera. Pero a pesar de todo era. Cuando el tiempo reanudó su marcha, observó el cadáver con más detalle. No había manchas de sangre ni heridas visibles. Yacía de espaldas, con las manos aferrándose el torso, como si le hubiese sorprendido un ataque cardíaco... y en ese momento su rostro se puso tan lívido como aquel que tenía a sus pies...";
+new_line;
+return true;
+3:	! describe (#1 - primera vez)
+print "Saltó por encima de un montón de ladrillos y lo vio. El cuerpo sin vida de un soldado. Yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+4:	! describe (#2)
+print "El cadáver de un soldado yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+5:	! describe (#3 - examinado)
+print "Uno de sus camaradas yacía muerte unos metros más allá, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+6:	! ##Search (#1)
+! TODO
+print "Tal vez tuviese algo de valor en los bolsillos. Pero tendría que acercarse más para comprobarlo.";
+new_line;
+return true;
+7:	! ##Search (#2)
+! TODO
+print "Le rebuscó en los bolsillos, pero no tenía nada.";
+new_line;
+return true;
+8:	! ##Search (#3)
+! TODO
+print "Dentro de los bolsillos del uniforme encontró [lista de objetos en limbo_cadaver_a].";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+limbo_cadaver_b: switch (n) {
+1:	! ##Examine (#1 - primera vez)
+print "Fue acercándose lentamente al soldado con el fusil en alto, preparado para disparar de nuevo si era necesario. Aún les separaba cerca de unos diez metros, pero entonces pudo ver la sangre salpicando los restos del pilar de hormigón caído junto al cuerpo inmóvil. Y vio algo más. Aquel soldado llevaba un uniforme como el suyo. Había matado a uno de sus compañeros.";
+new_line;
+return true;
+2:	! ##Examine (#2)
+print "Desencajado cruzó los últimos metros que le separaban del cuerpo, preguntándose si sería capaz de reconocer al hombre al que acababa de matar. Había caído de bruces, así que únicamente era capaz de verle la espalda manchada de polvo y sangre. Se inclinó sobre él y le dio la vuelta suavemente hasta dejarle de espaldas. Entonces el tiempo pareció detenerse. La cara sucia que miraba hacia el cielo con ojos vidriosos era la suya. Resultaba imposible, pero aquel cuerpo sin vida del suelo era él. Era él.
+^^
+Su mente daba vueltas en un torbellino caótico y sin sentido, pero entonces una idea cobró forma entre la confusión. Alarmado se incorporó y giró la cabeza hacia la azotea del edificio del otro extremo de la calle. Allí estaba, una forma gris, apuntándole desde la cornisa con un fusil semiautomático...";
+new_line;
+return true;
+3:	! describe (#1 - primera vez)
+print "Continuó andando entre los montones de escombros, intentando rodear el socavón. Fue entonces cuando lo vio; estaba en el suelo, a unos veinte metros de distancia, tras los restos de un pilar derrumbado. ¿Le habría alcanzado?";
+new_line;
+return true;
+4:	! describe (#2)
+print "El soldado yacía en el suelo, a unos veinte metros de distancia.";
+new_line;
+return true;
+5:	! describe (#3 - examinado)
+print "El cuerpo inmóvil de uno de sus camaradas yacía de bruces sobre un charco de sangre a unos metros de donde se encontraba.";
+new_line;
+return true;
+6:	! ##Search (#1)
+! TODO
+print "Tal vez tuviese algo de valor en los bolsillos. Pero tendría que acercarse más para comprobarlo.";
+new_line;
+return true;
+7:	! ##Search (#2)
+! TODO
+print "Le rebuscó en los bolsillos, pero no tenía nada.";
+new_line;
+return true;
+8:	! ##Search (#3)
+! TODO
+print "Dentro de los bolsillos del uniforme encontró [lista de objetos en limbo_cadaver_a].";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+limbo_cielo: switch (n) {
+1:	! ##Examine
+print "Estaba completamente encapotado. De un gris plomizo. Como el resto de la ciudad.";
+new_line;
 return true;
 }
 
@@ -81,6 +396,14 @@ new_line;
 return true;
 5:	! ##Rub (#2)
 print "No tenía forma de limpiarlo mejor. Él mismo estaba cubierto entero de polvo y barro. Como mucho iba a conseguir ensuciarlo aún más.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+limbo_polvo: switch (n) {
+1:	! ##Examine
+print "El polvo le había arrebatado su color a la ciudad, sepultada por completo bajo una gruesa capa gris.";
 new_line;
 return true;
 }
