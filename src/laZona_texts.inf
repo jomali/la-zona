@@ -441,14 +441,10 @@ print "Las [limbo_suelo](cenizas) hacían pequeños remolinos sobre el asfalto.";
 new_line;
 return true;
 5:	! each_turn (C)
-print "Tosió ásperamente por culpa del [limbo_suelo](polvo) y la [limbo_suelo](ceniza).";
-new_line;
-return true;
-6:	! each_turn (D)
 print "El aire estaba cargado de [limbo_suelo](ceniza) y [limbo_suelo](polvo).";
 new_line;
 return true;
-7:	! each_turn (E)
+6:	! each_turn (D)
 print "El viento levantaba el [limbo_suelo](polvo) y la [limbo_suelo](ceniza) del suelo. Llevados, esparcidos y llevados de nuevo.";
 new_line;
 return true;

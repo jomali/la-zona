@@ -368,14 +368,6 @@ print " hacían pequeños remolinos sobre el asfalto.";
 new_line;
 return true;
 5:	! each_turn (C)
-print "Tosió ásperamente por culpa del ";
-CreateLink(limbo_suelo, "polvo", 0);
-print " y la ";
-CreateLink(limbo_suelo, "ceniza", 0);
-print ".";
-new_line;
-return true;
-6:	! each_turn (D)
 print "El aire estaba cargado de ";
 CreateLink(limbo_suelo, "ceniza", 0);
 print " y ";
@@ -383,7 +375,7 @@ CreateLink(limbo_suelo, "polvo", 0);
 print ".";
 new_line;
 return true;
-7:	! each_turn (E)
+6:	! each_turn (D)
 print "El viento levantaba el ";
 CreateLink(limbo_suelo, "polvo", 0);
 print " y la ";
