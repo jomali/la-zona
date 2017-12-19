@@ -159,13 +159,13 @@ print "Se encontraba en la parte más profunda de un ancho canal de hormigón, jun
 new_line;
 return true;
 2:	! initial (A - ataque al corazón)
-print "Inspiró hondo, ignorando la opresión que sentía en el pecho,";
+print "Inspiró hondo, haciendo caso omiso a la opresión que sentía en el pecho";
 return true;
 3:	! initial (B - disparo)
-print "Inspiró hondo, preguntándose qué le esperaría allí afuera,";
+print "Inspiró hondo, preguntándose qué le esperaría allí afuera";
 return true;
 4:	! initial (C)
-print ", y atravesó a tientas el último tramo del túnel. La intensa luz del exterior le hirió en los ojos cuando se encontró fuera, impidiéndole ver nada durante unos instantes. Mientras sus pupilas se iban acostumbrando paulatinamente a la nueva claridad, también se fue dibujando ante él lentamente el contorno sobrecogedor de la ciudad.";
+print ", y atravesó a tientas el último tramo del túnel. La intensa luz del exterior le hirió en los ojos cuando se encontró fuera, impidiéndole ver nada durante unos instantes. A medida que sus pupilas se iban acostumbrando paulatinamente a la nueva claridad, también se fue dibujando ante él lentamente el contorno sobrecogedor de la ciudad.";
 new_line;
 return true;
 5:	! cant_go
@@ -349,11 +349,11 @@ return true;
 2:	! ##Examine (B - Si se permite que Stalker vuelva a entrar al túnel)
 return true;
 3:	! ataque al corazón (A)
-print "Un repentino pinchazo en el pecho le hizo encogerse sobre sí mismo. Cayó de rodillas por culpa del dolor.";
+print "Un repentino pinchazo le hizo encogerse sobre sí mismo. Se llevó las manos al pecho y cayó al suelo, atravesado por el dolor.";
 new_line;
 return true;
 4:	! ataque al corazón (B)
-print "La presión punzante irradiaba desde la altura del esternón y se extendía por los hombros y el cuello, atenazándole los brazos y la mandíbula. Aún en el suelo, con la espalda empapada por completo de un sudor frío, hizo un esfuerzo por ignorar la angustia y controlar la respiración desbocada. A medida que recuperaba poco a poco el aliento logró ir apartando el dolor en un rincón. Eso estaba bien. No podía detenerse. Tanteó a su alrededor hasta encontrar el fusil que se le había caído de las manos y se levantó de nuevo. Tenía que continuar.";
+print "La punzante presión le irradiaba desde la altura del esternón y se extendía a través de hombros y cuello hasta atenazarle los brazos y la mandíbula. Tenía la espalda empapada por completo de un sudor frío. Por un momento notó cómo lo dominaba el pánico, pero acto seguido luchó por sobreponerse a él y se concentró en controlar la respiración desbocada. Aún permaneció unos minutos en el suelo mientras recuperaba el aliento. El dolor, por su parte, comenzaba a atenuarse tanto como para poder apartarlo en un rincón de su mente donde sería capaz ignorarlo. Eso estaba bien. No podía morir allí. Tanteó a su alrededor hasta encontrar el fusil que se le había caído de las manos y se levantó de nuevo. Tenía que continuar.";
 new_line;
 return true;
 5:	! disparo (A)
