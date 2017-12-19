@@ -60,24 +60,24 @@ Object	LibraryMessages
 		}
 
 	CommandsOn:
-		switch (lm_n) {
-			1:	print_ret (parser) "Grabación de órdenes activada.";
+		switch (n) { ![6/11]
+			1:	"[Grabación de órdenes activada.]";
 			#Ifdef TARGET_GLULX;
-			2:	print_ret (parser) "Órdenes relanzadas.";
-			3:	print_ret (parser) "Grabación de órdenes ya activada.";
-			4:	print_ret (parser) "Fallo en la grabación de órdenes.";
+			2:	"[Órdenes relanzadas.]";
+			3:	"[Grabación de órdenes ya activada.]";
+			4:	"[Fallo en la grabación de órdenes.]";
 			#Endif; ! TARGET_
 		}
 
 	CommandsRead:
 		switch (lm_n) {
-			1:	print_ret (parser) "Relanzando acciones.";
+			1:	print_ret (parser) "Reejecutando órdenes...";
 			#Ifdef TARGET_GLULX;
 			2:	print_ret (parser) "Las órdenes ya están siendo relanzadas.";
 			3:	print_ret (parser) "Fallo en la reejecución de órdenes:
 				grabación en curso.";
 			4:	print_ret (parser) "Fallo en la reejecución de órdenes.";
-			5:	print_ret (parser) "Acciones ejecutadas: fin del proceso.";
+			5:	print_ret (parser) "Reejecución de órdenes: fin del proceso.";
 			#Endif; ! TARGET_
 		}
 

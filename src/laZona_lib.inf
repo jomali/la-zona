@@ -50,6 +50,7 @@
 !!		-	PrintHeadline()
 !!		-	PrintVersionNumber()
 !!		-	PrintSerialNumber()
+!!	-	Direcciones
 !!	-	DrawStatusLine()
 !!		-	PrintLocationName()
 !!	-	ExamineSub()
@@ -148,6 +149,65 @@
 	print i;
 	#Endif;	! TARGET_
 ];
+
+
+!!==============================================================================
+!!	Direcciones
+!!------------------------------------------------------------------------------
+!! Redefinición de los 8 puntos cardinales ---norte, sur, este, oeste,
+!! nordeste, noroeste, sudeste, sudoeste--- y las direcciones 'arriba' y
+!! 'abajo' (se mantienen las definiciones 'interior' y 'exterior' por defecto
+!! de la 'Spanish.h'), para eliminar los nombres 'cielo' 'techo', 'piso' y
+!! 'suelo', de forma que puedan ser utilizados por otros objetos del relato.
+!! Se añaden además dos direcciones nuevas: 'adelante' y 'atrás'.
+!!
+!! Para utilizar las redefiniciones es necesario declarar la constante
+!! WITHOUT_DIRECTIONS, de forma que se omiten los puntos cardinales por defecto
+!! de la librería.
+!!------------------------------------------------------------------------------
+
+CompassDirection n_obj "norte" compass
+ with	name 'n//' 'norte', door_dir n_to;
+
+CompassDirection s_obj "sur" compass
+ with	name 's//' 'sur', door_dir s_to;
+
+CompassDirection e_obj "este" compass
+ with	name 'e//' 'este', door_dir e_to;
+
+CompassDirection w_obj "oeste" compass
+ with	name 'w//' 'o//' 'oeste', door_dir w_to;
+
+CompassDirection ne_obj "nordeste" compass
+ with	name 'ne' 'nordeste' 'noreste', door_dir ne_to;
+
+CompassDirection nw_obj "noroeste" compass
+ with	name 'no' 'nw' 'noroeste', door_dir nw_to;
+
+CompassDirection se_obj "sudeste" compass
+ with	name 'se' 'sureste' 'sudeste', door_dir se_to;
+
+CompassDirection sw_obj "sudoeste" compass
+ with	name 'so' 'sw' 'suroeste' 'sudoeste', door_dir sw_to;
+
+CompassDirection u_obj "arriba" compass
+ with	name 'u//' 'arriba' 'ar' 'r//' 'sube', door_dir u_to,
+ has	proper;
+
+CompassDirection d_obj "abajo" compass
+ with	name 'd//' 'abajo' 'ab' 'baja', door_dir d_to,
+ has	proper;
+
+Property b_to;
+CompassDirection b_obj "atrás" compass
+ with	name 'b//' 'atras', door_dir b_to,
+ has	proper;
+
+Property f_to;
+CompassDirection f_obj "adelante" compass
+ with	name 'f//' 'adelante', door_dir f_to,
+ has	proper;
+
 
 !!==============================================================================
 !! Dibuja una barra de estado con el nombre de la localidad centrado. (NOTA:

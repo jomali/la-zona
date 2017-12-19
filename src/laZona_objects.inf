@@ -66,6 +66,24 @@
 
 Object	DungeonMaster "(Dungeon Master)"
  with	!!----------------------------------------------------------------------
+		!! Cambia aleatoriamente el tiempo del narrador una vez se ha superado
+		!! una cierta cantidad de iteraciones de la historia.
+		!!----------------------------------------------------------------------
+		change_grammatical_tense [
+			inflection;
+			if (self.iteration == self.iteration_threshold) {
+				SetGrammaticalInflection(THIRD_PERSON_PRESENT);
+			}
+			else if (self.iteration > self.iteration_threshold) {
+				inflection = random(
+					THIRD_PERSON_PRESENT,
+					THIRD_PERSON_PAST,
+					THIRD_PERSON_FUTURE);
+				SetGrammaticalInflection(inflection);
+			}
+			return true;
+		],
+		!!----------------------------------------------------------------------
 		!! Reinicia el bucle del relato, colocando al usuario de nuevo en la
  		!! localidad inicial.
 		!!----------------------------------------------------------------------
@@ -84,18 +102,19 @@ Object	DungeonMaster "(Dungeon Master)"
 			return true;
 		],
 		!!----------------------------------------------------------------------
-		change_grammatical_tense [
-			inflection;
-			if (self.iteration == self.iteration_threshold) {
-				SetGrammaticalInflection(THIRD_PERSON_PRESENT);
-			}
-			else if (self.iteration > self.iteration_threshold) {
-				inflection = random(
-					THIRD_PERSON_PRESENT,
-					THIRD_PERSON_PAST,
-					THIRD_PERSON_FUTURE);
-				print "", inflection, "^";
-				SetGrammaticalInflection(inflection);
+		!! Imprime un mensaje describiendo el soplar del viento con una
+		!! probabilidad de '1/wind_ratio'.
+		!!----------------------------------------------------------------------
+		wind_blows [;
+			if (random(self.wind_ratio) == 1) {
+				new_line;
+				switch (random(5)) {
+					1:	return O__M(limbo_suelo, 3);
+					2:	return O__M(limbo_suelo, 4);
+					3:	return O__M(limbo_suelo, 5);
+					4:	return O__M(limbo_suelo, 6);
+					5:	return O__M(limbo_suelo, 7);
+				}
 			}
 		],
 		!!----------------------------------------------------------------------
@@ -117,6 +136,9 @@ Object	DungeonMaster "(Dungeon Master)"
 		!! Número de iteraciones a partir de las que el narrador cambia
 		!! aleatoriamente de formas temporales:
 		iteration_threshold 4,
+		!! La función 'wind_blows' sólo imprime mensajes en una probabilidad
+		!! de 1/wind_ratio:
+		wind_ratio 5,
 ;
 
 Room	LIMBO "En algún lugar"
@@ -140,7 +162,7 @@ NPC		-> Stalker "Stalker"
 		description [; <<Inv>>; ],
  has	male proper;
 
-!!	 -	'general' se activa después de haber limpiado el arma por primera vez.
+!!	 -	'general' se activa después de haber limpiado el arma por primera vez. Después ya no se desactiva.
 Item	-> -> limbo_fusil "fusil"
  with	name_f	'arma' 'culata',
 		name_m	'canon' 'fusil' 'gatillo' 'rifle',
@@ -170,20 +192,26 @@ Atrezzo	limbo_cielo "cielo"
 		adjectives 'cerrado' 'encapotado' 'plomizo',
 		description [; return O__M(self, 1); ],
 		react_before [;
-			Examine, Search:
+			DefaultAction, Examine, Search:
 				if (noun == u_obj) {
 					<<Examine self>>;
 				}
 		],
  has	male;
 
-Atrezzo	limbo_polvo "polvo"
+Atrezzo	limbo_suelo "suelo"
  with	found_in [; if (location ofclass Outdoors) return true; ],
 		name_f	'ceniza',
 		name_fp	'cenizas',
-		name_m	'polvo',
+		name_m	'piso' 'polvo' 'suelo',
 		gender	G_MASCULINO,
 		description [; return O__M(self, 1); ],
+		react_before [;
+			DefaultAction, Examine, Search:
+				if (noun == d_obj) {
+					<<Examine self>>;
+				}
+		],
  has	male;
 
 
@@ -291,7 +319,7 @@ Furniture	-> tunel_salida "salida"
 		description [; return O__M(self, 1); ],
 		before [;
 			DefaultAction:
-				<<Go self>>;
+				return false;
 			Enter, Examine, Go, Search:
 				return false;
 			default:
@@ -332,16 +360,17 @@ Outdoors	CANAL "canal"
 		u_to	canal_escalera,
 		f_to	[; return self.u_to(); ],
 		b_to	[; return self.s_to(); ],
+		out_to	[; return self.u_to(); ],
 		cant_go	[; return O__M(self, 5); ],
 		images	PIC_CANAL_A PIC_CANAL_B,
  has	male;
 
-Furniture	-> canal_escalera "escalones"
+Furniture	-> canal_escalera "escalera"
  with	name_f	'cuesta' 'escalera' 'escalerilla' 'escalinata' 'pendiente',
 		name_fp	'escaleras' 'escalerillas',
 		name_m	'escalon' 'peldano' 'terraplen',
 		name_mp	'escalones' 'peldanos',
-		gender	G_MASCULINO + G_PLURAL,
+		gender	G_FEMENINO,
 		describe [;
 			new_line;
 			return O__M(self, 2);
@@ -357,7 +386,7 @@ Furniture	-> canal_escalera "escalones"
 		],
 		door_dir u_to,
 		door_to CALLEJON,
- has	door male open pluralname remarkable;
+ has	door female open pluralname remarkable;
 
 Atrezzo	-> canal_edificios "edificios"
  with	name_f	'ciudad' 'ruina' 'urbe',
@@ -377,10 +406,9 @@ Atrezzo	-> canal_rio "río"
 		name_fp	'aguas',
 		name_m	'agua' 'cauce' 'caudal' 'rio',
 		gender	G_MASCULINO,
-		adjectives
-			'turbia' 'turbias' 'turbio',
+		adjectives 'turbia' 'turbias' 'turbio',
 		description [; return O__M(self, 1); ],
- has	male pluralname;
+ has	male;
 
 
 !!==============================================================================
@@ -418,17 +446,6 @@ Furniture	-> callejon_puerta "puerta"
 			return O__M(self, 3);
 		],
 		description [; return O__M(self, 1); ],
-		before [;
-			DefaultAction:
-				if (self has described) {
-					print (parser) "Ir hacia puerta";
-					new_line;
-					<<Go self>>;
-				}
-				print (parser) "Examinar puerta";
-				new_line;
-				<<Examine self>>;
-		],
 		door_dir e_to,
 		door_to AZOTEA,
  has	door female open remarkable;
@@ -563,6 +580,7 @@ Outdoors	CALLE_OESTE "calle"
 			return true;
 		}],
 		description [; return O__M(self, 1); ],
+		each_turn [; DungeonMaster.wind_blows(); ],
 		n_to	CALLEJON,
 		e_to	CALLE_ESTE,
 		w_to	calle_edificio_desplomado,
@@ -641,11 +659,14 @@ Furniture	-> calle_diana "diana"
 !!
 !!------------------------------------------------------------------------------
 
+!!	-	'general' se activa para bloquear la rutina 'each_turn' la primera vez
+!!		que se llega a la localidad
 Outdoors	CALLE_ESTE "calle"
  with	name_f	'calle',
 		gender	G_FEMENINO,
 		adjectives 'principal',
 		initial [; if (self hasnt visited) {
+			give self general;
 			if (DungeonMaster.heart_attack) move limbo_cadaver_a to self;
 			else move limbo_cadaver_b to self;
 			O__M(self, 2);
@@ -655,6 +676,10 @@ Outdoors	CALLE_ESTE "calle"
 			return true;
 		}],
 		description [; return O__M(self, 1); ],
+		each_turn [;
+			if (self hasnt general) DungeonMaster.wind_blows();
+			else give self ~general;
+		],
 		w_to	CALLE_OESTE,
 		b_to	[; return self.w_to(); ],
 		images	PIC_CALLE_ESTE_A,

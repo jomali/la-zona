@@ -1,4 +1,4 @@
-!% -SD
+!% -SDX
 !% +language_name=Spanish
 !% $MAX_LABELS=5000
 !% $MAX_STATIC_DATA=15000
@@ -99,6 +99,7 @@ Constant MAX_CARRIED 3;			! Máx. de objetos que se pueden llevar en mano
 Constant NO_PLACES;				! Acciones LUGARES y OBJETOS desactivadas
 Constant NO_SCORE;				! No se lleva conteo de puntuación
 Constant SIN_MENSAJES;			! Se omiten los mensajes por defecto de la lib.
+Constant WITHOUT_DIRECTIONS;	! Se omiten las dir. por defecto de la lib.
 
 !!------------------------------------------------------------------------------
 !! Constantes y variables de la extensión 'types'.
@@ -1135,6 +1136,18 @@ Verb 'no.verb'
 		new_line;
 		return true;
 	} else {
+		if (noun has door && noun has described) {
+			st = PrintParserPrefix();
+			!! Se utiliza esta estrategia en lugar de imprimir directamente el
+ 			!! nombre del objeto con '(the) noun' para evitar la creación de un
+ 			!! hipervínculo en la notificación del parser:
+			print "Ir hacia ", (el_) noun;
+			PrintToBuffer(_temp_array, _HYPERLINK_BUFFER_SIZE, noun);
+			PrintCharacterArray(_temp_array);
+			PrintParserSufix(st);
+			new_line;
+			<<Go noun>>;
+		}
 		st = PrintParserPrefix();
 		print "Examinar ";
 		PrintToBuffer(_temp_array, _HYPERLINK_BUFFER_SIZE, noun);

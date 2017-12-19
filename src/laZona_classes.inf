@@ -48,13 +48,13 @@
 !!	-	Atributo remarkable
 !!	-	Direcciones Adelante/Atrás
 !!	-	Clase Thing
-!!		+	Clase Room
-!!			*	Clase Outdoors
-!!			*	Clase Indoors
 !!		+	Clase Item
 !!		+	Clase Furniture
 !!		+	Clase Atrezzo
 !!		+	Clase NPC
+!!	-	Clase Room
+!!		+	Clase Outdoors
+!!		+	Clase Indoors
 !!	-	Clase SmartEnterable
 !!
 !!------------------------------------------------------------------------------
@@ -67,12 +67,12 @@
 !!	de esta clase de forma que también él defina su propia versión de alguna de
 !!	estas propiedades no aditivas, las rutinas del objeto "sobreescribirán"
 !!	completamente aquellas de la clase. Dicho de otra manera, si el objeto
-!!	define las suyas propias, las rutinas 'before' y *react_before* de la clase
+!!	define las suyas propias, las rutinas 'before' y 'react_before' de la clase
 !!	de la que es instancia NO SERÁN INVOCADAS en ningún momento. Sin embargo,
 !!	se puede hacer una llamada explícita a la rutina de la clase desde la
 !!	rutina del objeto. A continuación se especifica cómo un objeto 'objectName'
-!!	invocaría a la rutina 'react_before' de clase *className* de la que es
-!!	instancia:
+!!	invocaría a la rutina 'react_before' de una superclase 'className' de su
+!!	jerarquía de clases:
 !!
 !!		objectName.className::react_before();
 !!
@@ -89,24 +89,6 @@
 !!------------------------------------------------------------------------------
 
 Attribute remarkable;
-
-
-!!==============================================================================
-!!	Direcciones Adelante/Atrás
-!!------------------------------------------------------------------------------
-!!	Se añaden dos direcciones nuevas: adelante y atrás, a las 12 direcciones
-!!	por defecto de la librería: norte, sur, este, oeste, nordeste, noroeste,
-!!	sudeste, sudoeste, arriba, abajo, interior y exterior (definidas en
-!!	'Spanish.h').
-!!------------------------------------------------------------------------------
-
-Property b_to;
-CompassDirection b_obj "atrás" compass
-with name 'atras', door_dir b_to, has proper;
-
-Property f_to;
-CompassDirection f_obj "adelante" compass
- with	name 'adelante', door_dir f_to, has proper;
 
 
 !!==============================================================================
@@ -162,46 +144,6 @@ Class	Thing
 		],
 		reset [; return true; ],
 ;
-
-
-!!==============================================================================
-!!	Clase Room
-!!------------------------------------------------------------------------------
-!!	Representa un objeto localidad dentro del modelo de mundo.
-!!------------------------------------------------------------------------------
-
-Class	Room
- with	description [;
-			if (action == ##Look || self hasnt visited) self.long_description();
-			else self.short_description();
-			!! Espacio para elementos comunes a las dos descripciones.
-			return true;
-		],
-		long_description "EN CONSTRUCCIÓN.",
-		!! Por defecto, la descripción corta es la misma descripción larga:
-		short_description [; return self.long_description(); ],
-		!! Permite que se inhiba el listado automático de objetos al imprimir
-		!! la descripción de la localidad. (XXX Para ello se debe modificar el
-		!! comportamiento de la acción ##Look en el archivo de mensajes de la
-		!! librería):
-		inhibit_object_list false,
- has	light remarkable;
-
-
-!!==============================================================================
-!!	Clase Outdoors
-!!------------------------------------------------------------------------------
-
-Class	Outdoors
- class	Room;
-
-
-!!==============================================================================
-!!	Clase Indoors
-!!------------------------------------------------------------------------------
-
-Class	Indoors
- class	Room;
 
 
 !!==============================================================================
@@ -382,6 +324,46 @@ Class	NPC
 				}
 		],
  has	animate;
+
+
+ !!==============================================================================
+ !!	Clase Room
+ !!------------------------------------------------------------------------------
+ !!	Representa un objeto localidad dentro del modelo de mundo.
+ !!------------------------------------------------------------------------------
+
+ Class	Room
+  with	description [;
+ 			if (action == ##Look || self hasnt visited) self.long_description();
+ 			else self.short_description();
+ 			!! Espacio para elementos comunes a las dos descripciones.
+ 			return true;
+ 		],
+ 		long_description "EN CONSTRUCCIÓN.",
+ 		!! Por defecto, la descripción corta es la misma descripción larga:
+ 		short_description [; return self.long_description(); ],
+ 		!! Permite que se inhiba el listado automático de objetos al imprimir
+ 		!! la descripción de la localidad. (XXX Para ello se debe modificar el
+ 		!! comportamiento de la acción ##Look en el archivo de mensajes de la
+ 		!! librería):
+ 		inhibit_object_list false,
+  has	light remarkable;
+
+
+ !!==============================================================================
+ !!	Clase Outdoors
+ !!------------------------------------------------------------------------------
+
+ Class	Outdoors
+  class	Room;
+
+
+ !!==============================================================================
+ !!	Clase Indoors
+ !!------------------------------------------------------------------------------
+
+ Class	Indoors
+  class	Room;
 
 
 !!==============================================================================

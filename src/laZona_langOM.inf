@@ -118,7 +118,7 @@ callejon_basura: switch (n) {
 print "El callejón era tan estrecho y estaba tan lleno de basura que apenas se podía cruzar por allí; montones de muebles destrozados, contenedores desbordados, viejas cajas de cartón podridas e hinchadas por la humedad y pilas de escombros se acumulaban contra las paredes de ladrillo.";
 return true;
 2:	! ##Examine (B)
-print " Había ", (a) callejon_maquina_tabaco, " caída de lado entre los muebles.";
+print " Entre todo aquello destacaba especialmente ", (a) callejon_maquina_tabaco, ".";
 new_line;
 return true;
 3:	! ##Examine (C - primera vez)
@@ -155,7 +155,13 @@ return true;
 
 CANAL: switch (n) {
 1:	! ##Examine
-print "Se encontraba en la parte más profunda de un ancho canal de hormigón, junto a la boca del túnel de alcantarillado abierta en uno de los terraplenes laterales. A lo largo de las orillas se levantaban penosamente unas hileras irregulares de edificios agujereados por los disparos y las bombas. El río, casi opaco por la porquería, fluía sosegado y caudaloso por el centro del canal, arrastrando al oeste los últimos restos de aquella ciudad moribunda.";
+print "Se encontraba en la parte más profunda de un ancho canal de hormigón, junto a la boca del túnel de alcantarillado que había en uno de los terraplenes laterales. A lo largo de las orillas se levantaban penosamente unas hileras irregulares de ";
+CreateLink(canal_edificios, "edificios", 0);
+print " agujereados por los disparos y las bombas. El ";
+CreateLink(canal_rio, "río", 0);
+print ", casi opaco por la porquería, fluía sosegado y caudaloso por el centro del canal, arrastrando al ", (name) w_obj, " los últimos restos de aquella ";
+CreateLink(canal_edificios, "ciudad", 0);
+print " moribunda.";
 new_line;
 return true;
 2:	! initial (A - ataque al corazón)
@@ -165,22 +171,26 @@ return true;
 print "Inspiró hondo, preguntándose qué le esperaría allí afuera";
 return true;
 4:	! initial (C)
-print ", y atravesó a tientas el último tramo del túnel. La intensa luz del exterior le hirió en los ojos cuando se encontró fuera, impidiéndole ver nada durante unos instantes. A medida que sus pupilas se iban acostumbrando paulatinamente a la nueva claridad, también se fue dibujando ante él lentamente el contorno sobrecogedor de la ciudad.";
+print ", y atravesó a tientas el último tramo del túnel. La intensa luz del exterior le hirió en los ojos cuando se encontró fuera, impidiéndole ver nada durante unos instantes. A medida que sus pupilas se iban acostumbrando paulatinamente a la nueva claridad, también se fue dibujando ante él lentamente el contorno sobrecogedor de la ";
+CreateLink(canal_edificios, "ciudad", 0);
+print ".";
 new_line;
 return true;
 5:	! cant_go
-print "No era buena idea quedarse en el canal; estaba demasiado a descubierto. Tenía que ir hacia la escalera y salir de allí.";
+print "No era buena idea quedarse en el canal; estaba demasiado a descubierto. Tenía que ir hacia ", (the) canal_escalera, " y salir de allí.";
 new_line;
 return true;
 6:	! ##Go:n_obj|ne_obj|nw_obj
 new_line;
 return true;
 7:	! ##Go:e_obj|w_obj (A - si no se han examinado los edificios)
-print " Aunque no parecía haber signos de vida por ninguna parte, no era buena idea continuar por el canal. Demasiado a descubierto. Sería un blanco fácil en caso de que hubiese francotiradores escondidos entre las ruinas.";
+print " Aunque no parecía haber signos de vida por ninguna parte, no era buena idea continuar por el canal. Demasiado a descubierto. Sería un blanco fácil en caso de que hubiese francotiradores escondidos entre las ";
+CreateLink(canal_edificios, "ruinas", 0);
+print ".";
 new_line;
 return true;
 8:	! ##Go:e_obj|w_obj (B)
-print "No era buena idea continuar por el canal. Demasiado descubierto. Sería un blanco fácil en caso de que hubiese francotiradores enemigos escondidos entre los edificios de las orillas.";
+print "No era buena idea continuar por el canal. Demasiado descubierto. Sería un blanco fácil en caso de que hubiese francotiradores enemigos escondidos entre ", (the) canal_edificios, " de las orillas.";
 new_line;
 return true;
 }
@@ -197,11 +207,13 @@ return true;
 
 canal_escalera: switch (n) {
 1:	! ##Examine
-print "Los escalones estaban tallados en el hormigón. Ascendían por la pendiente hasta la orilla sur del canal.";
+print "Los escalones estaban tallados en el hormigón. Ascendían por la pendiente hasta la orilla ", (name) s_obj, " del canal.";
 new_line;
 return true;
 2:	! describe
-print "A un puñado de metros podía ver una tosca escalinata labrada directamente sobre el hormigón que ascendía fuera del canal.";
+print "A un puñado de metros podía ver una tosca ";
+CreateLink(canal_escalera, "escalinata", 0);
+print " labrada directamente sobre el hormigón que ascendía fuera del canal.";
 new_line;
 return true;
 3:	! default
@@ -306,7 +318,7 @@ return true;
 
 limbo_cielo: switch (n) {
 1:	! ##Examine
-print "Estaba completamente encapotado. De un gris plomizo. Como el resto de la ciudad.";
+print "El cielo estaba completamente encapotado. De un gris plomizo. Como el resto de la ciudad.";
 new_line;
 return true;
 }
@@ -334,16 +346,56 @@ new_line;
 return true;
 }
 
-limbo_polvo: switch (n) {
+limbo_suelo: switch (n) {
 1:	! ##Examine
-print "El polvo le había arrebatado su color a la ciudad, sepultada por completo bajo una gruesa capa gris.";
+print "Caminaba sobre una alfombra gris. El polvo le había arrebatado el color a la ciudad.";
+new_line;
+return true;
+2:	! ##Examine (B - en la CALLE_ESTE)
+print "Nevaba ceniza sobre la calle, todo cubierto de ceniza y polvo.";
+new_line;
+return true;
+3:	! each_turn (A)
+print "Lo único que se movía en la calle era la ";
+CreateLink(limbo_suelo, "ceniza", 0);
+print " levantada por el viento.";
+new_line;
+return true;
+4:	! each_turn (B)
+print "Las ";
+CreateLink(limbo_suelo, "cenizas", 0);
+print " hacían pequeños remolinos sobre el asfalto.";
+new_line;
+return true;
+5:	! each_turn (C)
+print "Tosió ásperamente por culpa del ";
+CreateLink(limbo_suelo, "polvo", 0);
+print " y la ";
+CreateLink(limbo_suelo, "ceniza", 0);
+print ".";
+new_line;
+return true;
+6:	! each_turn (D)
+print "El aire estaba cargado de ";
+CreateLink(limbo_suelo, "ceniza", 0);
+print " y ";
+CreateLink(limbo_suelo, "polvo", 0);
+print ".";
+new_line;
+return true;
+7:	! each_turn (E)
+print "El viento levantaba el ";
+CreateLink(limbo_suelo, "polvo", 0);
+print " y la ";
+CreateLink(limbo_suelo, "ceniza", 0);
+print " del suelo. Llevados, esparcidos y llevados de nuevo.";
 new_line;
 return true;
 }
 
 TUNEL: switch (n) {
 1:	! ##Examine (A)
-print "Había estado caminando en la oscuridad más absoluta, siguiendo a ciegas el muro que tenía a su derecha para no desorientarse. Una estrategia que había terminado por funcionarle. Algo más adelante veía recortarse finalmente un pequeño semicírculo de luz; estaba a punto de alcanzar la salida.";
+print "Había estado caminando en ", (the) tunel_oscuridad, " más absoluta, siguiendo a ciegas ", (the) tunel_muro, " que tenía a su derecha para no desorientarse. Una estrategia que había terminado por funcionar. Algo más adelante veía recortarse finalmente un pequeño semicírculo de luz; estaba a punto de alcanzar ", (the) tunel_salida, ".";
 new_line;
 return true;
 2:	! ##Examine (B - Si se permite que Stalker vuelva a entrar al túnel)
@@ -353,7 +405,7 @@ print "Un repentino pinchazo le hizo encogerse sobre sí mismo. Se llevó las mano
 new_line;
 return true;
 4:	! ataque al corazón (B)
-print "La punzante presión le irradiaba desde la altura del esternón y se extendía a través de hombros y cuello hasta atenazarle los brazos y la mandíbula. Tenía la espalda empapada por completo de un sudor frío. Por un momento notó cómo lo dominaba el pánico, pero acto seguido luchó por sobreponerse a él y se concentró en controlar la respiración desbocada. Aún permaneció unos minutos en el suelo mientras recuperaba el aliento. El dolor, por su parte, comenzaba a atenuarse tanto como para poder apartarlo en un rincón de su mente donde sería capaz ignorarlo. Eso estaba bien. No podía morir allí. Tanteó a su alrededor hasta encontrar el fusil que se le había caído de las manos y se levantó de nuevo. Tenía que continuar.";
+print "La punzante presión le irradiaba desde la altura del esternón y se extendía a través de hombros y cuello hasta atenazarle los brazos y la mandíbula. Tenía la espalda empapada por completo de un sudor frío. Por un momento notó cómo lo dominaba el pánico, pero enseguida luchó por sobreponerse a él y se concentró en controlar la respiración desbocada. Aún permaneció unos minutos en el suelo recuperando el aliento. El dolor, mientras tanto, se atenuó lo suficiente como para poder apartarlo en un rincón de su mente donde sería capaz de ignorarlo. Eso estaba bien. No podía morir allí. Tanteó a su alrededor hasta encontrar ", (the) limbo_fusil, " que se le había caído de las manos y se levantó de nuevo. Tenía que continuar.";
 new_line;
 return true;
 5:	! disparo (A)
@@ -365,7 +417,9 @@ print "Se había convertido en un acto reflejo desde el mismo momento en que habí
 new_line;
 return true;
 7:	! cant_go
-print "Era imposible orientarse bien en la oscuridad, por eso había estado usando las paredes del túnel como referencia con la que guiarse. Así, se limitaba a seguir ", (name) f_obj, " o ", (name) b_obj, " a lo largo del muro.";
+print "Era imposible orientarse bien en la oscuridad, por eso había estado usando las ";
+CreateLink(tunel_muro, "paredes", 0);
+print " del túnel como referencia con la que guiarse. Así, se limitaba a seguir ", (name) f_obj, " o ", (name) b_obj, " a lo largo ", (del) tunel_muro, ".";
 new_line;
 return true;
 8:	! ##Go: b_obj
@@ -389,7 +443,7 @@ return true;
 }
 
 tunel_muro: switch (n) {
-1:	! ##Touch
+1:	! ##Examine/##Touch
 print "Aunque no ", (lo) obj, " podía ver, notaba los húmedos ladrillos a su lado.";
 new_line;
 return true;
@@ -397,7 +451,9 @@ return true;
 
 tunel_oscuridad: switch (n) {
 1:	! ##Examine
-print "No podía ver nada. Aparte de aquella luz que se recortaba algo más ", (name) f_obj, ".";
+print "No podía ver nada. Aparte de aquella ";
+CreateLink(tunel_salida, "luz", 0);
+print " que se recortaba algo más ", (name) f_obj, ".";
 new_line;
 return true;
 2:	! ##Drop (x1)
@@ -405,7 +461,7 @@ print "Si dejaba ", (the) x1, " allí era posible que después no pudiese encontra
 new_line;
 return true;
 3:	! ##Rub (x1)
-print "Era imposible limpiar ", (the) x1, ", o cualquier otra cosa, si no podía ver", (lo) x1, ".";
+print "Era imposible limpiar ", (the) x1, " ---o cualquier otra cosa--- si no podía ver", (lo) x1, ".";
 new_line;
 return true;
 }
