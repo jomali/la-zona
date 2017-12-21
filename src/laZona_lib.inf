@@ -514,26 +514,6 @@ Attribute described; ! Indica si un objeto ha sido descrito al jugador
 !!	@version 1.0
 !!------------------------------------------------------------------------------
 
-[ LanguageDirection dir;
-	switch (dir) {
-		n_to:	print "al norte";
-		s_to:	print "al sur";
-		e_to:	print "al este";
-		w_to:	print "al oeste";
-		ne_to:	print "al nordeste";
-		nw_to:	print "al noroeste";
-		se_to:	print "al sudeste";
-		sw_to:	print "al suroeste";
-		u_to:	print "arriba";
-		d_to:	print "abajo";
-		in_to:	print "dentro";
-		out_to:	print "fuera";
-		b_to:	print "atrás";
-		f_to:	print "adelante";
-		default: return RunTimeError(9, dir);
-	}
-];
-
 CompassDirection n_obj "norte" compass
  with	name 'n//' 'norte', door_dir n_to;
 
@@ -575,6 +555,26 @@ Property f_to;
 CompassDirection f_obj "adelante" compass
  with	name 'f//' 'adelante', door_dir f_to,
  has	proper;
+
+[ LanguageDirection dir;
+	switch (dir) {
+		n_to:	print "al norte";
+		s_to:	print "al sur";
+		e_to:	print "al este";
+		w_to:	print "al oeste";
+		ne_to:	print "al nordeste";
+		nw_to:	print "al noroeste";
+		se_to:	print "al sudeste";
+		sw_to:	print "al suroeste";
+		u_to:	print "arriba";
+		d_to:	print "abajo";
+		in_to:	print "dentro";
+		out_to:	print "fuera";
+		b_to:	print "atrás";
+		f_to:	print "adelante";
+		default: return RunTimeError(9, dir);
+	}
+];
 
 
 !!==============================================================================
