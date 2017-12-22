@@ -191,6 +191,7 @@ Replace ChangePlayer;			! Rutina para cambiar el objeto jugable PJ
 Replace DrawStatusLine;			! Dibuja la barra de estado
 Replace ExamineSub;				! Rutina para la acción ##Examine
 Replace GetGNAOfObject;			! Rutina para obtener el GNA de un objeto
+Replace LanguageDirection;		! Imprime el nombre de las direcciones
 Replace LMode1Sub;				! Lookmode 1: Breve
 Replace LMode2Sub;				! Lookmode 2: Largo (establecido por defecto)
 Replace LMode3Sub;				! Lookmode 3: Superbreve
@@ -656,15 +657,19 @@ Global _current_location = 0;
 	#Endif; ! TARGET_GLULX;
 	!! Selecciona estilo de texto resaltado:
 	st = _current_style;
-	if (style >= 1 && style <= 3) SetTextStyle(style);
-	if (style == 0) {
-		SetTextStyle(_keyword_st3); ! Por defecto: estilo para otros objetos
-		if (metaclass(item) == Object) {
-			if (item has remarkable)
-				SetTextStyle(_keyword_st1); ! Estilo para objetos importantes
-			else if ((item ofclass Room or CompassDirection) || (item has door))
-				SetTextStyle(_keyword_st2); ! Estilo para direcciones
-		}
+	switch (style) {
+		1:	SetTextStyle(_keyword_st1);
+		2:	SetTextStyle(_keyword_st2);
+		3:	SetTextStyle(_keyword_st3);
+		default:
+			SetTextStyle(_keyword_st3); ! Por defecto: estilo de otros objetos
+			if (metaclass(item) == Object) {
+				if (item has remarkable)
+					SetTextStyle(_keyword_st1); ! Estilo de objetos importantes
+				else if ((item ofclass Room or CompassDirection)
+ 					|| (item has door))
+					SetTextStyle(_keyword_st2); ! Estilo de direcciones
+			}
 	}
 	!! Imprime texto del hipervínculo:
 	if (metaclass(alt) == String) item = alt;
@@ -677,7 +682,7 @@ Global _current_location = 0;
 			if (indef_mode && item.&short_name_indef ~= 0
 				&& PrintOrRun(item, short_name_indef, 1) ~= 0)
 				jump linkTextPrinted;
-			if (item.&short_name ~=0 && PrintOrRun(item, short_name, 1) ~= 0)
+			if (item.&short_name ~= 0 && PrintOrRun(item, short_name, 1) ~= 0)
 				jump linkTextPrinted;
 			print (object) item;
 		default:
@@ -1156,6 +1161,30 @@ Verb 'no.verb'
 		new_line;
 		<<Examine noun>>;
 	}
+];
+
+!!------------------------------------------------------------------------------
+!! ##Dirs
+!!------------------------------------------------------------------------------
+
+Verb meta 'dirs' 'direcciones' 'salidas'
+	*								-> Dirs
+;
+VerboIrregular "listar salidas" with imperativo
+	'dirs' 'direcciones' 'salidas';
+
+Property exits;
+
+[ DirsSub;
+	if (real_location provides exits
+		&& metaclass(real_location.exits) ~= nothing) {
+		!! Si es un string, lo imprime en pantalla, añade un salto de línea y
+		!! retorna 'verdadero'. Si es una rutina, la ejecuta, añade un salto de
+		!! línea y retorna su resultado
+		return real_location.exits();
+	}
+	print_ret (parser) "No se observan salidas obvias desde la localidad
+	actual.";
 ];
 
 !!------------------------------------------------------------------------------

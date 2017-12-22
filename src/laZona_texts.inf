@@ -52,6 +52,49 @@
 	switch (obj) {
 
 !!------------------------------------------------------------------------------
+AZOTEA: switch (n) {
+1:	! ##Examine
+print "En armonía con el resto del edificio, la azotea estaba casi completamente desierta, salvo por una sencilla silla de madera que había cerca de la cornisa. Era evidente que en aquel sitio había estado apostado un francotirador en algún momento. No le extrañó, el único acceso hasta allí arriba era la puerta por la que había llegado, por lo que uno podría defender aquella posición con cierta facilidad, y ofrecía una vista excelente de la calle y de los edificios de alrededor.";
+new_line;
+return true;
+2:	! intial (A - primera vez)
+print "El interior se hallaba totalmente vacío. Incluso los marcos de madera de las puertas habían desaparecido pasto de los incendios. Alcanzó unas precarias escaleras y fue ascendiendo por ellas lentamente, temiendo que el suelo pudiese ceder bajo sus pies en cualquier momento. El estado del edificio era deplorable; además de algunos agujeros de bala había grandes boquetes en las paredes provocados por las bombas, y descubrió algunas habitaciones en las que se había desplomado el techo. La escalera aguantó su peso, no obstante, y logró coronar el final de la escalera sin accidentes. Salió a una azotea despejada.";
+new_line;
+return true;
+3:	! initial (B)
+print "Entró al edificio y subió la escalera con mucho cuidado hasta llegar a la azotea.";
+new_line;
+return true;
+4:	! cant_go
+print "Sólo podía volver [b_obj] por la [azotea_puerta].";
+new_line;
+return true;
+5:	! exits
+print "Salidas visibles: [d_obj].";
+return true;
+}
+
+!!------------------------------------------------------------------------------
+azotea_colillas: switch (n) {
+1:	! ##Examine
+print "También él había tenido un paquete de tabaco en algún momento. Aunque ya no era capaz de recordar cuándo se le había acabado...";
+new_line;
+return true;
+2:	! describe
+print "Había un montón de [azotea_colillas] consumidas en el suelo, cerca de la cornisa.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
+azotea_silla: switch (n) {
+1:	! ##Examine
+print "Al acercarse a la silla comprobó que incluso había un montón de colillas consumidas en el suelo.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
 calle_coches: switch (n) {
 1:	! ##Examine
 print "Estaban reducidos a poco más que simples amasijos de metal ennegrecido.";
@@ -110,7 +153,7 @@ return true;
 !!------------------------------------------------------------------------------
 CALLE_ESTE: switch (n) {
 1:	! ##Examine
-print "Un incendio debía estar consumiendo algún tejado cercano. Notó el humo irritándole la garganta y los ojos un momento antes de que empezase a ver caer ceniza a su alrededor, pausadamente, como una especie de nieve fina y reseca. En aquel punto de la calle una buena parte del pavimento se había hundido, formando un talud de cascotes que descendía en pendiente hasta el canal.";
+print "Un incendio debía estar consumiendo algún tejado cercano. Notó el humo irritándole la garganta y los ojos un momento antes de que empezase a ver caer ceniza a su alrededor, pausadamente, como una especie de nieve fina y reseca. La calle continuaba en línea recta hacia el [e_obj]. En aquel punto una buena parte del pavimento se había hundido, formando un talud de cascotes que descendía en pendiente hasta el canal.";
 new_line;
 return true;
 2:	! initial (A)
@@ -122,6 +165,13 @@ return true;
 4:	! initial (C)
 print ". Crujido de cristales rotos bajo sus botas. Los agujeros de las ventanas parecían cuencas vacías que lo observaban acusadoramente entre susurros del viento. Por lo demás imperaba el silencio.";
 new_line;
+return true;
+5:	! cant_go
+print "La calle continuaba recta, de [w_obj] a [e_obj]. Sólo podía continuar hacia [f_obj] o volver [b_obj].";
+new_line;
+return true;
+6:	! exits
+print "Salidas visibles: [e_obj] y [w_obj].";
 return true;
 }
 
@@ -144,11 +194,10 @@ print "Un doloroso pinchazo en el pecho le detuvo en seco. Notaba la espalda y l
 new_line;
 return true;
 4:	! cant_go
-print "No podía ir por allí. ";
+print "No podía ir por allí. La calle se extendía de [e_obj] a [w_obj], paralela al canal. Al [n_obj] se abría el estrecho callejón por el que había venido.";
 return true;
 5:	! exits
-print "La calle se extendía de [e_obj] a [w_obj], paralela al canal. Al [n_obj] se abría el estrecho callejón por el que había venido.";
-new_line;
+print "Salidas visibles: [n_obj], [e_obj] y [w_obj].";
 return true;
 }
 
@@ -170,13 +219,20 @@ CALLEJON: switch (n) {
 print "Estaba en un callejón estrecho, abierto como una herida entre dos edificios de sucias paredes de ladrillo. Montones de muebles destrozados y otros desperdicios se amontonaban a lo largo de prácticamente todo el callejón, desde la valla metálica que franquaba el paso al canal, al norte, al extremo sur opuesto.";
 new_line;
 return true;
-2:	! initial (A - primera vez)
+2:	! initial (A - desde el canal, primera vez)
 print "Era imposible saber si había tiradores enemigos apostados al otro lado del río pero no podía volver atrás, de modo que si los había confió que no estuviesen mirando justo allí en ese momento y echó a correr hacia la escalera.";
 new_line;
 return true;
-3:	! initial (B)
+3:	! initial (B - desde el canal)
 print "Subió a toda prisa por el terraplén y saltó sobre la valla caída de lo alto.";
 new_line;
+return true;
+4:	! cant_go
+print "No podía ir por allí. El callejón se extendía de [n_obj] a [s_obj]. Estaba además la [callejon_puerta] trasera en la pared [e_obj].";
+new_line;
+return true;
+5:	! exits
+print "Salidas visibles: [n_obj], [s_obj] y [e_obj].";
 return true;
 }
 
@@ -196,7 +252,18 @@ return true;
 }
 
 !!------------------------------------------------------------------------------
+callejon_edificios: switch (n) {
+1:	! ##Examine
+print "Los altos muros de ladrillo se cernían ominosamente sobre su cabeza.";
+new_line;
+return true;
+}
+
+!!------------------------------------------------------------------------------
 callejon_maquina_tabaco: switch (n) {
+!! Golpea con la culata del fusil sobre la tapa de la máquina hasta que cede y se abre violentamente. No tenía cajetillas dentro. Sin embargo sí recupera una moneda.
+!!
+!! La tapa se abre con un estallido de plástico. No había cajetillas dentro. Sin embargo sí recupera una moneda.
 1:	! ##Examine (A - cerrada)
 print "Estaba algo aplastada, pero se encontraba en mejores condiciones que la mayor parte de la basura arrojada a su alrededor. Merecía la pena buscar dentro. Quizá aún pudiese encontrar algo de tabaco.";
 new_line;
@@ -246,7 +313,7 @@ print ", y atravesó a tientas el último tramo del túnel. La intensa luz del exte
 new_line;
 return true;
 5:	! cant_go
-print "No era buena idea quedarse en el canal; estaba demasiado a descubierto. Tenía que ir hacia [la canal_escalera] y salir de allí.";
+print "Continuar en el canal no era buena idea; estaba demasiado a descubierto. Y tampoco podía volver [b_obj]. Tenía que usar [la canal_escalera] y salir de allí.";
 new_line;
 return true;
 6:	! ##Go:n_obj|ne_obj|nw_obj
@@ -260,6 +327,9 @@ return true;
 8:	! ##Go:e_obj|w_obj (B)
 print "No era buena idea continuar por el canal. Demasiado descubierto. Sería un blanco fácil en caso de que hubiese francotiradores enemigos escondidos entre [los canal_edificios] de las orillas.";
 new_line;
+return true;
+9:	! exits
+print "Salidas visibles: [u_obj].";
 return true;
 }
 
@@ -496,6 +566,9 @@ return true;
 print "Volvía a reinar un silencio absoluto, roto tan sólo por las gotas de agua que caían entre las sombras.";
 new_line;
 return true;
+12:	! exits
+print "Salidas visibles: [f_obj] y [b_obj].";
+return true;
 }
 
 !!------------------------------------------------------------------------------
@@ -508,15 +581,27 @@ return true;
 
 !!------------------------------------------------------------------------------
 tunel_oscuridad: switch (n) {
-1:	! ##Examine
-print "No podía ver nada. Aparte de aquella [tunel_salida](luz) que se recortaba algo más [f_obj].";
+1:	! ##Examine (A)
+print "No podía ver nada aparte de aquella [tunel_salida](luz) que se recortaba algo más [f_obj].";
 new_line;
 return true;
-2:	! ##Drop (x1)
+2:	! ##Examine (B)
+print "Todo cuanto podía ver era el semicírculo de [tunel_salida](luz:3) de [la tunel_salida].";
+new_line;
+return true;
+3:	! ##Examine (C)
+print "Las [tunel_oscuridad](sombras) le impedían ver nada. Salvo por la [tunel_salida](luz) que se recortaba más [f_obj].";
+new_line;
+return true;
+4:	! ##Examine (D)
+print "No podía ver nada en [la tunel_oscuridad]. Salvo el [tunel_salida](semicírculo de luz:3) de [la tunel_salida].";
+new_line;
+return true;
+5:	! ##Drop (x1)
 print "Si dejaba [el x1] allí era posible que después no pudiese encontrar", (lo) x1, " de nuevo en [la tunel_oscuridad]. Era mejor quedárse", (lo) x1, " consigo por el momento.";
 new_line;
 return true;
-3:	! ##Rub (x1)
+6:	! ##Rub (x1)
 print "Era imposible limpiar [el x1] ---o cualquier otra cosa--- si no podía ver", (lo) x1, ".";
 new_line;
 return true;

@@ -185,7 +185,8 @@ NPC		-> Stalker "Stalker"
 		description [; <<Inv>>; ],
  has	male proper;
 
-!!	 -	'general' se activa después de haber limpiado el arma por primera vez. Después ya no se desactiva.
+!!	 -	'general' se activa después de haber limpiado el arma por primera vez.
+!!		Después ya no se desactiva.
 Item	limbo_fusil "fusil" Stalker
  with	name_f	'arma' 'culata',
 		name_m	'canon' 'fusil' 'gatillo' 'rifle',
@@ -284,13 +285,19 @@ Indoors	TUNEL "Interior del túnel"
 		b_to	[; return O__M(self, 8); ],
 		out_to	[; return self.f_to(); ],
 		cant_go	[; return O__M(self, 7); ],
+		exits	[st;
+			st = PrintParserPrefix();
+			O__M(self, 12);
+			PrintParserSufix(st);
+			new_line;
+			return true;
+		],
 		images	PIC_TUNEL_A,
  private
 		listened false,
  has	male;
 
-!!	 -	'general' se activa para evitar las comprobaciones de la rutina
-!!		'react_before' del objeto
+!!	 -	'on' activa las comprobaciones de la rutina 'react_before' del objeto
 Atrezzo	-> tunel_oscuridad "oscuridad"
  with	name_f	'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
 		name_fp	'penumbras' 'sombras' 'tinieblas',
@@ -300,32 +307,32 @@ Atrezzo	-> tunel_oscuridad "oscuridad"
 			'absoluta' 'absolutas' 'densa' 'densas' 'espesa' 'espesas'
 			'impenetrable' 'impenetrables' 'inescrutabe' 'inescrutables'
 			'insondable' 'insondables',
-		description [; return O__M(self, 1); ],
+		description [;	return O__M(self, random(4)); ],
 		react_before [;
-			if (self has general) return false;
+			if (self hasnt on) return false;
 			Consult, Examine, Look, LookUnder, Read, Search:
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
 				if (noun == tunel_muro) return false;
 				if (noun == tunel_salida) return false;
-				return O__M(self, 1);
+				<<Examine self>>;
 			DefaultAction: return false;
 			Drop:
 				if (noun == nothing) return false;
 				if (~~IndirectlyContains(player, noun)) return false;
-				return O__M(self, 2, noun);
+				return O__M(self, 5, noun);
 			Inv, InvTall, InvWide:
-				return O__M(self, 1);
+				<<Examine self>>;
 			Rub:
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
 				if (noun == tunel_muro) return false;
 				if (noun == tunel_salida) return false;
-				return O__M(self, 3, noun);
+				return O__M(self, 6, noun);
 		],
- has	female;
+ has	female on;
 
 Atrezzo	-> tunel_muro "muro"
  with	name_f	'pared' 'tapia',
@@ -392,6 +399,13 @@ Outdoors	CANAL "canal"
 		b_to	[; return self.s_to(); ],
 		out_to	[; return self.u_to(); ],
 		cant_go	[; return O__M(self, 5); ],
+		exits	[st;
+			st = PrintParserPrefix();
+			O__M(self, 9);
+			PrintParserSufix(st);
+			new_line;
+			return true;
+		],
 		images	PIC_CANAL_A PIC_CANAL_B,
  has	male;
 
@@ -463,6 +477,14 @@ Outdoors	CALLEJON "callejón"
 		s_to	CALLE_OESTE,
 		f_to	[; return self.s_to(); ],
 		b_to	[; return self.n_to(); ],
+		cant_go	[; return O__M(self, 4); ],
+		exits	[st;
+			st = PrintParserPrefix();
+			O__M(self, 5);
+			PrintParserSufix(st);
+			new_line;
+			return true;
+		],
 		images	PIC_CALLEJON_A PIC_CALLEJON_B,
  has	male;
 
@@ -541,6 +563,14 @@ Outdoors	AZOTEA "azotea de edificio"
 		description [; return O__M(self, 1); ],
 		d_to	CALLEJON,
 		b_to	[; return self.d_to(); ],
+		cant_go	[; return O__M(self, 4); ],
+		exits	[st;
+			st = PrintParserPrefix();
+			O__M(self, 5);
+			PrintParserSufix(st);
+			new_line;
+			return true;
+		],
 		images	PIC_AZOTEA_A PIC_AZOTEA_B,
  has	female;
 
@@ -559,8 +589,7 @@ Atrezzo	-> azotea_colillas "colillas"
 		name_m	'cigarrillo' 'cigarro' 'tabaco',
 		name_mp	'cigarrillos' 'cigarros',
 		gender	G_FEMENINO + G_PLURAL,
-		adjectives
-			'consumida' 'consumidas' 'consumido' 'consumidos',
+		adjectives 'consumida' 'consumidas' 'consumido' 'consumidos',
 		description [; return O__M(self, 1); ],
  has	female pluralname;
 
@@ -615,9 +644,13 @@ Outdoors	CALLE_OESTE "calle"
 		w_to	calle_edificio_desplomado,
 		f_to	[; return self.e_to(); ],
 		b_to	[; return self.n_to(); ],
-		cant_go [;
-			O__M(self, 3);
-			return O__M(self, 4);
+		cant_go [; return O__M(self, 4); ],
+		exits	[st;
+			st = PrintParserPrefix();
+			O__M(self, 5);
+			PrintParserSufix(st);
+			new_line;
+			return true;
 		],
 		images PIC_CALLE_OESTE_A PIC_CALLE_OESTE_B,
  has	female;
@@ -705,6 +738,14 @@ Outdoors	CALLE_ESTE "calle"
 		description [; return O__M(self, 1); ],
 		w_to	CALLE_OESTE,
 		b_to	[; return self.w_to(); ],
+		cant_go	[; return O__M(self, 5); ],
+		exits	[st;
+			st = PrintParserPrefix();
+			O__M(self, 6);
+			PrintParserSufix(st);
+			new_line;
+			return true;
+		],
 		images	PIC_CALLE_ESTE_A,
  has	female;
 

@@ -4,7 +4,6 @@ TODO:
 -	Comprobar que la configuración se escribe/lee correctamente desde el fichero.
 -	Cambiar nombre de _temp_array
 -	Introducir únicamente nombres de objetos fuera del Scope. Para que en lugar del mensaje "La acción x no está definida" muestre el mensaje "No se puede interactuar con x en este momento".
--	Terminar de incluir hipervínculos en las descripciones
 
 -	CANAL: Crear entrada al túnel
 -	CALLEJON: Descripciones de los edificios
