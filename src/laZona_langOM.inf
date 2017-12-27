@@ -162,7 +162,7 @@ print "No podía ir por allí. El callejón se extendía de ", (name) n_obj, " a ", 
 new_line;
 return true;
 5:	! exits
-print "Salidas visibles: ", (name) n_obj, ", ", (name) s_obj, " y ", (name) in_obj, ".";
+print "Salidas visibles: ", (name) n_obj, ", ", (name) s_obj, " y ", (name) e_obj, ".";
 return true;
 }
 
@@ -287,7 +287,18 @@ SpanishNominativePronoun(obj);
 
 canal_rio: switch (n) {
 1:	! ##Examine
-print "Plásticos, trozos de madera calcinada y otros bultos imprecisos, medio sumergidos en las aguas turbias, eran arrastrados pausadamente hacia el oeste.";
+print "Plásticos, trozos de madera calcinada y otros bultos imprecisos, medio sumergidos en las aguas turbias, eran arrastrados lentamente por la corriente.";
+new_line;
+return true;
+}
+
+canal_tunel: switch (n) {
+1:	! ##Examine
+print "Una abertura negra que desembocaba en el canal.";
+new_line;
+return true;
+2:	! ##Enter
+print "No podía volver. En aquella dirección ya no quedaba nada.";
 new_line;
 return true;
 }
@@ -301,80 +312,72 @@ print " ", (emph) "¿Qué? ¿Cómo?... ¿cómo he llegado aquí?", "";
 return true;
 }
 
-limbo_cadaver_a: switch (n) {
-1:	! ##Examine (A - primera vez)
+limbo_cadaver: switch (n) {
+1:	! ##Examine (A - ataque al corazón: primera vez)
 print "Un escalofrío le sacudió mientras se acercaba al cuerpo. Aún le separaba de él al menos una docena de pasos y apenas se podía distinguir nada por culpa del polvo y la ceniza, pero estaba seguro de que aquel soldado vestía un uniforme igual que el suyo... No podía recordar con claridad. Por culpa del agotamiento quizá, o por el dolor cada vez más agudo que amenazaba con ocuparlo todo. ¿Cuándo había perdido a su unidad? ¿Cuánto hacía que vagaba sólo por aquella ciudad fantasma? ¿Habían pasado horas? ¿Días? En todo este tiempo ni siquiera había visto los cadáveres que sin duda deberían haber estado desperdigados por doquier. Hasta entonces.";
 new_line;
 return true;
-2:	! ##Examine (B)
+2:	! ##Examine (B - ataque al corazón)
 print "Cruzó los últimos metros que le separaban del cadáver, preguntándose si sería capaz de reconocer en él a alguno de sus antiguos compañeros. Cuando lo alcanzó, el mundo entero se detuvo. Sus manos y su espalda estaban cubiertos de un sudor que de pronto se sentía intolerablemente frío. Notaba los oídos palpitar con una potencia atroz. Las piernas bloqueadas, apenas capaces de soportar un peso que parecía haberse multiplicado. La mente embotada... Lo reconoció, desde luego. No inmediatamente, pero reconoció al soldado; era él.
 ^^
 Jadeando, incrédulo, recorrió con la mirada los rasgos de aquel cuerpo idéntico al suyo que estaba tumbado en el suelo, mientras su cerebro intentaba procesar lo imposible, desbordado por una vorágine de pensamientos incoherentes. Miraba a través de sus ojos marrones los marrones ojos vidriosos perdidos en la nada que eran también suyos. No podía ser de ninguna manera. Pero a pesar de todo era. Cuando el tiempo reanudó su marcha, observó el cadáver con más detalle. No había manchas de sangre ni heridas visibles. Yacía de espaldas, con las manos aferrándose el torso, como si le hubiese sorprendido un ataque cardíaco... y en ese momento su rostro se puso tan lívido como aquel que tenía a sus pies...";
 new_line;
 return true;
-3:	! describe (A - primera vez)
-print "Saltó por encima de un montón de ladrillos y lo vio. El cuerpo sin vida de un soldado. Yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
-new_line;
-return true;
-4:	! describe (B)
-print "El cadáver de un soldado yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
-new_line;
-return true;
-5:	! describe (C - examinado)
-print "Uno de sus camaradas yacía muerte unos metros más allá, semienterrado entre los escombros y la ceniza.";
-new_line;
-return true;
-6:	! ##Search (A)
-print "Tal vez tuviese algo de valor en los bolsillos. Pero tendría que acercarse más para comprobarlo.";
-new_line;
-return true;
-7:	! ##Search (B)
-print "Le rebuscó en los bolsillos, pero no tenía nada.";
-new_line;
-return true;
-8:	! ##Search (C)
-print "Dentro de los bolsillos del uniforme encontró ";
-WriteListFrom(child(limbo_cadaver_a), ENGLISH_BIT + PARTINV_BIT);
-print ".";
-new_line;
-return true;
-}
-
-limbo_cadaver_b: switch (n) {
-1:	! ##Examine (A - primera vez)
+3:	! ##Examine (C - disparo: primera vez)
 print "Fue acercándose lentamente al soldado con el fusil en alto, preparado para disparar de nuevo si era necesario. Aún les separaba cerca de unos diez metros, pero entonces pudo ver la sangre salpicando los restos del pilar de hormigón caído junto al cuerpo inmóvil. Y vio algo más. Aquel soldado llevaba un uniforme como el suyo. Había matado a uno de sus compañeros.";
 new_line;
 return true;
-2:	! ##Examine (B)
+4:	! ##Examine (D - disparo)
 print "Desencajado cruzó los últimos metros que le separaban del cuerpo, preguntándose si sería capaz de reconocer al hombre al que acababa de matar. Había caído de bruces, así que únicamente era capaz de verle la espalda manchada de polvo y sangre. Se inclinó sobre él y le dio la vuelta suavemente hasta dejarle de espaldas. Entonces el tiempo pareció detenerse. La cara sucia que miraba hacia el cielo con ojos vidriosos era la suya. Resultaba imposible, pero aquel cuerpo sin vida del suelo era él. Era él.
 ^^
 Su mente daba vueltas en un torbellino caótico y sin sentido, pero entonces una idea cobró forma entre la confusión. Alarmado se incorporó y giró la cabeza hacia la azotea del edificio del otro extremo de la calle. Allí estaba, una forma gris, apuntándole desde la cornisa con un fusil semiautomático...";
 new_line;
 return true;
-3:	! describe (A - primera vez)
+5:	! describe (A - ataque al corazón: primera vez)
+print "Saltó por encima de un montón de ladrillos y lo vio. El cuerpo sin vida de un soldado. Yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+6:	! describe (B) - ataque al corazón)
+print "El cadáver de un soldado yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+7:	! describe (C - ataque al corazón: examinado)
+print "Uno de sus camaradas yacía muerto unos metros más allá, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+8:	! describe (D - disparo: primera vez)
 print "Continuó andando entre los montones de escombros, intentando rodear el socavón. Fue entonces cuando lo vio; estaba en el suelo, a unos veinte metros de distancia, tras los restos de un pilar derrumbado. ¿Le habría alcanzado?";
 new_line;
 return true;
-4:	! describe (B)
+9:	! describe (E - disparo)
 print "El soldado yacía en el suelo, a unos veinte metros de distancia.";
 new_line;
 return true;
-5:	! describe (C - examinado)
+10:	! describe (F - disparo: examinado)
 print "El cuerpo inmóvil de uno de sus camaradas yacía de bruces sobre un charco de sangre a unos metros de donde se encontraba.";
 new_line;
 return true;
-6:	! ##Search (A)
+11:	! ##Search (A - demasiado lejos)
 print "Tal vez tuviese algo de valor en los bolsillos. Pero tendría que acercarse más para comprobarlo.";
 new_line;
 return true;
-7:	! ##Search (B)
-print "Le rebuscó en los bolsillos, pero no tenía nada.";
+12:	! ##Search (B - vacío)
+print "Se abalanzó sobre el cadáver incapaz de aceptar que era él realmente, buscando algo, cualquier cosa, que le demostrase que se trataba de un error, de una copia... cualquier cosa. Pero no había nada. Era como mirarse en un espejo, sólo que el reflejo no te enseñaba el presente...";
 new_line;
 return true;
-8:	! ##Search (C)
-print "Dentro de los bolsillos del uniforme encontró ";
-WriteListFrom(child(limbo_cadaver_a), ENGLISH_BIT + PARTINV_BIT);
-print ".";
+13:	! ##Search (C - 1 moneda)
+print "Con un sentimiento de angustia insportable, incapaz de creer que ese cadáver pueda ser él, se lanza hacia los bolsillos. Y lo encuentra. Encuentra la moneda, igual que la que tiene él en su bolsillo. No puede ser...";
+new_line;
+return true;
+14:	! ##Search (D - 2 monedas)
+print "Incapaz de aceptar que pudiese ser él realmente se abalanza sobre el cadáver intentando buscar algo que le convenza de los contrario, cualquier cosa. Pero entonces se le acabó el tiempo...";
+new_line;
+return true;
+}
+
+limbo_cadaver_sangre: switch (n) {
+1:	! ##Examine (A - ataque al corazón)
+print "No había rastros de sangre ni heridas visibles en el cadáver.";
 new_line;
 return true;
 }
