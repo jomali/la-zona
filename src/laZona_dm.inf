@@ -1,0 +1,589 @@
+
+
+!!==============================================================================
+!!
+!!	LA ZONA
+!!	Objeto director de partida
+!!
+!!==============================================================================
+!!
+!!	Archivo:		laZona_dm.inf
+!!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
+!!	Idioma:			ES (Español)
+!!	Sistema:		Inform-INFSP 6
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:		1.0
+!!	Fecha:			2018/08/25
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	Este archivo forma parte de la ficción interactiva LA ZONA.
+!!
+!!	LA ZONA es software libre: usted puede redistribuirlo y/o
+!!	modificarlo bajo los términos de la Licencia Pública General GNU
+!!	publicada por la Fundación para el Software Libre, ya sea la versión
+!!	3 de la Licencia, o (a su elección) cualquier versión posterior.
+!!
+!!	LA ZONA se distribuye con la esperanza de que sea útil, pero
+!!	SIN GARANTÍA ALGUNA; ni siquiera la garantía implícita MERCANTIL o
+!!	de APTITUD PARA UN PROPÓSITO DETERMINADO. Consulte los detalles de
+!!	la Licencia Pública General GNU para más información.
+!!
+!!	Debería haber recibido una copia de la Licencia Pública General GNU
+!!	junto a LA ZONA. En caso contrario, consulte
+!!	<http://www.gnu.org/licenses/>.
+!!
+!!	Copyright (c) 2018, J. Francisco Martín
+!!
+!!------------------------------------------------------------------------------
+!!
+!!	OBJETO DIRECTOR DE PARTIDA
+!!
+!!	El objeto director de partida se encarga de registrar parte del estado de
+!!	la aplicación y ofrecer una interfaz para modificarlo, de forma que un
+!!	cierto conjunto de variables globales pasan a considerarse fuera del
+!!  alcance global. De este modo se asegura que su modificación no vulnere
+!!  nunca las reglas de la aplicación.
+!!
+!!  Variables de las que registra el estado o facilita una interfaz para su
+!!  modificación:
+!!
+!!  <>  _grammatical_inflection: flexión gramatical del narrador
+!!	<>	self.highlight_style_1: estilo de resaltado para objetos destacados
+!!	<>	self.highlight_style_2: estilo de resaltado para direcciones y puertas
+!!	<>	self.highlight_style_3: estilo de resaltado para otros objetos
+!!	<>	self.hyperlinks_status_1: estado de los hipervínculos asociados a
+!!          objetos destacados
+!!	<>	self.hyperlinks_status_2: estado de los hipervínculos asociados a
+!!          direcciones y puertas
+!!	<>	self.hyperlinks_status_3: estado de los hipervínculos asociados a
+!!          otros objetos
+!!
+!!	Interfaz del objeto DM:
+!!
+!!	<>	get_grammatical_inflection() : integer
+!!	<>	get_highlight_style(object_type:integer) : integer
+!!	<>	get_hyperlinks_status(object_type:integer) : boolean
+!!	<>	get_initial_location() : Object
+!!	<>	get_iteration() : integer
+!!	<>	get_iteration_threshold() : integer
+!!	<>	get_text_style() : integer
+!!	<>	read_configuration_file(file_name:string) : boolean
+!!	<>	restart()
+!!	<>	set_grammatical_inflection(gi:integer) : integer
+!!	<>	set_highlight_style(object_type:integer, style:integer)
+!!	<>	set_hyperlinks_status(object_type:integer, status:boolean)
+!!	<>	set_text_style(style:integer) : integer
+!!	<>	visit_charon()
+!!	<>	write_configuration_file(file_name:string) : boolean
+!!
+!!	Un cierto número de variables globales, como aquellas definidas por la
+!!	librería Inform (player, location, keep_silent...), siguen disponibles
+!!	desde el alcance global y pueden ser modificacadas libremente.
+!!
+!!------------------------------------------------------------------------------
+
+Object	DM "(Dungeon Master)"
+ with	!!----------------------------------------------------------------------
+		!! Retorna el valor de la flexión gramatical actual utilizada por los
+		!! mensajes por defecto de la librería.
+		!!
+		!!	@returns {integer} Código numérico de la flexión gramatical actual
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		get_grammatical_inflection [;
+			#Ifdef USE_SPANISH_LM;
+			return _grammatical_inflection;
+			#Ifnot;
+			return 2;
+			#Endif;
+		],
+		!!----------------------------------------------------------------------
+		!! Retorna el estilo de texto de las palabras destacadas para el tipo
+ 		!! de objeto pasado como parámetro.
+		!!
+		!!	@param {integer} object_type - Código numérico [1-3] del tipo de
+ 		!!		objeto para los que se pretende conocer el estilo de texto
+		!!		resaltado
+		!!	@returns {integer} Código numérico del estilo de texto resaltado
+		!!		para los objetos de tipo 'object_type'
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		get_highlight_style [ object_type
+			result;
+			switch (object_type) {
+				1:	result = self.highlight_style_1;
+				2:	result = self.highlight_style_2;
+				3:	result = self.highlight_style_3;
+			}
+			return result;
+		],
+		!!----------------------------------------------------------------------
+		!! Retorna el estado (activado/desactivado) de los hipervínculos para
+		!! el tipo de objeto pasado como parámetro.
+		!!
+		!!	@param {integer} object_type - Código numérico [1-3] del tipo de
+ 		!!		objeto para los que se pretende conocer el estado de los
+		!!		hipervínculos
+		!!	@returns {boolean} Verdadero si los hipervínculos para los objetos
+		!!		de tipo 'object_type' están activados. Falso en caso contrario
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		get_hyperlinks_status [ object_type
+			result;
+			switch (object_type) {
+				1:	result = self.hyperlinks_status_1;
+				2:	result = self.hyperlinks_status_2;
+				3:	result = self.hyperlinks_status_3;
+			}
+			return result;
+		],
+		!!----------------------------------------------------------------------
+		!! Retorna la localidad inicial de cada iteración.
+		!!
+		!!	@returns {Object} Localidad inicial
+		!!----------------------------------------------------------------------
+		get_initial_location [;
+			return self.initial_location;
+		],
+		!!----------------------------------------------------------------------
+		!!	@returns {integer} Número de iteraciones actuales de la historia
+		!!----------------------------------------------------------------------
+		get_iteration [;
+			return self.iteration;
+		],
+		!!----------------------------------------------------------------------
+		!!	@returns {integer} Número total de iteraciones de la historia que
+		!!		se contabilizan
+		!!----------------------------------------------------------------------
+		get_iteration_threshold [;
+			return self.iteration_threshold;
+		],
+		!!----------------------------------------------------------------------
+		!! Retorna el código numérico del estilo de texto utilizado actualmente
+		!! por la obra.
+		!!
+		!!	@returns {integer} Código numérico del estilo utilizado actualmente
+		!!----------------------------------------------------------------------
+		get_text_style [;
+			#Ifdef TEXT_STYLES;
+			return _current_text_style;
+			#Ifnot;
+			return 0;
+			#Endif; ! TEXT_STYLES;
+		],
+		!!----------------------------------------------------------------------
+		!! Lee de un fichero de texto externo los parámetros de configuración
+		!! de la aplicación.
+		!!
+		!!	@param {string} file_name - Nombre del fichero de texto del que se
+		!!		leen los parámetros de configuración
+		!!	@returns {boolean} Verdadero si el fichero se lee con éxito. Falso
+		!!		en caso contrario
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		read_configuration_file [ file_name
+			file_ref str ch i a b c d e f;
+			#Ifdef TARGET_ZCODE;
+			!! (Por evitar alertas del compilador)
+			file_name = file_ref + str + ch + i + a + b + c + d + e + f;
+			#Ifnot; ! TARGET_GLULX;
+			a = b = c = d = e = f = -1;
+			file_ref = glk($0061, fileusage_Data + fileusage_BinaryMode,
+				ChangeAnyToCString(file_name), 0); ! glk_fileref_create_by_name
+			if (file_ref ~= 0) {
+				str=glk($0042,file_ref,filemode_Read,0); ! glk_stream_open_file
+				glk($0063, file_ref); ! glk_fileref_destroy
+				for (i = 1 : i <= 6 : i++) {
+					do ch = glk($0090, str); ! glk_get_char_stream
+					until ((ch == null) || (ch >= 48 && ch <= 57));
+					if (ch == null) break;
+					switch (i) {
+						1:	a = (ch-48);
+						2:	b = (ch-48);
+						3:	c = (ch-48);
+						4:	d = (ch-48);
+						5:	e = (ch-48);
+						6:	f = (ch-48);
+					}
+					do ch = glk($0090, str); ! glk_get_char_stream
+					until ((ch == null) || (ch == 10)); ! (hasta nueva línea)
+				}
+				!! Cierra el archivo:
+				glk($0044, str, 0); ! glk_stream_close
+				!! Comprueba errores:
+				if (a < 0 || a > 1) return false;
+				if (b < 0 || b > 1) return false;
+				if (c < 0 || c > 1) return false;
+				if (d < 0 || d > 7) return false;
+				if (e < 0 || e > 7) return false;
+				if (f < 0 || f > 7) return false;
+				!! Transforma los códigos de estilo a los valores reales:
+				switch (d) {
+					1:	d = TEXT_STYLE_STRESSED;
+					2:	d = TEXT_STYLE_NOTE;
+					3:	d = TEXT_STYLE_IMPORTANT;
+					4:	d = TEXT_STYLE_HEADER;
+					5:	d = TEXT_STYLE_MONOSPACED;
+					6:	d = TEXT_STYLE_REVERSED;
+					7:	d = TEXT_STYLE_USER1;
+					default: d = TEXT_STYLE_UPRIGHT;
+				}
+				switch (e) {
+					1:	e = TEXT_STYLE_STRESSED;
+					2:	e = TEXT_STYLE_NOTE;
+					3:	e = TEXT_STYLE_IMPORTANT;
+					4:	e = TEXT_STYLE_HEADER;
+					5:	e = TEXT_STYLE_MONOSPACED;
+					6:	e = TEXT_STYLE_REVERSED;
+					7:	e = TEXT_STYLE_USER1;
+					default: e = TEXT_STYLE_UPRIGHT;
+				}
+				switch (f) {
+					1:	f = TEXT_STYLE_STRESSED;
+					2:	f = TEXT_STYLE_NOTE;
+					3:	f = TEXT_STYLE_IMPORTANT;
+					4:	f = TEXT_STYLE_HEADER;
+					5:	f = TEXT_STYLE_MONOSPACED;
+					6:	f = TEXT_STYLE_REVERSED;
+					7:	f = TEXT_STYLE_USER1;
+					default: f = TEXT_STYLE_UPRIGHT;
+				}
+				!! Establece los parámetros de configuración y retorna:
+				self.set_hyperlinks_status(1, a);
+				self.set_hyperlinks_status(2, b);
+				self.set_hyperlinks_status(3, c);
+				self.set_highlight_style(1, d);
+				self.set_highlight_style(2, e);
+				self.set_highlight_style(3, f);
+				return true;
+			}
+			#Endif; ! TARGET_
+			return false;
+		],
+		!!----------------------------------------------------------------------
+		!! Reestablece el modelo del mundo a su estado inicial.
+		!!
+		!!	@returns {boolean} Verdadero
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		restart [ flag
+			obj;
+			objectloop(obj ofclass Thing) {
+				if (~~obj.reset()) {
+					give obj ~described;
+					give obj ~general;
+					give obj ~moved;
+					obj.state = 0;
+				}
+			}
+			objectloop(obj ofclass Room) {
+				if (~~obj.reset()) {
+					give obj ~general;
+					give obj ~visited;
+					obj.state = 0;
+				}
+			}
+			if (self.iteration <= self.iteration_threshold) self.iteration++;
+			if (flag) give self.initial_location general;
+			PlayerTo(self.initial_location);
+			return true;
+		],
+		!!----------------------------------------------------------------------
+		!! Establece el valor de la flexión gramatical utilizada por los
+		!! mensajes por defecto de la librería.
+		!!
+		!!	@param {integer} gi - Código numérico de la nueva flexión
+		!!		gramatical: {1: presente en 1ª persona, 2: presente en 2ª
+		!!		persona, 3: presente en 3ª persona, 4: pasado en 1ª persona,
+ 		!!		5: pasado en 2ª persona, 6: pasado en 3ª persona, 7: futuro en
+		!!		1ª persona, 8: futuro en 2ª persona, 9: futuro en 3ª persona}
+		!!	@returns {integer} Código numérico de la flexión gramatical
+		!!		reemplazada
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		set_grammatical_inflection [ gi
+			result;
+			#Ifdef USE_SPANISH_LM;
+			result = _grammatical_inflection;
+			SetGrammaticalInflection(gi);
+			return result;
+			#Ifnot;
+			return 2;
+			#Endif;
+		],
+		!!----------------------------------------------------------------------
+		!! Establece el estilo de texto de las palabras destacadas para el tipo
+		!! de objeto pasado como parámetro.
+		!!
+		!! El sistema de palabras destacadas es dependiente del sistema de
+		!! hipervínculos, de manera que los estilos disponibles en un momento
+		!! dado para un tipo de objeto dependen del estado de los hipervínculos
+		!! para ese tipo de objeto. Si se intenta establecer un estilo de texto
+		!! que no es compatible con el estado de los hipervínculos, la rutina
+ 		!! asigna el siguiente estilo disponible automáticamente.
+		!!
+		!!	@param {integer} object_type - Código numérico [1-3] del tipo de
+ 		!!		objeto para los que se pretende modificar el estilo de texto
+		!!		resaltado
+		!!	@param {integer} text_style - Código numérico del nuevo estilo de
+		!!		texto resaltado que se asigna al tipo de objeto 'object_type'
+		!!	@returns {integer} Código numérico del estilo de texto resaltado
+		!!		que se había estado utilizando previamente para los objetos de
+		!!		de tipo 'object_type'
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		set_highlight_style [ object_type text_style
+			result status default_text_style;
+			switch (object_type) {
+				1:
+					result = self.highlight_style_1;
+					status = self.hyperlinks_status_1;
+					default_text_style = DEFAULT_HIGHLIGHT_ST_1;
+				2:
+					result = self.highlight_style_2;
+					status = self.hyperlinks_status_2;
+					default_text_style = DEFAULT_HIGHLIGHT_ST_2;
+				3:
+					result = self.highlight_style_3;
+					status = self.hyperlinks_status_3;
+					default_text_style = DEFAULT_HIGHLIGHT_ST_3;
+			}
+			switch (text_style) {
+				TEXT_STYLE_UPRIGHT:
+					text_style = TEXT_STYLE_UPRIGHT;
+				TEXT_STYLE_STRESSED:
+					text_style = TEXT_STYLE_STRESSED;
+				TEXT_STYLE_NOTE:
+					if (status) text_style = TEXT_STYLE_IMPORTANT;
+					else text_style = TEXT_STYLE_NOTE;
+				TEXT_STYLE_IMPORTANT:
+					text_style = TEXT_STYLE_IMPORTANT;
+				TEXT_STYLE_HEADER:
+					if (status) text_style = TEXT_STYLE_MONOSPACED;
+					else text_style = TEXT_STYLE_HEADER;
+				TEXT_STYLE_MONOSPACED:
+					text_style = TEXT_STYLE_MONOSPACED;
+				TEXT_STYLE_REVERSED:
+					if (status) text_style = TEXT_STYLE_USER1;
+					else text_style = TEXT_STYLE_REVERSED;
+				TEXT_STYLE_USER1:
+					text_style = TEXT_STYLE_USER1;
+				default:
+					text_style = default_text_style;
+			}
+			switch (object_type) {
+				1:	self.highlight_style_1 = text_style;
+				2:	self.highlight_style_2 = text_style;
+				3:	self.highlight_style_3 = text_style;
+			}
+			return result;
+		],
+		!!----------------------------------------------------------------------
+		!! Establece el estado de los hipervínculos para el tipo de objeto
+		!! pasado como parámetro.
+		!!
+		!!	@param {integer} object_type - Código numérico [1-3] del tipo de
+		!!		objeto para los que se pretende modificar el estado de los
+		!!		hipervínculos
+		!!	@param {boolean} status - Estado (activado/desactivado) que se
+		!!		asigna a los hipervínculos asociados al tipo de objeto
+		!!		'object_type'
+		!!	@returns {boolean} Estado de los hipervínculos que estaba
+		!!		establecido previamente para los objetos de tipo 'object_type'
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		set_hyperlinks_status [ object_type status
+			result;
+			switch (object_type) {
+				1:
+					result = self.hyperlinks_status_1;
+					self.hyperlinks_status_1 = status;
+					!! Actualiza el estilo de texto resaltado
+					self.set_highlight_style(1, self.highlight_style_1);
+				2:
+					result = self.hyperlinks_status_2;
+					self.hyperlinks_status_2 = status;
+					!! Actualiza el estilo de texto resaltado
+					self.set_highlight_style(2, self.highlight_style_2);
+				3:
+					result = self.hyperlinks_status_3;
+					self.hyperlinks_status_3 = status;
+					!! Actualiza el estilo de texto resaltado
+					self.set_highlight_style(3, self.highlight_style_3);
+			}
+			return result;
+		],
+		!!----------------------------------------------------------------------
+		!! Establece el estilo de texto utilizado por la obra.
+		!!
+		!!	@param {integer} style - Código numérico del nuevo estilo de texto:
+		!!		{1: recto, 2: enfático, 3: importante, 4: monoespaciado, 5:
+		!!		encabezado, 6: nota, 7: cita, 8: entrada, 9: usuario 1, 10:
+		!!		usuario 2}
+		!!	@returns {integer} Código numérico del estilo de texto reemplazado
+		!!----------------------------------------------------------------------
+		set_text_style [ st;
+			#Ifdef TEXT_STYLES;
+			return UseTextStyle(st);
+			#Ifnot;
+			return 0;
+			#Endif; ! TEXT_STYLES;
+		],
+		!!----------------------------------------------------------------------
+        !! Gestiona la escena final de la historia.
+		!!----------------------------------------------------------------------
+		visit_charon [;
+            PressAnyKey();
+            EraseWindow();
+            PlayerTo(Estigia);
+            DrawStatusLine();
+            PressAnyKey();
+			DrawSceneImage(PIC_INFIERNO_A);
+            FadeOutTrack(MUS_INFIERNO, 0, 2000, true);
+            FadeOutTrack(MUS_PURGATORIO, 0, 2000, true);
+            FadeOutTrack(SFX_GOTAS, 0, true);
+            FadeOutTrack(SFX_VIENTO, 0, 2000, true);
+			FadeInTrack(MUS_INFIERNO, -1, 2000);
+			DM.set_text_style(TEXT_STYLE_STRESSED);
+			new_line;
+            switch (self.charon_visited) {
+                0:
+                    O__M(Stalker, 5);
+                    PressAnyKey();
+                    new_line;
+                    O__M(Stalker, 6);
+                    PressAnyKey();
+                    new_line;
+                    O__M(Stalker, 7);
+                1:
+                    O__M(Stalker, 8);
+                    new_line;
+                    PressAnyKey();
+                    new_line;
+                    O__M(Stalker, 9);
+                    O__M(Stalker, 10);
+                2:
+                    O__M(Stalker, 8);
+                    O__M(Stalker, 9);
+                    new_line;
+            }
+            PressAnyKey();
+            new_line;
+            O__M(Stalker, 11);
+            PressAnyKey();
+            new_line;
+            if (IndirectlyContains(player, monedas)) {
+                O__M(Stalker, 15);
+                PressAnyKey();
+                new_line;
+                O__M(Stalker, 16);
+                PressAnyKey();
+                new_line;
+                HorizontalRule();
+                new_line;
+                print (header) "^FIN^";
+                PressAnyKey();
+                new_line;
+                print (parser) "Pulsa cualquier tecla para terminar";
+                PressAnyKey();
+                @restart;
+            } else if (IndirectlyContains(player, moneda)) {
+                O__M(Stalker, 13);
+            } else {
+                O__M(Stalker, 12);
+            }
+            if (self.charon_visited == 0) {
+                PressAnyKey();
+                new_line;
+                O__M(Stalker, 14);
+            }
+			PressAnyKey();
+			DM.set_text_style(TEXT_STYLE_UPRIGHT);
+			EraseWindow();
+            if (self.charon_visited < 3) self.charon_visited++;
+			return self.restart(true);
+		],
+		!!----------------------------------------------------------------------
+		!! Guarda en un fichero de texto externo un registro con los parámetros
+		!! de configuración de la aplicación.
+		!!
+		!!	@param {string} file_name - Nombre del fichero de texto en que se
+		!!		escriben los parámetros de configuración
+		!!	@returns {boolean} Verdadero si el fichero se escribe con éxito.
+		!!		Falso en caso contrario
+		!!	@version 1.0
+		!!----------------------------------------------------------------------
+		write_configuration_file [ file_name
+			file_ref str i temp_txt temp_code;
+			#Ifdef TARGET_ZCODE;
+			!! (Por evitar alertas del compilador)
+			file_name = file_ref + str + i + temp_txt + temp_code;
+			#Ifnot; ! TARGET_GLULX;
+			!! Crea el fichero externo y redirige el flujo de salida a él:
+			file_ref = glk($0061, fileusage_Data + fileusage_BinaryMode,
+				ChangeAnyToCString(file_name), 0); ! glk_fileref_create_by_name
+			if (file_ref ~= 0) {
+				str=glk($0042,file_ref,filemode_Write,0); !glk_stream_open_file
+				glk($0063, file_ref); ! glk_fileref_destroy
+				glk($0047, str); ! glk_stream_set_current
+				!! Escritura en fichero de los parámetros de configuración:
+				print self.get_hyperlinks_status(1), " # Hipervínculos
+				asociados a objetos destacados {0:desactivados, 1:activados}^";
+				print self.get_hyperlinks_status(2), " # Hipervínculos
+				asociados a direcciones {0: desactivados, 1:activados}^";
+				print self.get_hyperlinks_status(3), " # Hipervínculos
+				asociados a otros objetos {0:desactivados, 1:activados}^";
+				for (i = 1 : i <= 3 : i++) {
+					switch (i) {
+						1:	temp_txt = "objetos destacados";
+						2:	temp_txt = "direcciones";
+						3:	temp_txt = "otros objetos";
+					}
+					switch (self.get_highlight_style(i)) {
+						TEXT_STYLE_UPRIGHT:		temp_code = 0;
+						TEXT_STYLE_STRESSED:	temp_code = 1;
+						TEXT_STYLE_NOTE:		temp_code = 2;
+						TEXT_STYLE_IMPORTANT:	temp_code = 3;
+						TEXT_STYLE_HEADER:		temp_code = 4;
+						TEXT_STYLE_MONOSPACED:	temp_code = 5;
+						TEXT_STYLE_REVERSED:	temp_code = 6;
+						TEXT_STYLE_USER1:		temp_code = 7;
+					}
+					print temp_code, " # Estilo de texto de ",
+					(string) temp_txt, " [0-7]^";
+				}
+				!! Cierra el archivo y termina la operación:
+				glk($002F, gg_mainwin); ! glk_set_window
+				glk($0044, str, 0); ! glk_stream_close
+				return true;
+			}
+			#Endif; ! TARGET_
+			return false;
+		],
+ private
+		!!----------------------------------------------------------------------
+		!! ATRIBUTOS PRIVADOS
+		!!----------------------------------------------------------------------
+		!! Registra si el PC ya ha visitado a Caronte:
+		charon_visited 0,
+		!! Estilo de texto resaltado: Objetos destacados
+		highlight_style_1 DEFAULT_HIGHLIGHT_ST_1,
+		!! Estilo de texto resaltado: Direcciones y puertas
+		highlight_style_2 DEFAULT_HIGHLIGHT_ST_2,
+		!! Estilo de texto resaltado: Otros objetos
+		highlight_style_3 DEFAULT_HIGHLIGHT_ST_3,
+		!! Estado de hipervínculos: Objetos destacados
+		hyperlinks_status_1 DEFAULT_HYPERLINKS_STATUS,
+		!! Estado de hipervínculos: Direcciones y puertas
+		hyperlinks_status_2 DEFAULT_HYPERLINKS_STATUS,
+		!! Estado de hipervínculos: Otros objetos
+		hyperlinks_status_3 DEFAULT_HYPERLINKS_STATUS,
+		!! Localidad inicial del bucle
+		initial_location Tunel,
+		!! Contador de iteraciones del bucle (sólo contabiliza las 5 primeras)
+		iteration 0,
+		!! Número de iteraciones a partir de las cuáles el narrador cambia
+		!! aleatoriamente de formas temporales:
+		iteration_threshold 3,
+;

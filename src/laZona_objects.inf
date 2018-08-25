@@ -11,13 +11,13 @@
 !!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:			ES (Castellano)
 !!	Sistema:		Inform-INFSP 6
-!!	Plataforma:		GLULX
-!!	Versión:		0.0
-!!	Fecha:			2017/12/16
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:		1.0
+!!	Fecha:			2018/08/25
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Este archivo forma parte del relato interactivo LA ZONA.
+!!	Este archivo forma parte de la ficción interactiva LA ZONA.
 !!
 !!	LA ZONA es software libre: usted puede redistribuirlo y/o
 !!	modificarlo bajo los términos de la Licencia Pública General GNU
@@ -36,178 +36,42 @@
 !!	Copyright (c) 2018, J. Francisco Martín
 !!
 !!------------------------------------------------------------------------------
-!!
-!!	# HISTORIAL DE VERSIONES
-!!
-!!	0.0: 2016/06/18	Inicio del desarrollo.
-!!
-!!------------------------------------------------------------------------------
-!!
-!!	# TABLA DE CONTENIDOS
-!!
-!!	1)	LIMBO
-!!	2)	TUNEL
-!!	3)	CANAL
-!!	4)	CALLEJON
-!!	5)	AZOTEA
-!!	6)	CALLE_OESTE
-!!	7)	CALLE_ESTE
-!!	8)	INFIERNO_NEGRO
-!!	9)	INFIERNO_BLANCO
-!!
-!!------------------------------------------------------------------------------
 
 
 !!==============================================================================
 !!
-!!	1)	LIMBO
+!!	1)	@Limbo
 !!
 !!------------------------------------------------------------------------------
 
-Object	DungeonMaster "(Dungeon Master)"
- with	!!----------------------------------------------------------------------
-		!! Reinicia el bucle del relato, colocando al usuario de nuevo en la
- 		!! localidad inicial.
-		!!
-		!!	@returns {boolean} Verdadero
-		!!----------------------------------------------------------------------
-		restart_loop [
-			obj inflection;
-			!! Reinicializaciones del relato:
-			objectloop(obj ofclass Thing) {
-				give obj ~described;
-				obj.reset();
-			}
-			objectloop(obj ofclass Room) {
-				give obj ~visited;
-			}
-			if (self.iteration <= self.iteration_threshold) self.iteration++;
-			self.shot_on_dartboard = false;
-			PlayerTo(self.initial_location);
-			return true;
-		],
-		!!----------------------------------------------------------------------
-		!! Inicio del bucle.
-		!!
-		!!	@returns {boolean} Verdadero
-		!!----------------------------------------------------------------------
-		start_loop [;
-			EraseWindow();
-			FadeInTrack(MUS_PURGATORIO, -1);
-			new_line;
-			HorizontalRule();
-			new_line;
-			return true;
-		],
-		!!----------------------------------------------------------------------
-		!! Imprime un mensaje acerca del viento con una probabilidad de
-		!! '1/wind_ratio'. Si se utiliza con el parámetro 'stop' fuerza que la
-		!! rutina no imprima ningún mensaje ni esta vez ni la próxima vez que
-		!! sea invocada (invocaciones posteriores volverán a funcionar
-		!! normalmente hasta que se vuelva a utilizar el parámetro 'stop').
-		!!
-		!!	@param {boolean} [stop=false] - Si se invoca con 'stop' verdadero
-		!!		se fuerza que no se impriman mensajes ni esta vez ni la próxima
-		!!		vez que la rutina sea invocada
-		!!	@returns {boolean} Verdadero
-		!!----------------------------------------------------------------------
-		wind_blows [ stop;
-			if (stop) {
-				self.wind_stopped = true;
-				return true;
-			}
-			if (self.wind_stopped) {
-				self.wind_stopped = false;
-				return true;
-			}
-			if (random(self.wind_ratio) == 1) {
-				new_line;
-				switch (random(4)) {
-					1: O__M(limbo_suelo, 3);
-					2: O__M(limbo_suelo, 4);
-					3: O__M(limbo_suelo, 5);
-					default: O__M(limbo_suelo, 6);
-				}
-			}
-			return true;
-		],
-		!!----------------------------------------------------------------------
-		!! Otras propiedades
-		!!----------------------------------------------------------------------
-		!! El Stalker ha muerto de un ataque al corazón en la iteración
-		!! anterior del bucle/si va a morir de un ataque al corazón en la
-		!! iteración actual:
-		heart_attack true,
-		!! Contador de iteraciones del bucle (sólo registra las primeras):
-		iteration 0,
-		!! Número de iteraciones a partir de las que el narrador cambia
-		!! aleatoriamente de formas temporales:
-		iteration_threshold 4,
-		!! El Stalker ha disparado sobre la diana en la iteración actual:
-		shot_on_dartboard false,
-		!! El Stalker ha descubierto la máquina de tabaco del callejón:
-		waste_described false,
-		!! La función 'wind_blows' sólo imprime mensajes en una probabilidad
-		!! de 1/wind_ratio:
-		wind_ratio 5,
- private
-		!! Localidad inicial del bucle:
-		initial_location TUNEL,
-		!! El viento está detenido durante la siguiente invocación de la rutina
-		!! 'wind_blows()':
-		wind_stopped false,
-;
-
-Room	LIMBO "En algún lugar"
- with	name_f	'babia',
-		name_m	'limbo' 'lugar' 'sueno' 'vacio',
-		gender	G_MASCULINO,
-		description [;
-			O__M(self, 1);
-			if (self hasnt visited) O__M(self, 2);
-			new_line;
-			return true;
-		],
+Room	Limbo ""
+ with	name_f 'babia',
+		name_m 'limbo' 'lugar' 'sueno' 'vacio',
+		gender G_MASCULINO,
+		description "",
 		clarification 0,
 		images	PIC_INFIERNO_A PIC_INFIERNO_B,
  has	male;
 
-NPC		-> Stalker "Stalker"
- with	name_m	'personaje' 'protagonista' 'stalker',
-		gender	G_MASCULINO,
-		adjectives 'principal',
-		description [; <<Inv>>; ],
- has	male proper;
+Room	Estigia ""
+ with	name_f 'babia',
+		name_m 'limbo' 'lugar' 'sueno' 'vacio',
+		gender G_MASCULINO,
+		description "",
+		clarification 0,
+		images	PIC_INFIERNO_A PIC_INFIERNO_B,
+ has	male;
 
-!!	 -	'general' se activa después de haber limpiado el arma por primera vez.
-!!		Después ya no se desactiva.
-Item	limbo_fusil "fusil" Stalker
- with	name_f	'arma' 'culata',
-		name_m	'canon' 'fusil' 'gatillo' 'rifle',
-		gender	G_MASCULINO,
-		adjectives 'madera' 'manchada' 'manchado' 'tiza',
-		description [;
-			if (self has general) return O__M(self, 2);
-			else return O__M(self, 1);
-		],
-		before [;
-			Rub:
-				if (self has general) return O__M(self, 5);
-				give self general;
-				return O__M(self, 4);
-			Touch:
-				return O__M(self, 3);
-		],
-		!! action_set ##Examine ##Take ##Drop,
- has	male remarkable;
+Item Diana;
+Item MaquinaTabaco;
 
-Atrezzo	limbo_cielo "cielo"
+Atrezzo	-> Cielo "cielo"
  with	found_in [; if (location ofclass Outdoors) return true; ],
-		name_f	'nube',
-		name_fp	'nubes',
-		name_m	'cielo' 'dia' 'firmamento' 'sol',
-		gender	G_MASCULINO,
+		name_f 'nube',
+		name_fp 'nubes',
+		name_m 'cielo' 'dia' 'firmamento' 'sol',
 		adjectives 'cerrado' 'encapotado' 'plomizo',
+		gender	G_MASCULINO,
 		description [; return O__M(self, 1); ],
 		react_before [;
 			DefaultAction, Examine, Search:
@@ -217,15 +81,153 @@ Atrezzo	limbo_cielo "cielo"
 		],
  has	male;
 
-Atrezzo	limbo_suelo "suelo"
- with	found_in [; if (location ofclass Outdoors) return true; ],
-		name_f	'ceniza',
-		name_fp	'cenizas',
-		name_m	'piso' 'polvo' 'suelo',
+Item	-> Monedas "monedas"
+ with	name_f 'moneda',
+		name_fp 'monedas',
+		name_m 'amuleto' 'dinero',
+		name_mp 'amuletos',
+		adjectives 'antigua' 'antiguas' 'antiguo' 'antiguos' 'dos' 'par'
+			'pequena' 'pequenas' 'pequeno' 'pequenos',
+		article "dos",
+		gender G_FEMENINO + G_PLURAL,
+		description [;
+			return O__M(self, 1);
+		],
+		reset [;
+			return true;
+		],
+ has	female pluralname remarkable;
+
+Item	-> Soldado "soldado"
+ with	name_f	'persona',
+		name_m	'enemigo' 'hombre' 'soldado',
+		gender	G_MASCULINO,
+		describe [;
+			new_line;
+			return O__M(self, 2);
+		],
+		description [;
+			return O__M(self, 1);
+		],
+		before [;
+			Examine,
+			DefaultAction:
+				return false;
+			ShootAt:
+				self.disappears();
+				Cuerpo.shot = true;
+				O__M(self, 5);
+				!! PressAnyKey();
+				new_line;
+				O__M(self, 6);
+				return true;
+			default:
+				return O__M(self, 7);
+		],
+		appears [;
+			move self to Azotea;
+			Soldado.state++;
+		],
+		disappears [;
+			StopDaemon(self);
+			move self to Limbo;
+			move SoldadoDesaparecido to Azotea;
+			self.state++;
+		],
+		reset [;
+			self.state = 0;
+			StopDaemon(self);
+			move self to Limbo;
+			return false;
+		],
+ has	male remarkable;
+
+Atrezzo	-> SoldadoDesaparecido "soldado"
+ with	name_f	'persona',
+		name_m	'cadaver' 'cuerpo' 'enemigo' 'hombre' 'soldado',
 		gender	G_MASCULINO,
 		description [;
-			if (location == CALLE_OESTE) return O__M(self, 1);
+			return O__M(self, 1, (Cuerpo.shot));
+		],
+		reset [;
+			move self to Limbo;
+			return false;
+		],
+ has	male;
+
+NPC		-> Stalker "Stalker"
+ with	name_m 'personaje' 'protagonista' 'stalker',
+		adjectives 'principal',
+   		gender G_FEMENINO,
+		capacity MAX_CARRIED,
+		description [; <<Inv>>; ],
+		set_gender [ gen
+			gi;
+			switch (gen) {
+				G_FEMENINO:
+					self.gender = G_FEMENINO;
+					give self female;
+					give self ~male;
+				G_MASCULINO:
+					self.gender = G_MASCULINO;
+					give self ~female;
+					give self male;
+			}
+			!! Para ajustar diferentes variables de la librería Inform:
+			gi = DM.get_grammatical_inflection();
+			DM.set_grammatical_inflection(gi);
+		],
+        react_before[;
+            Pray:
+                if (self.prayed) return O__M(self, 2);
+                self.prayed = true;
+                return O__M(self, 1);
+        ],
+        before [;
+            ShootAt:
+                if (noun == self) {
+                    O__M(self, 3);
+                    DM.visit_charon();
+                    return true;
+                }
+        ],
+ private
+        prayed false,
+ has	female proper;
+
+Item	-> -> Fusil "fusil"
+ with	name_f 'arma' 'culata',
+		name_m 'canon' 'fusil' 'gatillo' 'rifle',
+		adjectives 'madera' 'manchada' 'manchado' 'tiza',
+		description [;
+			if (self.state == 0) return O__M(self, 1);
 			else return O__M(self, 2);
+		],
+		before [;
+			Rub:
+				if (self.state > 0) {
+					if (DM.get_iteration() > 0) return O__M(self, 7);
+					else return O__M(self, 6);
+				} else {
+					self.state++;
+					return O__M(self, 5);
+				}
+			Touch:
+				if (DM.get_iteration() > 0) return O__M(self, 4);
+				else return O__M(self, 3);
+		],
+ has	male remarkable;
+
+Array windFlags -> 2; ! hasta 8 flags
+Atrezzo	-> Polvo "polvo"
+ with	found_in [; if (location ofclass Outdoors) return true; ],
+		name_f 'calzada' 'carretera' 'ceniza',
+		name_fp 'cenizas',
+		name_m 'asfalto' 'pavimento' 'piso' 'polvo' 'suelo' 'terreno',
+		gender G_MASCULINO,
+		description [;
+			if (location == CalleCentro or CalleOeste) return O__M(self, 2);
+			else return O__M(self, 1);
 		],
 		react_before [;
 			DefaultAction, Examine, Search:
@@ -234,614 +236,985 @@ Atrezzo	limbo_suelo "suelo"
 				}
 		],
 		each_turn [;
-			if (location == CALLE_ESTE or CALLE_OESTE)
-				DungeonMaster.wind_blows();
+			if (location == CalleCentro or CalleEste or CalleOeste)
+				self.blowing_in_the_wind();
 		],
+		stop_wind [ num;
+			self.wind_stopped = num;
+		],
+		reset [;
+			self.wind_stopped = 0;
+		],
+ private
+		blowing_in_the_wind [;
+			if (self.wind_stopped > 0) {
+				self.wind_stopped--;
+				return true;
+			}
+			if (random(self.wind_ratio) == 1) {
+				new_line;
+				switch (Shuffle(4, windFlags)) {
+					1: O__M(self, 3);
+					2: O__M(self, 4);
+					3: O__M(self, 5);
+					4: O__M(self, 6);
+				}
+			}
+			return true;
+		],
+		!! La función 'blowing_in_the_wind()' sólo imprime mensajes con una
+		!! probabilidad de 1/wind_ratio:
+		wind_ratio 5,
+		!! Contador que detiene las impresiones de 'blowing_in_the_wind()':
+		wind_stopped 0,
  has	male;
 
+Atrezzo	-> Ruinas "ruinas"
+ with	found_in [; if (location ofclass Outdoors) return true; ],
+		name_f 'ruina',
+		name_fp 'ruinas',
+		name_m 'cascote' 'escombro' 'resto',
+		name_mp 'cascotes' 'escombros' 'restos',
+		gender G_FEMENINO + G_PLURAL,
+		description [;
+			if (location == Azotea && SoldadoDesaparecido in Azotea) {
+				return O__M(SoldadoDesaparecido, 1, (Cuerpo.shot));
+			} else {
+				return O__M(self, 1);
+			}
+		],
+ has	female pluralname;
 
 !!==============================================================================
 !!
-!!	2)	TUNEL
+!!	2)	@Tunel : Interior del túnel
 !!
 !!------------------------------------------------------------------------------
 
-Indoors	TUNEL "Interior del túnel"
- with	name_f	'alcantarilla' 'cloaca' 'galeria',
-		name_fp	'alcantarillas' 'cloacas',
-		name_m	'corredor' 'pasadizo' 'pasaje' 'tunel',
-		gender	G_MASCULINO,
+Indoors	Tunel "túnel"
+ with	name_f 'alcantarilla' 'cloaca' 'galeria',
+		name_fp 'alcantarillas' 'cloacas',
+		name_m 'corredor' 'pasadizo' 'pasaje' 'tunel',
 		adjectives
 			'dentro' 'interior' 'negra' 'negro' 'oscura' 'oscuro' 'subterranea'
 			'subterraneo',
+		gender G_MASCULINO,
 		initial [; if (self hasnt visited) {
 			!! Primera parte del mensaje inicial:
-			if (DungeonMaster.heart_attack) O__M(self, 3);
-			else O__M(self, 5);
-			!! Inicializaciones de cada iteración del bucle:
-			if (DungeonMaster.iteration == 0) {
-				FadeInTrack(SFX_GOTAS, 100);
+			O__M(self, 4);
+			!! Sólo se hace pausa tras finalizar una iteración del bucle de
+			!! forma natural:
+			if (self has general) PressAnyKey();
+            DrawSceneImage(PIC_TUNEL_A);
+            !! Reproduce la pista de audio adecuada:
+            if (IsTrackPlaying(MUS_INFIERNO)) {
+                FadeOutTrack(MUS_INFIERNO, 0, 2000, false, SFX_GOTAS);
+            } else if (IsTrackPlaying(MUS_PURGATORIO)) {
+                FadeOutTrack(MUS_PURGATORIO, 0, 2000, false, SFX_GOTAS);
+            } else if (IsTrackPlaying(SFX_VIENTO)) {
+                FadeOutTrack(SFX_VIENTO, 0, 2000, false, SFX_GOTAS);
+            } else {
+                FadeInTrack(SFX_GOTAS, 2000, true);
+            }
+			!! Modifica las inflexiones del narrador, como corresponda:
+			if (DM.get_iteration() == (DM.get_iteration_threshold() - 1)) {
+				Stalker.set_gender(G_MASCULINO);
 			}
-			if (DungeonMaster.iteration > 0) {
-				PressAnyKey();
-				FadeOutTrack(SFX_VIENTO, 0, 1500, SFX_GOTAS);
+			if (DM.get_iteration() == DM.get_iteration_threshold()) {
+				DM.set_grammatical_inflection(THIRD_PERSON_PAST);
 			}
-			if (DungeonMaster.iteration == DungeonMaster.iteration_threshold) {
-				SetGrammaticalInflection(THIRD_PERSON_PRESENT);
-			}
-			if (DungeonMaster.iteration > DungeonMaster.iteration_threshold) {
-				SetGrammaticalInflection(random(
+			if (DM.get_iteration() > DM.get_iteration_threshold()) {
+				Stalker.set_gender(random(
+					G_FEMENINO,
+					G_MASCULINO
+				));
+				DM.set_grammatical_inflection(random(
 					THIRD_PERSON_PRESENT,
 					THIRD_PERSON_PAST,
-					THIRD_PERSON_FUTURE));
+					THIRD_PERSON_FUTURE
+				));
 			}
 			!! Segunda parte del mensaje inicial:
 			new_line;
-			if (DungeonMaster.heart_attack) O__M(self, 4);
-			else O__M(self, 6);
+			O__M(self, 5);
 			new_line;
 			return true;
 		}],
-		description [; return O__M(self, 1); ],
-		before [;
+		description [;
+			return O__M(self, 1);
+		],
+		before [
+			previous_style;
+			Exits:
+				previous_style = DM.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				O__M(self, 2);
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				DM.set_text_style(previous_style);
+				new_line;
+				return true;
 			Listen:
-				if (DungeonMaster.heart_attack) return O__M(self, 9);
+				O__M(self, 6);
 				if (~~self.listened) {
 					self.listened = true;
-					return O__M(self, 10);
+					O__M(self, 7);
 				}
-				return O__M(self, 11);
+				new_line;
+				return true;
 		],
-		f_to	tunel_salida,
-		b_to	[; return O__M(self, 8); ],
+		f_to FinalTunel,
+		b_to [; return O__M(self, 8); ],
 		out_to	[; return self.f_to(); ],
-		cant_go	[; return O__M(self, 7); ],
-		exits	[st;
-			st = PrintParserPrefix();
-			O__M(self, 12);
-			PrintParserSufix(st);
-			new_line;
-			return true;
-		],
-		images	PIC_TUNEL_A,
+		cant_go	[; return O__M(self, 3); ],
+		images PIC_TUNEL_A,
  private
 		listened false,
  has	male;
 
+Item	-> FinalTunel "final del túnel"
+ with	name_f 'abertura' 'boca' 'claridad' 'entrada' 'luminosidad' 'luz'
+ 			'salida',
+		name_m 'final' 'resplandor' 'semicirculo',
+		adjectives 'luminosa' 'luminoso' 'tunel',
+		article "el",
+		gender G_MASCULINO,
+		description [; return O__M(self, 1); ],
+		door_dir f_to,
+		door_to [;
+			FadeOutTrack(SFX_GOTAS, 0, 200);
+			O__M(self, 2);
+			new_line;
+			return Canal;
+		],
+ has	door male open scenery;
+
+Atrezzo	-> Muro "muro"
+ with	name_f 'pared' 'tapia',
+		name_fp 'paredes' 'tapias',
+		name_m 'muro',
+		name_mp 'muros',
+		adjectives 'humeda' 'humedas' 'humedo' 'humedos' 'ladrillo',
+		gender G_MASCULINO,
+		before [;
+			Examine,
+			Touch:
+				return O__M(self, 1);
+		],
+ has	male;
+
 !!	 -	'on' activa las comprobaciones de la rutina 'react_before' del objeto
-Atrezzo	-> tunel_oscuridad "oscuridad"
+Array darknessFlags -> 2; ! hasta 8 flags
+Atrezzo	-> Oscuridad "oscuridad"
  with	name_f	'negrura' 'oscuridad' 'penumbra' 'sombra' 'tiniebla',
 		name_fp	'penumbras' 'sombras' 'tinieblas',
-		gender	G_FEMENINO,
-		article "la",
 		adjectives
 			'absoluta' 'absolutas' 'densa' 'densas' 'espesa' 'espesas'
 			'impenetrable' 'impenetrables' 'inescrutabe' 'inescrutables'
 			'insondable' 'insondables',
-		description [;	return O__M(self, random(4)); ],
+		gender	G_FEMENINO,
+		article "la",
+		description [;
+			switch (Shuffle(3, darknessFlags)) {
+				1: return O__M(self, 1);
+				2: return O__M(self, 2);
+				3: return O__M(self, 3);
+			}
+		],
 		react_before [;
 			if (self hasnt on) return false;
-			Consult, Examine, Look, LookUnder, Read, Search:
+			Consult,
+			Examine,
+			Look,
+			LookUnder,
+			Read,
+			Search:
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
-				if (noun == tunel_muro) return false;
-				if (noun == tunel_salida) return false;
+				if (noun == Muro) return false;
+				if (noun == FinalTunel) return false;
 				<<Examine self>>;
-			DefaultAction: return false;
+			DefaultAction:
+				return false;
 			Drop:
 				if (noun == nothing) return false;
 				if (~~IndirectlyContains(player, noun)) return false;
-				return O__M(self, 5, noun);
-			Inv, InvTall, InvWide:
+				return O__M(self, 4, noun);
+			Inv,
+			InvTall,
+			InvWide:
 				<<Examine self>>;
 			Rub:
 				if (noun == nothing) return false;
 				if (noun == self) return false;
 				if (noun == parent(self)) return false;
-				if (noun == tunel_muro) return false;
-				if (noun == tunel_salida) return false;
-				return O__M(self, 6, noun);
+				if (noun == Muro) return false;
+				if (noun == FinalTunel) return false;
+				return O__M(self, 5, noun);
 		],
  has	female on;
-
-Atrezzo	-> tunel_muro "muro"
- with	name_f	'pared' 'tapia',
-		name_fp	'paredes' 'tapias',
-		name_m	'muro',
-		name_mp	'muros',
-		gender	G_MASCULINO,
-		adjectives 'humeda' 'humedas' 'humedo' 'humedos' 'ladrillo',
-		before [;
-			Examine, Touch: return O__M(self, 1);
-		],
- has	male;
-
-Furniture	-> tunel_salida "salida"
- with	name_f	'abertura' 'boca' 'claridad' 'entrada' 'luminosidad' 'luz'
- 				'salida',
-		name_m	'final' 'resplandor' 'semicirculo',
-		gender	G_FEMENINO,
-		adjectives 'luminosa' 'luminoso' 'tunel',
-		describe [; return true; ],
-		description [; return O__M(self, 1); ],
-		before [;
-			DefaultAction:
-				return false;
-			Enter, Examine, Go, Search:
-				return false;
-			default:
-				return O__M(self, 2);
-		],
-		door_dir f_to,
-		door_to CANAL,
- has	door female open remarkable;
 
 
 !!==============================================================================
 !!
-!!	3)	CANAL
+!!	3)	@Canal
 !!
 !!------------------------------------------------------------------------------
 
-Outdoors	CANAL "canal"
- with	name_f	'acequia',
-		name_m	'acueducto' 'canal',
-		gender	G_MASCULINO,
+Outdoors	Canal "canal"
+ with	name_f 'acequia',
+		name_m 'acueducto' 'canal',
+		gender G_MASCULINO,
 		initial [; if (self hasnt visited) {
-			if (DungeonMaster.heart_attack) O__M(self, 2);
-			else O__M(self, 3);
 			O__M(self, 4);
 			new_line;
 			return true;
 		}],
-		description [; return O__M(self, 1); ],
-		s_to	canal_tunel,
-		e_to	[;
-			if (canal_edificios hasnt described) {
-				<Examine canal_edificios>;
-				return O__M(self, 7);
+		description [;
+			return O__M(self, 1);
+		],
+		before [
+			previous_style;
+			Exits:
+				previous_style = DM.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				O__M(self, 2);
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				DM.set_text_style(previous_style);
+				new_line;
+				return true;
+		],
+		n_to Rio,
+		s_to TunelCanal,
+		e_to [;
+			if (EdificiosCanal hasnt described) {
+				<Examine EdificiosCanal>;
+				new_line;
 			}
-			return O__M(self, 8);
+			return O__M(self, 5);
 		],
-		w_to	[; return self.e_to(); ],
-		u_to	canal_escalera,
-		in_to	[; return self.s_to(); ],
-		out_to	[; return self.u_to(); ],
-		f_to	[; return self.u_to(); ],
-		b_to	[; return self.s_to(); ],
-		cant_go	[; return O__M(self, 5); ],
-		exits	[st;
-			st = PrintParserPrefix();
-			O__M(self, 9);
-			PrintParserSufix(st);
-			new_line;
-			return true;
-		],
+		w_to [; return self.e_to(); ],
+		ne_to [; return self.n_to(); ],
+		nw_to [; return self.n_to(); ],
+		u_to Escalera,
+		in_to [; return self.s_to(); ],
+		out_to [; return self.u_to(); ],
+		f_to [; return self.u_to(); ],
+		b_to [; return self.s_to(); ],
+		cant_go [; return O__M(self, 3); ],
 		images	PIC_CANAL_A PIC_CANAL_B,
  has	male;
 
-Atrezzo	-> canal_edificios "edificios"
- with	name_f	'ciudad' 'ruina' 'urbe',
-		name_fp	'ruinas',
-		name_m	'edificio' 'metropoli',
-		name_mp	'edificios',
-		gender	G_MASCULINO + G_PLURAL,
-		adjectives 'destrozada' 'destrozado' 'ruinosa' 'ruinoso' 'ruinosos',
+Atrezzo	-> EdificiosCanal "edificios"
+ with	name_f 'ciudad' 'urbe',
+		name_m 'edificio' 'humo' 'metropoli',
+		name_mp 'edificios',
+		adjectives 'columna' 'columnas' 'destrozada' 'destrozado' 'ruinosa'
+			'ruinoso' 'ruinosos',
+		gender G_MASCULINO + G_PLURAL,
 		description [;
 			if (self hasnt described) O__M(self, 1);
 			return O__M(self, 2);
 		],
  has	male pluralname;
 
-Atrezzo	-> canal_rio "río"
- with	name_f	'corriente',
-		name_fp	'aguas',
-		name_m	'agua' 'cauce' 'caudal' 'rio',
-		gender	G_MASCULINO,
-		adjectives 'turbia' 'turbias' 'turbio',
-		description [; return O__M(self, 1); ],
- has	male;
-
-Atrezzo	-> canal_tunel "entrada del túnel"
- with	name_f	'abertura' 'alcantarilla' 'cloaca' 'entrada' 'salida',
-		name_fp	'alcantarillas' 'cloacas',
-		name_m	'corredor' 'pasadizo' 'pasaje' 'tunel',
-		gender	G_FEMENINO,
-		adjectives 'boca',
-		description [; return O__M(self, 1); ],
-		door_dir s_to,
-		door_to [; return O__M(self, 2); ],
- has	door female open;
-
-Furniture	-> canal_escalera "escalera"
- with	name_f	'cuesta' 'escalera' 'escalerilla' 'escalinata' 'pendiente',
-		name_fp	'escaleras' 'escalerillas',
-		name_m	'escalon' 'peldano' 'terraplen',
-		name_mp	'escalones' 'peldanos',
-		gender	G_FEMENINO,
+Item	-> Escalera "escalera"
+ with	name_f 'cuesta' 'escalera' 'escalerilla' 'escalinata' 'pendiente',
+		name_fp 'escaleras' 'escalerillas',
+		name_m 'escalon' 'peldano' 'terraplen',
+		name_mp 'escalones' 'peldanos',
+		gender G_FEMENINO,
 		describe [;
 			new_line;
 			return O__M(self, 2);
 		],
 		description [; return O__M(self, 1); ],
-		before [;
+		before [
+			previous_style;
 			DefaultAction:
-				return false;
-			Enter, Examine, Go, Search:
-				return false;
-			default:
-				return O__M(self, 3);
+				previous_style = UseTextStyle(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				print "ve ", (al_) self, "", (object) self;
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				UseTextStyle(previous_style);
+				new_line;
+				<<Go self>>;
 		],
 		door_dir u_to,
-		door_to CALLEJON,
- has	door female open pluralname remarkable;
+		door_to [;
+			if (Callejon hasnt visited) {
+				O__M(self, 3);
+				new_line;
+			} else {
+				O__M(self, 4);
+				new_line;
+			}
+			return Callejon;
+		],
+ has	door female open pluralname;
+
+Atrezzo	-> Rio "río"
+ with	name_f 'corriente',
+		name_fp 'aguas',
+		name_m 'agua' 'cauce' 'caudal' 'rio',
+		adjectives 'turbia' 'turbias' 'turbio',
+		gender G_MASCULINO,
+		description [;
+			return O__M(self, 1);
+		],
+		before [;
+			Enter:
+				return O__M(self, 2);
+		],
+		door_dir n_to,
+		door_to [; <<Enter self>>; ],
+ has	door enterable male open;
+
+Atrezzo	-> TunelCanal "túnel"
+ with	name_f 'abertura' 'alcantarilla' 'boca' 'cloaca' 'entrada' 'salida',
+		name_fp 'alcantarillas' 'cloacas',
+		name_m 'corredor' 'pasadizo' 'pasaje' 'tunel',
+		gender G_MASCULINO,
+		description [; return O__M(self, 1); ],
+		before [;
+			Enter:
+				return O__M(self, 2);
+		],
+		door_dir s_to,
+		door_to [; <<Enter self>>; ],
+ has	door enterable male open;
 
 
 !!==============================================================================
 !!
-!!	4)	CALLEJON
+!!	4)	@Callejon
 !!
 !!------------------------------------------------------------------------------
 
-Outdoors	CALLEJON "callejón"
- with	name_f	'calleja' 'callejuela',
-		name_m	'callejon' 'callizo' 'pasadizo',
-		gender	G_MASCULINO,
-		initial [;
-			if (self hasnt visited) O__M(self, 2);
-			else O__M(self, 3);
-			new_line;
-			return true;
+Outdoors	Callejon "callejón"
+ with	name_f 'calleja' 'callejuela',
+		name_m 'callejon' 'callizo' 'pasadizo',
+		gender G_MASCULINO,
+		description [;
+			return O__M(self, 1);
 		],
-		description [; return O__M(self, 1); ],
-		n_to	CANAL,
-		e_to	callejon_puerta,
-		s_to	CALLE_OESTE,
-		f_to	[; return self.s_to(); ],
-		b_to	[; return self.n_to(); ],
-		cant_go	[; return O__M(self, 4); ],
-		exits	[st;
-			st = PrintParserPrefix();
+		before [
+			previous_style;
+			Exits:
+				previous_style = DM.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				O__M(self, 2);
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				DM.set_text_style(previous_style);
+				new_line;
+				return true;
+		],
+		after [;
+			Go:
+				FadeOutTrack(SFX_VIENTO, 0, 200);
+		],
+		n_to [;
 			O__M(self, 5);
-			PrintParserSufix(st);
 			new_line;
-			return true;
+			return Canal;
 		],
+		w_to PuertaCallejon,
+		s_to [;
+			if (self hasnt general) {
+				give self general;
+				O__M(self, 4);
+				new_line;
+			}
+			return CalleEste;
+		],
+		f_to [; return self.s_to(); ],
+		b_to [; return self.n_to(); ],
+		cant_go	[; return O__M(self, 3); ],
 		images	PIC_CALLEJON_A PIC_CALLEJON_B,
  has	male;
 
-Furniture	-> callejon_puerta "puerta"
- with	name_f	'abertura' 'cerradura' 'entrada' 'puerta',
-		name_m	'umbral',
-		gender	G_FEMENINO,
+Atrezzo	-> Basura "montones de desperdicios"
+ with	name_f 'basura',
+		name_fp 'basuras',
+		name_m 'carton' 'desperdicio' 'mueble',
+		name_mp 'cartones' 'desperdicios' 'muebles',
+		gender G_MASCULINO + G_PLURAL,
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
+
+Atrezzo	-> EdificiosCallejon "edificios"
+ with	name_f 'ciudad' 'pared' 'urbe',
+		name_fp 'paredes',
+		name_m 'edificio' 'metropoli' 'muro',
+		name_mp 'edificios' 'muros',
+		gender G_MASCULINO,
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
+
+Item	-> PuertaCallejon "puerta"
+ with	name_f 'abertura' 'cerradura' 'entrada' 'puerta' 'salida',
+		name_fp 'entradas' 'puertas' 'salidas' 'umbral',
+		name_m 'hueco',
+		adjectives 'abierta' 'chapa' 'reventada',
+		gender G_FEMENINO,
 		describe [;
 			new_line;
-			if (~~DungeonMaster.waste_described) return O__M(self, 2);
-			return O__M(self, 3);
+			return O__M(self, 2);
 		],
-		description [; return O__M(self, 1); ],
-		door_dir e_to,
-		door_to AZOTEA,
- has	door female open remarkable;
-
-Atrezzo	-> callejon_edificios "edificios"
- with	name_f	'pared',
-		name_fp	'paredes',
-		name_m	'edificio' 'muro',
-		name_mp	'edificios' 'muros',
-		gender	G_MASCULINO,
-		description [; return O__M(self, 1); ],
- has	male pluralname;
-
-Atrezzo	-> callejon_basura "montones de desperdicios"
- with	name_f	'basura',
-		name_fp	'basuras',
-		name_m	'carton' 'desperdicio' 'escombro' 'mueble',
-		name_mp	'cartones' 'desperdicios' 'escombros' 'muebles',
-		gender	G_MASCULINO + G_PLURAL,
 		description [;
-			O__M(self, 1);
-			if (DungeonMaster.waste_described) return O__M(self, 2);
-			else {
-				DungeonMaster.waste_described = true;
-				new_line;
-				new_line;
-				return O__M(self, 3);
-			}
+			return O__M(self, 1);
 		],
- has	male pluralname;
+		before [
+			previous_style;
+			Close:
+				return O__M(self, 3);
+			DefaultAction:
+				if (self hasnt open) {
+					previous_style = UseTextStyle(TEXT_STYLE_PARSER);
+					print (string) TEXT_STYLE_PARSER_PREFIX;
+					print "abre ", (el_) self, "", (object) self;
+					print (string) TEXT_STYLE_PARSER_SUFIX;
+					UseTextStyle(previous_style);
+					new_line;
+					<<Open self>>;
+				} else {
+					previous_style = UseTextStyle(TEXT_STYLE_PARSER);
+					print (string) TEXT_STYLE_PARSER_PREFIX;
+					print "ve ", (al_) self, "", (object) self;
+					print (string) TEXT_STYLE_PARSER_SUFIX;
+					UseTextStyle(previous_style);
+					new_line;
+					<<Go self>>;
+				}
+			Pull:
+				<<Open self>>;
+			Push:
+				<<Close self>>;
+		],
+		door_dir w_to,
+		door_to [;
+			if (Azotea hasnt visited) O__M(self, 4);
+			else O__M(self, 5);
+			new_line;
+			return Azotea;
+		],
+ has	door female open static;
 
-Furniture	-> callejon_maquina_tabaco "máquina de tabaco"
- with	name_f	'maquina',
-		name_m	'mueble' 'tabaco',
-		name_mp	'muebes',
-		gender	G_FEMENINO,
-		description [; return O__M(self, 1); ],
- has	concealed female ~open;
-
-Item	limbo_moneda "moneda de plata" LIMBO
- with	name_f	'moneda',
-		gender	G_FEMENINO,
-		adjectives 'plata',
-		description [; return O__M(self, 1); ],
- has	female remarkable;
-
+AdjacentRoom	-> Valla "valla"
+ with	name_f 'acequia' 'valla',
+		name_m 'acueducto' 'canal',
+		gender G_FEMENINO,
+		direction_obj n_obj,
+ has	female scenery;
 
 !!==============================================================================
 !!
-!!	5)	AZOTEA
+!!	5)	@Azotea
 !!
 !!------------------------------------------------------------------------------
 
-Outdoors	AZOTEA "azotea de edificio"
- with	name_f	'azotea' 'terraza',
-		gender	G_FEMENINO,
-		initial [;
-			if (self hasnt visited) O__M(self, 2);
-			else O__M(self, 3);
-			new_line;
-			return true;
-		],
+Outdoors	Azotea "azotea"
+ with	name_f 'azotea' 'terraza',
+		gender G_FEMENINO,
 		description [; return O__M(self, 1); ],
-		d_to	CALLEJON,
-		b_to	[; return self.d_to(); ],
-		cant_go	[; return O__M(self, 4); ],
-		exits	[st;
-			st = PrintParserPrefix();
-			O__M(self, 5);
-			PrintParserSufix(st);
-			new_line;
-			return true;
+		before [
+			previous_style;
+			Exits:
+				previous_style = DM.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				O__M(self, 2);
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				DM.set_text_style(previous_style);
+				new_line;
+				return true;
+			Jump:
+				<<JumpOver Cornisa>>;
 		],
+		d_to [;
+			O__M(self, 4);
+			new_line;
+			return Callejon;
+		],
+		b_to [; return self.d_to(); ],
+		cant_go [; return O__M(self, 3); ],
 		images	PIC_AZOTEA_A PIC_AZOTEA_B,
  has	female;
 
-Atrezzo	-> azotea_ciudad "ciudad"
+Atrezzo	-> CalleAzotea "calle"
  with	name_f	'calle' 'ciudad' 'urbe' 'vista',
 		name_fp	'calles' 'vistas',
-		name_m	'edificio',
-		name_mp	'edificios',
+		name_m	'arbol' 'acueducto' 'canal' 'coche' 'edificio' 'metropoli'
+			'rio' 'vehiculo',
+		name_mp	'arboles' 'coches' 'edificios' 'vehiculos',
 		gender	G_FEMENINO,
-		description [; return O__M(self, 1); ],
+		description [;
+			O__M(self, 1);
+			if (Soldado.state == 0) {
+					Soldado.appears();
+					new_line;
+					O__M(Soldado, 3);
+			} else if (Soldado.state == 1) {
+					new_line;
+					O__M(Soldado, 4);
+			}
+			return true;
+		],
  has	female;
 
-Atrezzo	-> azotea_colillas "colillas"
- with	name_f	'colilla',
-		name_fp	'colillas',
-		name_m	'cigarrillo' 'cigarro' 'tabaco',
-		name_mp	'cigarrillos' 'cigarros',
-		gender	G_FEMENINO + G_PLURAL,
+Atrezzo	-> Colchon "colchón"
+ with	name_f 'colchoneta',
+		name_m 'colchon' 'jergon',
+		adjectives 'destrozada' 'destrozado' 'francotirador' 'sucia' 'sucio'
+			'tirador',
+		gender G_MASCULINO,
+		description [;
+			O__M(self, 1);
+			if (Moneda has concealed) {
+				give Moneda ~concealed;
+				new_line;
+				O__M(Moneda, 4);
+			}
+			return true;
+		],
+		before [;
+			Take:
+				return O__M(self, 2);
+		],
+ has	male;
+
+Atrezzo	-> Cornisa "cornisa"
+ with	name_f 'cornisa',
+		gender G_FEMENINO,
+		before [;
+			Jump,
+			JumpOver:
+				O__M(Stalker, 4);
+				return DM.visit_charon();
+		],
+ has	female;
+
+Item	-> Moneda "moneda"
+ with	short_name [;
+			if (self.state == 0) {
+				Hyperlink(self, "objeto");
+				return true;
+			}
+		],
+		name_f 'cosa' 'moneda',
+		name_m 'amuleto' 'dinero' 'objeto',
+		adjectives 'antigua' 'antiguo' 'pequena' 'pequeno',
+		gender G_MASCULINO,
+		describe [;
+			if (location == Azotea) {
+				new_line;
+				return O__M(self, 2);
+			}
+		],
+		description [;
+			return O__M(self, 1);
+		],
+		before [;
+			Examine:
+				if (self.state == 0) {
+					<<Take self>>;
+				}
+		],
+		after [;
+			Take:
+				if (self.state == 0) {
+					self.gender = G_FEMENINO;
+					self.state++;
+					give self ~male;
+					give self female;
+					return O__M(self, 3);
+				}
+		],
+		reset [; return true; ],
+ has	concealed male remarkable;
+
+Atrezzo	-> Colillas "colillas"
+ with	name_f 'colilla',
+		name_fp 'colillas',
+		name_m 'cigarrillo' 'cigarro' 'filtro' 'tabaco',
+		name_mp 'cigarrillos' 'cigarros' 'filtros',
+		gender G_FEMENINO + G_PLURAL,
 		adjectives 'consumida' 'consumidas' 'consumido' 'consumidos',
 		description [; return O__M(self, 1); ],
  has	female pluralname;
 
-Furniture	-> azotea_puerta "puerta"
- with	name_f	'puerta',
-		gender	G_FEMENINO,
+AdjacentRoom	-> PuertaAzotea "puerta"
+ with	name_f 'abertura' 'cerradura' 'entrada' 'puerta' 'salida',
+		name_fp 'entradas' 'puertas' 'salidas' 'umbral',
+		name_m 'hueco',
+		adjectives 'negra' 'negro',
+		gender G_FEMENINO,
 		description [; return O__M(self, 1); ],
- has	female remarkable;
-
-Item	-> azotea_silla "silla"
- with	name_f	'silla',
-		name_m	'asiento' 'mueble',
-		gender	G_FEMENINO,
-		adjectives
-			'madera' 'sencilla' 'sencillo',
-		description [; return O__M(self, 1); ],
- has	female;
-
-Atrezzo	azotea_soldado "soldado" LIMBO
- with	name_f	'persona',
-		name_m	'enemigo' 'hombre' 'soldado',
-		gender	G_MASCULINO,
-		description [; return O__M(self, 1); ],
- has	male remarkable;
-
-Atrezzo	azotea_cadaver "soldado" LIMBO
- with	name_f	'persona',
-		name_m	'cadaver' 'cuerpo' 'enemigo' 'hombre' 'soldado',
-		gender	G_MASCULINO,
-		description [; return O__M(self, 1); ],
- has	male;
+		before [;
+			Close,
+			Open:
+				<<Examine self>>;
+		],
+		direction_obj d_obj,
+ has	female scenery;
 
 
 !!==============================================================================
 !!
-!!	6)	CALLE_OESTE
+!!	6)	@CalleEste
 !!
 !!------------------------------------------------------------------------------
 
-Outdoors	CALLE_OESTE "calle"
- with	name_f	'calle',
-		gender	G_FEMENINO,
+Outdoors	CalleEste "calle"
+ with	name_f 'calle',
 		adjectives 'principal',
+	   	gender G_FEMENINO,
 		initial [;
+			FadeInTrack(SFX_VIENTO, -1, 2000);
+			Polvo.stop_wind(1);
 			!! Es importante tener en cuenta que puede estar produciéndose un
 			!! efecto de 'fade' en tiempo real antes de lanzar el sistema de
 			!! apuntado y disparo, para evitar que entren en conflicto. Para
 			!! ello, se pueden utilizar las rutinas: Damusix.EnFade() y
 			!! Damusix.AbortarFade())
-			FadeInTrack(SFX_VIENTO, 100, 1500);
-			if (self hasnt visited) {
-				O__M(self, 2);
-				new_line;
-				return true;
-			}
+			!! FadeInTrack(SFX_VIENTO, 100, 1500);
+			!! if (self hasnt visited) {
+			!! 	O__M(self, 2);
+			!! 	new_line;
+			!! 	return true;
+			!! }
 		],
 		description [; return O__M(self, 1); ],
-		n_to	CALLEJON,
-		e_to	CALLE_ESTE,
-		w_to	calle_edificio_desplomado,
-		f_to	[; return self.e_to(); ],
-		b_to	[; return self.n_to(); ],
-		cant_go [; return O__M(self, 4); ],
-		exits	[st;
-			st = PrintParserPrefix();
-			O__M(self, 5);
-			PrintParserSufix(st);
-			new_line;
-			return true;
+		before [
+			previous_style;
+			Exits:
+				previous_style = DM.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				O__M(self, 2);
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				DM.set_text_style(previous_style);
+				new_line;
+				return true;
 		],
-		images PIC_CALLE_OESTE_A PIC_CALLE_OESTE_B,
+		n_to Callejon,
+		w_to [;
+			if (CalleCentro hasnt visited) {
+				O__M(self, 4);
+				!! O__M(self, 5); TODO - si dispara sobre la Diana
+				O__M(self, 6);
+				new_line;
+			}
+			return CalleCentro;
+		],
+		e_to EdificioDerrumbado,
+		f_to [; return self.w_to(); ],
+		b_to [; return self.n_to(); ],
+		cant_go [; return O__M(self, 3); ],
+		images PIC_CALLE_A PIC_CALLE_B,
  has	female;
 
-Atrezzo	-> calle_coches "coches"
- with	name_m	'amasijo' 'coche' 'vehiculo',
-		name_mp	'amasijos' 'coches' 'vahiculos',
-		gender	G_MASCULINO + G_PLURAL,
+AdjacentRoom	-> CallejonAdj "callejón"
+ with	name_m 'callejon' 'pasadizo',
+		adjectives 'estrecho',
+		gender G_MASCULINO,
+		direction_obj n_obj,
+ has	male;
+
+Atrezzo	-> CanalCalle "canal"
+ with	found_in CalleCentro CalleEste CalleOeste,
+		name_f 'acequia',
+		name_m 'acueducto' 'canal',
+		gender G_MASCULINO,
+		description [; return O__M(self, 1); ],
+ has	male;
+
+Atrezzo	-> Coches "coches"
+ with	name_m 'amasijo' 'coche' 'vehiculo',
+		name_mp 'amasijos' 'coches' 'vahiculos',
 		adjectives 'calcinado' 'calcinados' 'metal',
+		gender G_MASCULINO + G_PLURAL,
 		description [; return O__M(self, 1); ],
  has	male pluralname;
 
-Atrezzo	-> calle_edificio_desplomado "edificio desplomado"
- with	name_f	'barricada',
-		name_m	'edificio',
-		gender	G_MASCULINO,
+Atrezzo	-> EdificioDerrumbado "edificio derrumbado"
+ with	name_f 'barricada',
+		name_m 'edificio',
 		adjectives 'caido' 'derrumbado' 'desplomado',
+		gender G_MASCULINO,
 		description [; return O__M(self, 1); ],
-		door_dir w_to,
+		door_dir e_to,
 		door_to [; <<Examine self>>; ],
  has	door male open;
 
-Furniture	-> calle_diana "diana"
- with	name_f	'diana',
-		name_m	'blanco',
-		gender	G_FEMENINO,
-		adjectives 'tiza',
-		describe [;
-			new_line;
-			return O__M(self, 4);
+Atrezzo	-> EdificiosCalle "edificios"
+ with	found_in CalleCentro CalleEste CalleOeste,
+		name_f 'ciudad' 'cuenca' 'pared' 'urbe' 'ventana',
+		name_fp 'cuencas' 'paredes' 'ventanas',
+		name_m 'agujero' 'edificio' 'metropoli' 'muro',
+		name_mp 'agujeros' 'edificios' 'muros',
+		adjectives 'agujereada' 'agujereadas' 'agujereado' 'agujereados'
+			'vacia' 'vacias',
+		gender G_MASCULINO,
+		description [; return O__M(self, 1); ],
+ has	male pluralname;
+
+!! Item	-> Diana "diana"
+!!  with	name_f	'diana',
+!! 		name_m	'blanco',
+!! 		gender	G_FEMENINO,
+!! 		adjectives 'tiza',
+!! 		describe [;
+!! 			new_line;
+!! 			return O__M(self, 4);
+!! 		],
+!! 		description [ i;
+!! 			if (self.attemps < 5) return O__M(self, 1);
+!! 			i = (self.hits*100)/self.attemps;
+!! 			if (i < self.minimum_threshold) return O__M(self, 2);
+!! 			if (i > self.maximum_threshold) return O__M(self, 3);
+!! 			return O__M(self, 1);
+!! 		],
+!! 		before [ i;
+!! 			ShootAt:
+!! 				#Ifdef TARGET_GLULX;
+!! 				if (Damusix.EnFade()) Damusix.AbortarFade();
+!! 				#Endif; ! TARGET_GLULX;
+!! 				O__M(self, 5);
+!! 				new_line;
+!! 				self.attemps++;
+!! 				if (AimingManager.aim_and_fire() >= 0) {
+!! 					i = AimingManager.get_difficulty();
+!! 					if (i > 0) i = i - 10;
+!! 					AimingManager.set_difficulty(i);
+!! 					self.hits++;
+!! 					return O__M(self, 8);
+!! 				} else { ! Fallo
+!! 					return O__M(self, 6);
+!! 				}
+!! 		],
+!! 		restart [;
+!! 			self.hits = 0;
+!! 			self.attemps = 0;
+!! 		],
+!!  private
+!! 		attemps 0,				! número de intentos
+!! 		hits 0,					! número de aciertos a la diana
+!! 		maximum_threshold 66,	! umbral superior
+!! 		minimum_threshold 33,	! umbral inferior
+!!  has	female;
+
+!!==============================================================================
+!!
+!!	7)	@CalleCentro
+!!
+!!------------------------------------------------------------------------------
+
+Outdoors	CalleCentro "calle"
+ with	name_f 'calle',
+		adjectives 'principal',
+   		gender G_FEMENINO,
+		initial [;
+			Polvo.stop_wind(1);
+			if (Cuerpo.shot) move Cuerpo to self;
 		],
-		description [ i;
-			if (self.attemps < 5) return O__M(self, 1);
-			i = (self.hits*100)/self.attemps;
-			if (i < self.minimum_threshold) return O__M(self, 2);
-			if (i > self.maximum_threshold) return O__M(self, 3);
+		description [;
 			return O__M(self, 1);
 		],
-		before [ i;
-			ShootAt:
-				O__M(self, 5);
+		before [
+			previous_style;
+			Exits:
+				previous_style = DM.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				O__M(self, 2);
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				DM.set_text_style(previous_style);
 				new_line;
-				self.attemps++;
-				i = AimAndFire();
-				if (i == -2) {
-					! TODO Máquina-Z
-				} else if (i <= AimingManager.get_is_distance()) {
-					self.hits++;
-					return O__M(self, 8);
-				}
-				return O__M(self, 6);
+				return true;
 		],
-		restart [;
-			self.hits = 0;
-			self.attemps = 0;
+		e_to [;
+			if (Cuerpo.shot) {
+				O__M(Cuerpo, 16, e_obj);
+				new_line;
+				return DM.restart(true);
+			}
+			return CalleEste;
 		],
- private
-		attemps 0,				! número de intentos
-		hits 0,					! número de aciertos a la diana
-		maximum_threshold 66,	! umbral superior
-		minimum_threshold 33,	! umbral inferior
+		w_to [;
+			if (Cuerpo.shot) {
+				O__M(Cuerpo, 16, w_obj);
+				new_line;
+				return DM.restart(true);
+			}
+			if (CalleOeste hasnt visited) {
+				O__M(self, 4);
+				new_line;
+			}
+			return CalleOeste;
+		],
+		f_to [; return self.w_to(); ],
+		b_to [; return self.e_to(); ],
+		cant_go [; return O__M(self, 3); ],
+		images PIC_CALLE_A PIC_CALLE_B,
  has	female;
+
+Atrezzo	-> Humo "humo"
+ with	found_in CalleCentro CalleOeste,
+		name_f 'fumarada' 'humareda' 'niebla',
+		name_m 'humo' 'vapor',
+		gender G_MASCULINO,
+		description [;
+			if (location == CalleCentro) return O__M(self, 1);
+ 			else return O__M(self, 2);
+		],
+		react_before [;
+			Smell:
+				if (noun == nothing)
+					<<Smell self>>;
+		],
+		before [;
+			Smell:
+				return O__M(self, 3);
+		],
+ has	male;
 
 
 !!==============================================================================
 !!
-!!	7)	CALLE_ESTE
+!!	8)	@CalleOeste
 !!
 !!------------------------------------------------------------------------------
 
-Outdoors	CALLE_ESTE "calle"
- with	name_f	'calle',
-		gender	G_FEMENINO,
-		adjectives 'principal',
-		initial [; if (self hasnt visited) {
-			! TODO
-			DungeonMaster.wind_blows(true); ! Detiene el viento este turno
-			move limbo_cadaver to self;
-			O__M(self, 2);
-			if (DungeonMaster.shot_on_dartboard) O__M(self, 3);
-			O__M(self, 4);
-			new_line;
-			return true;
-		}],
-		description [; return O__M(self, 1); ],
-		w_to	CALLE_OESTE,
-		b_to	[; return self.w_to(); ],
-		cant_go	[; return O__M(self, 5); ],
-		exits	[st;
-			st = PrintParserPrefix();
-			O__M(self, 6);
-			PrintParserSufix(st);
+Outdoors	CalleOeste "calle"
+ with	name_f 'calle',
+ adjectives 'principal',
+		gender G_FEMENINO,
+		initial [;
+			Polvo.stop_wind(1);
+			if (~~Cuerpo.shot) move Cuerpo to self;
+		],
+		description [;
+			O__M(self, 1);
+			if (Cuerpo has concealed) O__M(self, 4);
 			new_line;
 			return true;
 		],
-		images	PIC_CALLE_ESTE_A,
+		before [
+			previous_style;
+			Exits:
+				previous_style = DM.set_text_style(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				O__M(self, 2);
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				DM.set_text_style(previous_style);
+				new_line;
+				return true;
+		],
+		e_to [;
+			if (Cuerpo.shot) O__M(Cuerpo, 16, e_obj);
+			else O__M(Cuerpo, 15, e_obj);
+			new_line;
+			return DM.restart(true);
+		],
+		w_to [;
+			if (Cuerpo.shot) O__M(Cuerpo, 16, w_obj);
+			else O__M(Cuerpo, 15, w_obj);
+			new_line;
+			return DM.restart(true);
+		],
+		f_to [; return self.w_to(); ],
+		b_to [; return self.e_to(); ],
+		cant_go	[; return O__M(self, 3); ],
+		images	PIC_CADAVER,
  has	female;
 
-Furniture	limbo_cadaver "cadáver" LIMBO
- with	name_f	'persona',
-		name_m	'cadaver' 'camarada' 'cuerpo' 'muerto' 'soldado',
-		gender	G_MASCULINO,
+Item	-> Cuerpo "cuerpo"
+ with	name_f 'persona',
+		name_m 'cadaver' 'caido' 'camarada' 'cuerpo' 'muerto' 'soldado',
+		gender G_MASCULINO,
 		describe [;
-			if (DungeonMaster.heart_attack) {
-				new_line;
-				if (self has described) return O__M(self, 7);
-				if (self.discovered) return O__M(self, 6);
-				self.discovered = true;
-				return O__M(self, 5);
+			new_line;
+			if (self.shot) {
+				if (~~self.discovered) {
+					self.discovered = true;
+					return O__M(self, 8);
+				}
+				if (self hasnt described) {
+					return O__M(self, 9);
+ 				}
+				return O__M(self, 10);
 			} else {
-				new_line;
-				if (self has described) return O__M(self, 10);
-				if (self.discovered) return O__M(self, 9);
-				self.discovered = true;
-				return O__M(self, 8);
+				if (~~self.discovered) {
+					self.discovered = true;
+					return O__M(self, 5);
+				}
+				if (self hasnt described) {
+					return O__M(self, 6);
+ 				}
+				return O__M(self, 7);
 			}
 		],
 		description [;
-			if (DungeonMaster.heart_attack) {
-				if (self hasnt described) return O__M(self, 1);
-				give self on;
-				return O__M(self, 2);
-			} else {
+			Polvo.stop_wind(1);
+			if (self.shot) {
 				if (self hasnt described) return O__M(self, 3);
 				give self on;
 				return O__M(self, 4);
+			} else {
+				if (self hasnt described) return O__M(self, 1);
+				give self on;
+				return O__M(self, 2);
 			}
 		],
 		react_before [;
 			if (self hasnt on) return false;
 			Search:
 				if (~~self.registered) return false;
-				return DungeonMaster.restart_loop();
+				return DM.restart(true);
 			default:
-				return DungeonMaster.restart_loop();
+				return DM.restart(true);
 		],
-		before [;
+		before [
+			obj;
 			Search:
-				if (self hasnt on) return O__M(self, 11);
-				else {
+				if (self hasnt on) {
+					return O__M(self, 11);
+				} else {
+					Polvo.stop_wind(1);
 					self.registered = true;
-					!! TODO - Comprobar núm monedas
+					if (IndirectlyContains(player, Moneda)) {
+						obj = parent(Moneda);
+						move Moneda to Limbo;
+						move Monedas to obj;
+						return O__M(self, 13);
+					}
+					if (IndirectlyContains(player, Monedas)) {
+						return O__M(self, 14);
+					}
 					return O__M(self, 12);
 				}
 		],
 		reset [;
+			move self to CalleOeste;
 			give self ~on;
-			self.discovered = false,
+			self.discovered = false;
 			self.registered = false;
+			self.shot = false;
+			return false;
 		],
- private
 		discovered false,
 		registered false,
+		shot false,
  has	male remarkable transparent;
 
-Atrezzo	-> -> limbo_cadaver_sangre "cadáver"
- with	name_f	'sangre',
-		gender	G_FEMENINO,
-		description [;
-			if (DungeonMaster.heart_attack) <<Examine limbo_cadaver>>;
-			else return O__M(self, 1);
+Item	-> -> "bolsillos"
+ with	name_f 'faltriquera',
+		name_fp 'faltriqueras',
+		name_m 'bolsillo',
+		name_mp 'bolsillos',
+		gender G_MASCULINO G_PLURAL,
+		before [;
+			DefaultAction,
+			Examine,
+			Search:
+				<<Search Cuerpo>>;
 		],
- has	female;
+ has	male pluralname;

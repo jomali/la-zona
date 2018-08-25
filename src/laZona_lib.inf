@@ -11,13 +11,13 @@
 !!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:			ES (Castellano)
 !!	Sistema:		Inform-INFSP 6
-!!	Plataforma:		GLULX
-!!	Versión:		0.0
-!!	Fecha:			2017/12/16
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:		1.0
+!!	Fecha:			2018/08/25
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Este archivo forma parte del relato interactivo LA ZONA.
+!!	Este archivo forma parte de la ficción interactiva LA ZONA.
 !!
 !!	LA ZONA es software libre: usted puede redistribuirlo y/o
 !!	modificarlo bajo los términos de la Licencia Pública General GNU
@@ -37,38 +37,65 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	# HISTORIAL DE VERSIONES
+!!	TABLA DE CONTENIDOS
 !!
-!!	0.0: 2016/06/18	Inicio del desarrollo.
-!!
-!!------------------------------------------------------------------------------
-!!
-!!	# TABLA DE CONTENIDOS
-!!
-!!	-	Banner()
-!!		-	PrintStoryTitle()
-!!		-	PrintHeadline()
-!!		-	PrintVersionNumber()
-!!		-	PrintSerialNumber()
-!!	-	DrawStatusLine()
-!!		-	PrintLocationName()
-!!	-	ExamineSub()
-!!	-	GetGNAOfObject()
-!!	-	GetActionVerb()
-!!	-	LanguageDirection()/Redefinición de direcciones
-!!	-	LMode1Sub()
-!!	-	LMode2Sub()
-!!	-	LMode3Sub()
-!!	-	LookSub()
-!!	-	ParseNoun()
-!!	-	PSN__()
-!!	-	SpanishNominativePronoun()
-!!	-	VersionSub()
+!!	Atributos y propiedades:
+!!		<>	remarkable
+!!		<>	reset
+!!		<>	state
+!!	Rutinas:
+!!		<>	Banner()
+!!			-	PrintStoryTitle()
+!!			-	PrintHeadline()
+!!			-	PrintVersionNumber()
+!!			-	PrintSerialNumber()
+!!		<>	DrawStatusLine()
+!!			-	PrintLocationName()
+!!		<>	ExamineSub()
+!!		<>	GetGNAOfObject()
+!!		<>	GetActionVerb()
+!!		<>	LanguageDirection()/Redefinición de direcciones
+!!		<>	LMode1Sub()
+!!		<>	LMode2Sub()
+!!		<>	LMode3Sub()
+!!		<>	LookSub()
+!!		<>	ParseNoun()
+!!		<>	VersionSub()
 !!
 !!------------------------------------------------------------------------------
 
 
 !!==============================================================================
+!!
+!!	Atributos y propiedades
+!!
+!!------------------------------------------------------------------------------
+
+!! El nuevo atributo 'remarkable' permite marcar un objeto como destacado. Se
+!! puede tener en cuenta si un objeto es o no destacado para, por ejemplo,
+!! imprimirlo con un estilo de resaltado propio, o para que alguna nueva acción
+!! extradiegética imprima el listado de objetos destacados al alcance del
+!! personaje controlado por el usuario en un momento dado
+Attribute remarkable;
+
+!! Nueva propiedad 'reset'. Puede ser utilizada por el autor para reinicializar
+!! el estado de un objeto
+Property reset false;
+
+!! Nueva propiedad 'state' para registrar el estado de un objeto. Puede ser
+!! utilizada por el autor de forma análoga al atributo 'general' de la librería
+!! Inform, facilitando una mayor libertad al autor al no tratarse de un
+!! atributo binario sino una propiedad que puede adoptar cualquier valor:
+Property state 0;
+
+
+!!==============================================================================
+!!
+!!	Rutinas
+!!
+!!------------------------------------------------------------------------------
+
+!!------------------------------------------------------------------------------
 !! Conjunto de rutinas para imprimir los créditos de la aplicación en
 !! castellano. Lista de rutinas incluidas: Banner(), PrintHeadline(),
 !! PrintSerialNumber(), PrintStoryTitle() y PrintVersionNumber().
@@ -150,8 +177,7 @@
 	#Endif;	! TARGET_
 ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Dibuja una barra de estado con el nombre de la localidad centrado. (NOTA:
 !! La barra de estado utilizada finalmente en el relato es en realidad una
 !! extensión de GWindows y no la barra de estado definida aquí, de manera que
@@ -202,8 +228,7 @@ Array	_AlmacenDeTexto_ -> 160 + WORDSIZE;
 	}
 ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Rutina para obtener la descripción de un objeto. Es idéntica a la rutina
 !! original implementada en 'verblibm.h' salvo por un detalle: al examinar un
 !! objeto por primera vez se le asigna el nuevo atributo 'described'.
@@ -229,8 +254,7 @@ Attribute described; ! Indica si un objeto ha sido descrito al jugador
 	if (AfterRoutines() == 1) rtrue;
 ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Determina el código GNA ('gender-number-animation') del nombre corto del
 !! objeto 'obj' pasado como parámetro. El código GNA es un número entero entre
 !! 0 y 11:
@@ -296,122 +320,120 @@ Attribute described; ! Indica si un objeto ha sido descrito al jugador
     return result;
 ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Retorna el verbo que se corresponde a la acción dada como parámetro.
 !!
 !!	@param {Object} x - Constante con una acción
 !!	@returns {string} Una palabra que se corresponde con la acción 'x'
 !!	@version 1.0
 !!------------------------------------------------------------------------------
-[ GetActionVerb x;
-	switch (x) {
-		!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
-		##Close:		return "Cerrar";
-		##Disrobe:		return "Desvestir";
-		##Drop:			return "Dejar";
-		##Eat:			return "Comer";
-		##Empty:		return "Vaciar";
-		!##EmptyT
-		##Enter:		return "Entrar";
-		##Examine:		return "Examinar";
-		##Exit:			return "Salir";
-		##GetOff:		return "Salir";
-		##Give:			return "Dar";
-		##Go:			return "Ir";
-		##GoIn:			return "Entrar";
-		##Insert:		return "Meter";
-		##Inv:			return "Inventario";
-		##InvTall:		return "Inventario (lista)";
-		##InvWide:		return "Inventario (descripción)";
-		##Lock:			return "Bloquear";
-		##Look:			return "Mirar";
-		##Open:			return "Abrir";
-		##Order:		return "Ordenar";
-		##PutOn:		return "Poner encima";
-		##Remove:		return "Quitar";
-		##Search:		return "Buscar";
-		##Show:			return "Enseñar";
-		##SwitchOff:	return "Apagar";
-		##SwitchOn:		return "Encender";
-		##Take:			return "Coger";
-		!##Transfer
-		##Unlock:		return "Desbloquear";
-		!##VagueGo
-		##Wear:			return "Vestir";
-		!! GROUP 3 ACTIONS: Output a message and stop at the "before" stage.
-		##Answer:		return "Responder";
-		##Ask:			return "Preguntar";
-		##AskFor:		return "Preguntar por";
-		##Attack:		return "Atacar";
-		##Blow:			return "Soplar";
-		##Burn:			return "Quemar";
-		##Buy:			return "Comprar";
-		##Climb:		return "Escalar";
-		##Consult:		return "Consultar";
-		##Cut:			return "Cortar";
-		##Dig:			return "Excavar";
-		##Drink:		return "Beber";
-		##Fill:			return "Llenar";
-		##Jump:			return "Saltar";
-		##JumpOver:		return "Saltar";
-		##Kiss:			return "Besar";
-		!##LetGo:
-		##Listen:		return "Escuchar";
-		##LookUnder:	return "Mirar debajo";
-		##Mild:			return "Insultar";
-		##No:			return "No";
-		##Pray:			return "Rezar";
-		##Pull:			return "Tirar";
-		##Push:			return "Empujar";
-		##PushDir:		return "Empujar hacia";
-		##Receive:		return "Recibir";
-		##Rub:			return "Frotar";
-		##Set:			return "Establecer";
-		##SetTo:		return "Establecer a";
-		##Sing:			return "Cantar";
-		##Sleep:		return "Dormir";
-		##Smell:		return "Oler";
-		##Sorry:		return "Disculpar";
-		##Squeeze:		return "Agitar";
-		##Strong:		return "Blasfemar";
-		##Swim:			return "Nadar";
-		##Swing:		return "Columpiar";
-		##Taste:		return "Saborear";
-		##Tell:			return "Decir";
-		##Think:		return "Pensar";
-		##ThrowAt:		return "Lanzar a";
-		##Tie:			return "Atar";
-		##Touch:		return "Tocar";
-		##Turn:			return "Girar";
-		##Wait:			return "Esperar";
-		##Wake:			return "Despertar";
-		##WakeOther:	return "Despertar";
-		##Wave:			return "Gesticular";
-		##WaveHands:	return "Gesticular con las manos";
-		##Yes:			return "Si";
-		!! GRAMÁTICA ESPAÑOLA EXTENDIDA:
-		##Dance:		return "Bailar";
-		##GoDown:		return "Descender";
-		##GoUp:			return "Ascender";
-		##KnockOn:		return "Llamar";
-		##Masturbate:	return "Masturbarse";
-		##Read:			return "Leer";
-		##Shout:		return "Gritar";
-		##Sit:			return "Sentarse";
-		##SleepWith:	return "Follar";
-		##StandUp:		return "Levantarse";
-		##Untie:		return "Desatar";
-		##Use:			return "Usar";
-		##Write:		return "Escribir";
-		##Xyzzy:		return "Xyzzy";
-		!! CUSTOM ACTIONS:
-		##TalkTo:		return "Hablar";
-	}
-];
+!! [ GetActionVerb x;
+!! 	switch (x) {
+!! 		!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
+!! 		##Close:		return "Cerrar";
+!! 		##Disrobe:		return "Desvestir";
+!! 		##Drop:			return "Dejar";
+!! 		##Eat:			return "Comer";
+!! 		##Empty:		return "Vaciar";
+!! 		!##EmptyT
+!! 		##Enter:		return "Entrar";
+!! 		##Examine:		return "Examinar";
+!! 		##Exit:			return "Salir";
+!! 		##GetOff:		return "Salir";
+!! 		##Give:			return "Dar";
+!! 		##Go:			return "Ir";
+!! 		##GoIn:			return "Entrar";
+!! 		##Insert:		return "Meter";
+!! 		##Inv:			return "Inventario";
+!! 		##InvTall:		return "Inventario (lista)";
+!! 		##InvWide:		return "Inventario (descripción)";
+!! 		##Lock:			return "Bloquear";
+!! 		##Look:			return "Mirar";
+!! 		##Open:			return "Abrir";
+!! 		##Order:		return "Ordenar";
+!! 		##PutOn:		return "Poner encima";
+!! 		##Remove:		return "Quitar";
+!! 		##Search:		return "Buscar";
+!! 		##Show:			return "Enseñar";
+!! 		##SwitchOff:	return "Apagar";
+!! 		##SwitchOn:		return "Encender";
+!! 		##Take:			return "Coger";
+!! 		!##Transfer
+!! 		##Unlock:		return "Desbloquear";
+!! 		!##VagueGo
+!! 		##Wear:			return "Vestir";
+!! 		!! GROUP 3 ACTIONS: Output a message and stop at the "before" stage.
+!! 		##Answer:		return "Responder";
+!! 		##Ask:			return "Preguntar";
+!! 		##AskFor:		return "Preguntar por";
+!! 		##Attack:		return "Atacar";
+!! 		##Blow:			return "Soplar";
+!! 		##Burn:			return "Quemar";
+!! 		##Buy:			return "Comprar";
+!! 		##Climb:		return "Escalar";
+!! 		##Consult:		return "Consultar";
+!! 		##Cut:			return "Cortar";
+!! 		##Dig:			return "Excavar";
+!! 		##Drink:		return "Beber";
+!! 		##Fill:			return "Llenar";
+!! 		##Jump:			return "Saltar";
+!! 		##JumpOver:		return "Saltar";
+!! 		##Kiss:			return "Besar";
+!! 		!##LetGo:
+!! 		##Listen:		return "Escuchar";
+!! 		##LookUnder:	return "Mirar debajo";
+!! 		##Mild:			return "Insultar";
+!! 		##No:			return "No";
+!! 		##Pray:			return "Rezar";
+!! 		##Pull:			return "Tirar";
+!! 		##Push:			return "Empujar";
+!! 		##PushDir:		return "Empujar hacia";
+!! 		##Receive:		return "Recibir";
+!! 		##Rub:			return "Frotar";
+!! 		##Set:			return "Establecer";
+!! 		##SetTo:		return "Establecer a";
+!! 		##Sing:			return "Cantar";
+!! 		##Sleep:		return "Dormir";
+!! 		##Smell:		return "Oler";
+!! 		##Sorry:		return "Disculpar";
+!! 		##Squeeze:		return "Agitar";
+!! 		##Strong:		return "Blasfemar";
+!! 		##Swim:			return "Nadar";
+!! 		##Swing:		return "Columpiar";
+!! 		##Taste:		return "Saborear";
+!! 		##Tell:			return "Decir";
+!! 		##Think:		return "Pensar";
+!! 		##ThrowAt:		return "Lanzar a";
+!! 		##Tie:			return "Atar";
+!! 		##Touch:		return "Tocar";
+!! 		##Turn:			return "Girar";
+!! 		##Wait:			return "Esperar";
+!! 		##Wake:			return "Despertar";
+!! 		##WakeOther:	return "Despertar";
+!! 		##Wave:			return "Gesticular";
+!! 		##WaveHands:	return "Gesticular con las manos";
+!! 		##Yes:			return "Si";
+!! 		!! GRAMÁTICA ESPAÑOLA EXTENDIDA:
+!! 		##Dance:		return "Bailar";
+!! 		##GoDown:		return "Descender";
+!! 		##GoUp:			return "Ascender";
+!! 		##KnockOn:		return "Llamar";
+!! 		##Masturbate:	return "Masturbarse";
+!! 		##Read:			return "Leer";
+!! 		##Shout:		return "Gritar";
+!! 		##Sit:			return "Sentarse";
+!! 		##SleepWith:	return "Follar";
+!! 		##StandUp:		return "Levantarse";
+!! 		##Untie:		return "Desatar";
+!! 		##Use:			return "Usar";
+!! 		##Write:		return "Escribir";
+!! 		##Xyzzy:		return "Xyzzy";
+!! 		!! CUSTOM ACTIONS:
+!! 		##TalkTo:		return "Hablar";
+!! 	}
+!! ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Rutinas para tomar inventario del protagonista.
 !!
 !!	@override verblibm.h
@@ -493,8 +515,7 @@ Attribute described; ! Indica si un objeto ha sido descrito al jugador
 !! [ InvTallSub; <Inv>; ];
 !! [ InvWideSub; <Inv>; ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Redefinición de los 8 puntos cardinales ---norte, sur, este, oeste,
 !! nordeste, noroeste, sudeste, sudoeste--- y las direcciones 'arriba' y
 !! 'abajo' (se mantienen las definiciones 'interior' y 'exterior' por defecto
@@ -547,9 +568,9 @@ CompassDirection d_obj "abajo" compass
  has	proper;
 
 Property b_to;
-CompassDirection b_obj "atrás" compass
- with	name 'b//' 'atras', door_dir b_to,
- has	proper;
+!! CompassDirection b_obj "atrás" compass
+!!  with	name 'b//' 'atras', door_dir b_to,
+!!  has	proper;
 
 Property f_to;
 CompassDirection f_obj "adelante" compass
@@ -576,8 +597,7 @@ CompassDirection f_obj "adelante" compass
 	}
 ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Redefinición de los 'lookmode': Breve, Largo y Superbreve.
 !!
 !!	@override verblibm.h
@@ -587,8 +607,7 @@ CompassDirection f_obj "adelante" compass
 [ LMode2Sub; lookmode = 2; L__M( ##LMode2 ); ];	! Largo (ahora por defecto)
 [ LMode3Sub; lookmode = 3; L__M( ##LMode3 ); ];	! Superbreve
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! Redefinición de la rutina 'LookSub' para evitar que se imprima el nombre de
 !! la localidad actual antes de su descripción.
 !!
@@ -659,8 +678,7 @@ CompassDirection f_obj "adelante" compass
 	if (AfterRoutines() == 1) rtrue;
 ];
 
-
-!!==============================================================================
+!!------------------------------------------------------------------------------
 !! La rutina ParseNoun se ocupa de ignorar "de" cuando aparece entre dos
 !! palabras reconocidas como names de un mismo objeto. Así, si un objeto tiene
 !! en su campo "name" los valores "caja" "madera" "caoba" ParseNoun aceptará
@@ -826,50 +844,7 @@ CompassDirection f_obj "adelante" compass
 	return n; ! Se retorna número de palabras reconocidas
 ];
 
-
-!!==============================================================================
-!! Rutina para imprimir el nombre corto de un objeto. Además, crea un
-!! hipervínculo relacionado con el objeto y, si el objeto tiene el atributo
-!! 'remarkable' utiliza un estilo resaltado para imprimir el nombre.
-!!
-!!	@returns {boolean} Verdadero
-!!	@override parserm.h
-!!	@version 1.0
 !!------------------------------------------------------------------------------
-[ PSN__ obj;
-    if (obj == 0) { print (string) NOTHING__TX; rtrue; }
-    switch (metaclass(obj)) {
-	    Routine:  print "<routine ", obj, ">"; rtrue;
-	    String:   print "<string ~", (string) obj, "~>"; rtrue;
-	    nothing:  print "<illegal object number ", obj, ">"; rtrue;
-    }
-    if (obj == player) { print (string) YOURSELF__TX; rtrue; }
-    #Ifdef LanguagePrintShortName;
-    if (LanguagePrintShortName(obj)) rtrue;
-    #Endif; ! LanguagePrintShortName
-	return CreateLink(obj);
-];
-
-
-!!==============================================================================
-!! Imprime el pronombre nominativo correcto correspondiente a un objeto.
-!!
-!!	@param {Object} obj - Obj. del que se desea imprimir su pronombre nominativo
-!!	@version 1.0
-!!------------------------------------------------------------------------------
-[ SpanishNominativePronoun obj;
-	switch (GetGNAOfObject(obj)) {
-		0, 6:	print "él";
-		1, 7:	print "ella";
-		2, 8:	print "ello";
-		3, 9:	print "ellos";
-		4, 10:	print "ellas";
-		5, 11:	print "ellos";
-   }
-];
-
-
-!!==============================================================================
 !! Créditos detallados de la aplicación.
 !!
 !!	@override verblibm.h

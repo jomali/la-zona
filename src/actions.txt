@@ -82,17 +82,3 @@
 !Wave
 !WaveHands
 !Yes
-!! CUSTOM ACTIONS
-!Dance
-!GoDown
-!GoUp
-!KnockOn
-!Masturbate
-!Sit
-!SleepWith
-!StandUp
-!TalkTo
-!Untie
-!Use
-!Write
-!Xyzzy

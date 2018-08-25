@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ifindex version="1.0" xmlns="http://babel.ifarchive.org/protocol/iFiction/">
+    <story>
+        <identification>
+            <ifid>1329837A-98CE-4902-9810-A3E21036A532</ifid>
+            <format>glulx</format>
+        </identification>
+        <bibliographic>
+            <title>La zona</title>
+            <author>J. Francisco Martin</author>
+            <language>ES</language>
+            <headline>Una ficción interactiva</headline>
+            <genre>fiction</genre>
+            <forgiveness>merciful</forgiveness>
+            <description></description>
+        </bibliographic>
+        <contacts>
+            <authoremail>jfm.lisaso@gmail.com</authoremail>
+            <url>https://github.com/jomali</url>
+        </contacts>
+        <release>
+            <version>1</version>
+            <releasedate>2018/08/25</releasedate>
+        </release>
+        <colophon>
+            <generator>Babble</generator>
+            <originated>2018/08/25</originated>
+        </colophon>
+    </story>
+</ifindex>

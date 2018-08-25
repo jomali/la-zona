@@ -3,683 +3,14 @@
 
 
 
-[ LanguageOM_past obj n x1;
-	switch (obj) {
-
-AZOTEA: switch (n) {
-1:	! ##Examine
-print "En armonía con el resto del edificio, la azotea estaba casi completamente desierta, salvo por una sencilla silla de madera que había cerca de la cornisa. Era evidente que en aquel sitio había estado apostado un francotirador en algún momento. No le extrañó, el único acceso hasta allí arriba era la puerta por la que había llegado, por lo que uno podría defender aquella posición con cierta facilidad, y ofrecía una vista excelente de la calle y de los edificios de alrededor.";
-new_line;
-return true;
-2:	! intial (A - primera vez)
-print "El interior se hallaba totalmente vacío. Incluso los marcos de madera de las puertas habían desaparecido pasto de los incendios. Alcanzó unas precarias escaleras y fue ascendiendo por ellas lentamente, temiendo que el suelo pudiese ceder bajo sus pies en cualquier momento. El estado del edificio era deplorable; además de algunos agujeros de bala había grandes boquetes en las paredes provocados por las bombas, y descubrió algunas habitaciones en las que se había desplomado el techo. La escalera aguantó su peso, no obstante, y logró coronar el final de la escalera sin accidentes. Salió a una azotea despejada.";
-new_line;
-return true;
-3:	! initial (B)
-print "Entró al edificio y subió la escalera con mucho cuidado hasta llegar a la azotea.";
-new_line;
-return true;
-4:	! cant_go
-print "Sólo podía volver ", (name) b_obj, " por la ", (name) azotea_puerta, ".";
-new_line;
-return true;
-5:	! exits
-print "Salidas visibles: ", (name) d_obj, ".";
-return true;
-}
-
-azotea_colillas: switch (n) {
-1:	! ##Examine
-print "También él había tenido un paquete de tabaco en algún momento. Aunque ya no era capaz de recordar cuándo se le había acabado...";
-new_line;
-return true;
-2:	! describe
-print "Había un montón de ", (name) azotea_colillas, " consumidas en el suelo, cerca de la cornisa.";
-new_line;
-return true;
-}
-
-azotea_silla: switch (n) {
-1:	! ##Examine
-print "Al acercarse a la silla comprobó que incluso había un montón de colillas consumidas en el suelo.";
-new_line;
-return true;
-}
-
-calle_coches: switch (n) {
-1:	! ##Examine
-print "Estaban reducidos a poco más que simples amasijos de metal ennegrecido.";
-new_line;
-return true;
-}
-
-calle_diana: switch (n) {
-1:	! ##Examine (A - neutra)
-print "Pintada con tiza. Tenía un montón de agujeros de bala alrededor.";
-new_line;
-return true;
-2:	! ##Examine (B - más fallos)
-print "Testimonio mudo de la mala puntería. Eran más los agujeros de bala que había fuera de los círculos de tiza que los que quedaban dentro.";
-new_line;
-return true;
-3:	! ##Examine (C - más aciertos)
-print "La mayoría de los agujeros estaban abiertos en el interior de los círculos de tiza.";
-new_line;
-return true;
-4:	! describe
-print "Frente a él, en un edificio al otro lado de la calle, alguien había pintado una diana con tiza sobre la pared. Había un montón de agujeros de bala a su alrededor.";
-new_line;
-return true;
-5:	! ##ShootAt (apuntado)
-print (string) random(
-	"Levantó el fusil y apuntó a la diana...",
-	"Apuntó con el fusil a la diana...",
-	"Levantó el fusil y trató de controlar la respiración mientras apuntaba...",
-	"Se arrodilló y apuntó a la diana, apostando el codo sobre la rodilla...",
-	"Tomó aire y levantó el fusil lentamente...",
-);
-new_line;
-return true;
-6:	! ##ShootAt (fallo)
-print "Disparó. El estampido del arma rompió el silencio y apenas un instante después, la bala impactó con un golpe seco sobre la pared de enfrente, abriendo un agujero a varios palmos de distancia de la circunferencia más exterior de la diana. Había fallado.";
-new_line;
-return true;
-7:	! ##ShootAt (acierto perfecto)
-8:	! ##ShootAt (acierto)
-9:	! ##ShootAt (acierto por poco)
-print "El disparo provocó un gran estampido y un segundo golpe, una diminuta fracción de segundo después, cuando la bala impactó sobre la pared del edificio del otro lado de la calle. Definitivamente era un acierto; había abierto un nuevo agujero de bala dentro de la circunferencia que delimitaba la diana.";
-new_line;
-return true;
-}
-
-calle_edificio_desplomado: switch (n) {
-1:	! ##Examine
-print "Uno de los edificios se había desplomado por completo sobre la calle, creando una gran barricada que impedía el paso hacia el oeste.";
-new_line;
-return true;
-}
-
-CALLE_ESTE: switch (n) {
-1:	! ##Examine
-print "Un incendio debía estar consumiendo algún tejado cercano. Notó el humo irritándole la garganta y los ojos un momento antes de que empezase a ver caer ceniza a su alrededor, pausadamente, como una especie de nieve fina y reseca. La calle continuaba en línea recta hacia el ", (name) e_obj, ". En aquel punto una buena parte del pavimento se había hundido, formando un talud de cascotes que descendía en pendiente hasta el canal.";
-new_line;
-return true;
-2:	! initial (A)
-print "Caminaba lentamente, parapetado a las paredes de los edificios y aferrando el fusil con fuerza";
-return true;
-3:	! initial (B - si ha disparado)
-print " ---ahora se arrepentía de haber probado puntería sobre la diana, temiendo que alguien pudiese haber escuchado los disparos---";
-return true;
-4:	! initial (C)
-print ". Crujido de cristales rotos bajo sus botas. Los agujeros de las ventanas parecían cuencas vacías que lo observaban acusadoramente entre susurros del viento. Por lo demás imperaba el silencio.";
-new_line;
-return true;
-5:	! cant_go
-print "La calle continuaba recta, de ", (name) w_obj, " a ", (name) e_obj, ". Sólo podía continuar hacia ", (name) f_obj, " o volver ", (name) b_obj, ".";
-new_line;
-return true;
-6:	! exits
-print "Salidas visibles: ", (name) e_obj, " y ", (name) w_obj, ".";
-return true;
-}
-
-CALLE_OESTE: switch (n) {
-1:	! ##Examine
-print "El callejón terminaba en aquella calle principal. Se extendía paralela al canal, de oeste a este, y estaba salpicada por coches calcinados y por los cascotes desprendidos de las fachadas y los tejados cercanos. La ciudad entera parecía haber quedado reducida a un montón de ruinas.";
-new_line;
-return true;
-2:	! initial (A - ataque al corazón)
-print "Cada vez se hacía más difícil ignorar el dolor del pecho, pero no podía detenerse. Tenía que salir de allí como fuese.";
-new_line;
-return true;
-3:	! initial (B - disparo)
-print "Un doloroso pinchazo en el pecho le detuvo en seco. Notaba la espalda y las palmas de las manos heladas de pronto por culpa del sudor, mientras algo parecía estar presionándole directamente sobre el esternón, con mucha fuerza. Estaba aterrado, pero no podía detenerse allí, de modo que trató recobrar el aliento y apartar el dolor a un lado. Ya podría descansar cuando saliese de aquel lugar. Tenía que continuar.";
-new_line;
-return true;
-4:	! cant_go
-print "No podía ir por allí. La calle se extendía de ", (name) e_obj, " a ", (name) w_obj, ", paralela al canal. Al ", (name) n_obj, " se abría el estrecho callejón por el que había venido.";
-return true;
-5:	! exits
-print "Salidas visibles: ", (name) n_obj, ", ", (name) e_obj, " y ", (name) w_obj, ".";
-return true;
-}
-
-CALLEJON: switch (n) {
-1:	! ##Examine
-print "Estaba en un callejón estrecho, abierto como una herida entre dos edificios de sucias paredes de ladrillo. Montones de muebles destrozados y otros desperdicios se amontonaban a lo largo de prácticamente todo el callejón, desde la valla metálica que franquaba el paso al canal, al norte, al extremo sur opuesto.";
-new_line;
-return true;
-2:	! initial (A - desde el canal, primera vez)
-print "Era imposible saber si había tiradores enemigos apostados al otro lado del río pero no podía volver atrás, de modo que si los había confió que no estuviesen mirando justo allí en ese momento y echó a correr hacia la escalera.";
-new_line;
-return true;
-3:	! initial (B - desde el canal)
-print "Subió a toda prisa por el terraplén y saltó sobre la valla caída de lo alto.";
-new_line;
-return true;
-4:	! cant_go
-print "No podía ir por allí. El callejón se extendía de ", (name) n_obj, " a ", (name) s_obj, ". Estaba además la ", (name) callejon_puerta, " trasera en la pared ", (name) e_obj, ".";
-new_line;
-return true;
-5:	! exits
-print "Salidas visibles: ", (name) n_obj, ", ", (name) s_obj, " y ", (name) e_obj, ".";
-return true;
-}
-
-callejon_basura: switch (n) {
-1:	! ##Examine (A)
-print "El callejón era tan estrecho y estaba tan lleno de basura que apenas se podía cruzar por allí; montones de muebles destrozados, contenedores desbordados, viejas cajas de cartón podridas e hinchadas por la humedad y pilas de escombros se acumulaban contra las paredes de ladrillo.";
-return true;
-2:	! ##Examine (B)
-print " Entre todo aquello destacaba especialmente ", (a) callejon_maquina_tabaco, ".";
-new_line;
-return true;
-3:	! ##Examine (C - primera vez)
-print "Entre todo aquello le llamó la atención ", (a) callejon_maquina_tabaco, " abollada. La habían arrojado junto a los escombros, pero aún parecía encontrarse en bastantes buenas condiciones.";
-new_line;
-return true;
-}
-
-callejon_edificios: switch (n) {
-1:	! ##Examine
-print "Los altos muros de ladrillo se cernían ominosamente sobre su cabeza.";
-new_line;
-return true;
-}
-
-callejon_maquina_tabaco: switch (n) {
-1:	! ##Examine (A - cerrada)
-print "Estaba algo aplastada, pero se encontraba en mejores condiciones que la mayor parte de la basura arrojada a su alrededor. Merecía la pena buscar dentro. Quizá aún pudiese encontrar algo de tabaco.";
-new_line;
-return true;
-}
-
-callejon_puerta: switch (n) {
-1:	! ##Examine
-print "Revestida de chapa, le habían volado la cerradura de un disparo.";
-new_line;
-return true;
-2:	! describe (A - sin haber descubierto la máquina de tabaco)
-print "Había una pequeña puerta trasera en la pared este. Alguien le había volado la cerradura.";
-new_line;
-return true;
-3:	! describe (B)
-print "Había ", (a) callejon_maquina_tabaco, " caída de lado entre la basura, cerca de la puerta trasera con la cerradura reventada.";
-new_line;
-return true;
-4:	! ##Close
-print  "No podía hacerlo con la cerradura destrozada.";
-new_line;
-return true;
-}
-
-CANAL: switch (n) {
-1:	! ##Examine
-print "Se encontraba en la parte más profunda de un ancho canal de hormigón, junto a la boca del túnel de alcantarillado que había en uno de los terraplenes laterales. A lo largo de las orillas se levantaban penosamente unas hileras irregulares de ";
-CreateLink(canal_edificios, "edificios", 0);
-print " agujereados por los disparos y las bombas. El ";
-CreateLink(canal_rio, "río", 0);
-print ", casi opaco por la porquería, fluía sosegado y caudaloso por el centro del canal, arrastrando al ", (name) w_obj, " los últimos restos de aquella ";
-CreateLink(canal_edificios, "ciudad", 0);
-print " moribunda.";
-new_line;
-return true;
-2:	! initial (A - ataque al corazón)
-print "Inspiró hondo, haciendo caso omiso a la opresión que sentía en el pecho";
-return true;
-3:	! initial (B - disparo)
-print "Inspiró hondo, preguntándose qué le esperaría allí afuera";
-return true;
-4:	! initial (C)
-print ", y atravesó a tientas el último tramo del túnel. La intensa luz del exterior le hirió en los ojos cuando se encontró fuera, impidiéndole ver nada durante unos instantes. A medida que sus pupilas se iban acostumbrando paulatinamente a la nueva claridad, también se fue dibujando ante él lentamente el contorno sobrecogedor de la ";
-CreateLink(canal_edificios, "ciudad", 0);
-print ".";
-new_line;
-return true;
-5:	! cant_go
-print "Continuar en el canal no era buena idea; estaba demasiado a descubierto. Y tampoco podía volver ", (name) b_obj, ". Tenía que usar ", (the) canal_escalera, " y salir de allí.";
-new_line;
-return true;
-6:	! ##Go:n_obj|ne_obj|nw_obj
-new_line;
-return true;
-7:	! ##Go:e_obj|w_obj (A - si no se han examinado los edificios)
-print " Aunque no parecía haber signos de vida por ninguna parte, no era buena idea continuar por el canal. Demasiado a descubierto. Sería un blanco fácil en caso de que hubiese francotiradores escondidos entre las ";
-CreateLink(canal_edificios, "ruinas", 0);
-print ".";
-new_line;
-return true;
-8:	! ##Go:e_obj|w_obj (B)
-print "No era buena idea continuar por el canal. Demasiado descubierto. Sería un blanco fácil en caso de que hubiese francotiradores enemigos escondidos entre ", (the) canal_edificios, " de las orillas.";
-new_line;
-return true;
-9:	! exits
-print "Salidas visibles: ", (name) u_obj, ".";
-return true;
-}
-
-canal_edificios: switch (n) {
-1:	! ##Examine (A - primera vez)
-print "Agazapado junto a la entrada del túnel estudió los edificios medio derruidos que se levantaban en la otra orilla. ";
-return true;
-2:	! ##Examine (B)
-print "Todo cuanto quedaba en pie en aquella parte de la ciudad eran poco más que esqueletos destrozados por las bombas. Armazones sin fachada que dejaban al descubierto un feo damero de suelos y tabiques. Podía ver alguna columna de humo elevándose allí donde todavía quedaba combustible suficiente para alimentar un fuego.";
-new_line;
-return true;
-}
-
-canal_escalera: switch (n) {
-1:	! ##Examine
-print "Los escalones estaban tallados en el hormigón. Ascendían por la pendiente hasta la orilla ", (name) s_obj, " del canal.";
-new_line;
-return true;
-2:	! describe
-print "A un puñado de metros podía ver una tosca ";
-CreateLink(canal_escalera, "escalinata", 0);
-print " labrada directamente sobre el hormigón que ascendía fuera del canal.";
-new_line;
-return true;
-3:	! default
-print "No necesitaba preocuparse por ";
-SpanishNominativePronoun(obj);
-".";
-}
-
-canal_rio: switch (n) {
-1:	! ##Examine
-print "Plásticos, trozos de madera calcinada y otros bultos imprecisos, medio sumergidos en las aguas turbias, eran arrastrados lentamente por la corriente.";
-new_line;
-return true;
-}
-
-canal_tunel: switch (n) {
-1:	! ##Examine
-print "Una abertura negra que desembocaba en el canal.";
-new_line;
-return true;
-2:	! ##Enter
-print "No podía volver. En aquella dirección ya no quedaba nada.";
-new_line;
-return true;
-}
-
-LIMBO: switch (n) {
-1:	! ##Examine (A)
-print "Est", (lm_estas) player, " más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
-return true;
-2:	! ##Examine (B - primera vez)
-print " ", (emph) "¿Qué? ¿Cómo?... ¿cómo he llegado aquí?", "";
-return true;
-}
-
-limbo_cadaver: switch (n) {
-1:	! ##Examine (A - ataque al corazón: primera vez)
-print "Un escalofrío le sacudió mientras se acercaba al cuerpo. Aún le separaba de él al menos una docena de pasos y apenas se podía distinguir nada por culpa del polvo y la ceniza, pero estaba seguro de que aquel soldado vestía un uniforme igual que el suyo... No podía recordar con claridad. Por culpa del agotamiento quizá, o por el dolor cada vez más agudo que amenazaba con ocuparlo todo. ¿Cuándo había perdido a su unidad? ¿Cuánto hacía que vagaba sólo por aquella ciudad fantasma? ¿Habían pasado horas? ¿Días? En todo este tiempo ni siquiera había visto los cadáveres que sin duda deberían haber estado desperdigados por doquier. Hasta entonces.";
-new_line;
-return true;
-2:	! ##Examine (B - ataque al corazón)
-print "Cruzó los últimos metros que le separaban del cadáver, preguntándose si sería capaz de reconocer en él a alguno de sus antiguos compañeros. Cuando lo alcanzó, el mundo entero se detuvo. Sus manos y su espalda estaban cubiertos de un sudor que de pronto se sentía intolerablemente frío. Notaba los oídos palpitar con una potencia atroz. Las piernas bloqueadas, apenas capaces de soportar un peso que parecía haberse multiplicado. La mente embotada... Lo reconoció, desde luego. No inmediatamente, pero reconoció al soldado; era él.
-^^
-Jadeando, incrédulo, recorrió con la mirada los rasgos de aquel cuerpo idéntico al suyo que estaba tumbado en el suelo, mientras su cerebro intentaba procesar lo imposible, desbordado por una vorágine de pensamientos incoherentes. Miraba a través de sus ojos marrones los marrones ojos vidriosos perdidos en la nada que eran también suyos. No podía ser de ninguna manera. Pero a pesar de todo era. Cuando el tiempo reanudó su marcha, observó el cadáver con más detalle. No había manchas de sangre ni heridas visibles. Yacía de espaldas, con las manos aferrándose el torso, como si le hubiese sorprendido un ataque cardíaco... y en ese momento su rostro se puso tan lívido como aquel que tenía a sus pies...";
-new_line;
-return true;
-3:	! ##Examine (C - disparo: primera vez)
-print "Fue acercándose lentamente al soldado con el fusil en alto, preparado para disparar de nuevo si era necesario. Aún les separaba cerca de unos diez metros, pero entonces pudo ver la sangre salpicando los restos del pilar de hormigón caído junto al cuerpo inmóvil. Y vio algo más. Aquel soldado llevaba un uniforme como el suyo. Había matado a uno de sus compañeros.";
-new_line;
-return true;
-4:	! ##Examine (D - disparo)
-print "Desencajado cruzó los últimos metros que le separaban del cuerpo, preguntándose si sería capaz de reconocer al hombre al que acababa de matar. Había caído de bruces, así que únicamente era capaz de verle la espalda manchada de polvo y sangre. Se inclinó sobre él y le dio la vuelta suavemente hasta dejarle de espaldas. Entonces el tiempo pareció detenerse. La cara sucia que miraba hacia el cielo con ojos vidriosos era la suya. Resultaba imposible, pero aquel cuerpo sin vida del suelo era él. Era él.
-^^
-Su mente daba vueltas en un torbellino caótico y sin sentido, pero entonces una idea cobró forma entre la confusión. Alarmado se incorporó y giró la cabeza hacia la azotea del edificio del otro extremo de la calle. Allí estaba, una forma gris, apuntándole desde la cornisa con un fusil semiautomático...";
-new_line;
-return true;
-5:	! describe (A - ataque al corazón: primera vez)
-print "Saltó por encima de un montón de ladrillos y lo vio. El cuerpo sin vida de un soldado. Yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
-new_line;
-return true;
-6:	! describe (B) - ataque al corazón)
-print "El cadáver de un soldado yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
-new_line;
-return true;
-7:	! describe (C - ataque al corazón: examinado)
-print "Uno de sus camaradas yacía muerto unos metros más allá, semienterrado entre los escombros y la ceniza.";
-new_line;
-return true;
-8:	! describe (D - disparo: primera vez)
-print "Continuó andando entre los montones de escombros, intentando rodear el socavón. Fue entonces cuando lo vio; estaba en el suelo, a unos veinte metros de distancia, tras los restos de un pilar derrumbado. ¿Le habría alcanzado?";
-new_line;
-return true;
-9:	! describe (E - disparo)
-print "El soldado yacía en el suelo, a unos veinte metros de distancia.";
-new_line;
-return true;
-10:	! describe (F - disparo: examinado)
-print "El cuerpo inmóvil de uno de sus camaradas yacía de bruces sobre un charco de sangre a unos metros de donde se encontraba.";
-new_line;
-return true;
-11:	! ##Search (A - demasiado lejos)
-print "Tal vez tuviese algo de valor en los bolsillos. Pero tendría que acercarse más para comprobarlo.";
-new_line;
-return true;
-12:	! ##Search (B - vacío)
-print "Se abalanzó sobre el cadáver incapaz de aceptar que era él realmente, buscando algo, cualquier cosa, que le demostrase que se trataba de un error, de una copia... cualquier cosa. Pero no había nada. Era como mirarse en un espejo, sólo que el reflejo no te enseñaba el presente...";
-new_line;
-return true;
-13:	! ##Search (C - 1 moneda)
-print "Con un sentimiento de angustia insportable, incapaz de creer que ese cadáver pueda ser él, se lanza hacia los bolsillos. Y lo encuentra. Encuentra la moneda, igual que la que tiene él en su bolsillo. No puede ser...";
-new_line;
-return true;
-14:	! ##Search (D - 2 monedas)
-print "Incapaz de aceptar que pudiese ser él realmente se abalanza sobre el cadáver intentando buscar algo que le convenza de los contrario, cualquier cosa. Pero entonces se le acabó el tiempo...";
-new_line;
-return true;
-}
-
-limbo_cadaver_sangre: switch (n) {
-1:	! ##Examine (A - ataque al corazón)
-print "No había rastros de sangre ni heridas visibles en el cadáver.";
-new_line;
-return true;
-}
-
-limbo_cielo: switch (n) {
-1:	! ##Examine
-print "El cielo estaba completamente encapotado. De un gris plomizo. Como el resto de la ciudad.";
-new_line;
-return true;
-}
-
-limbo_fusil: switch (n) {
-1:	! ##Examine (A - manchado de tiza)
-print "Un fusil semiautomático largo. Tenía restos de tiza en la culata de madera.";
-new_line;
-return true;
-2:	! ##Examine (B - limpio)
-print "Un fusil semiautomático largo con culata de madera.";
-new_line;
-return true;
-3:	! ##Touch
-print "Se había acostumbrado a llevar aquel arma entre las manos. Su peso, la suaviadad de la culata, el tacto del gatillo. Iba a sentirse extraño cuando saliese de aquel lugar y se pudiese olvidar de él.";
-new_line;
-return true;
-4:	! ##Rub (A - la primera vez)
-print "Era imposible mantener el fusil limpio por mucho cuidado que pusiese. De todas formas frotó la culata con la manga, intentando quitarle el polvo y las manchas de tiza.";
-new_line;
-return true;
-5:	! ##Rub (B)
-print "No tenía forma de limpiarlo mejor. Él mismo estaba cubierto entero de polvo y barro. Como mucho iba a conseguir ensuciarlo aún más.";
-new_line;
-return true;
-}
-
-limbo_suelo: switch (n) {
-1:	! ##Examine
-print "Caminaba sobre una alfombra gris. El polvo le había arrebatado el color a la ciudad.";
-new_line;
-return true;
-2:	! ##Examine (B - en la CALLE_ESTE)
-print "Nevaba ceniza sobre la calle, todo cubierto de ceniza y polvo.";
-new_line;
-return true;
-3:	! each_turn (A)
-print "Lo único que se movía en la calle era la ";
-CreateLink(limbo_suelo, "ceniza", 0);
-print " levantada por el viento.";
-new_line;
-return true;
-4:	! each_turn (B)
-print "Las ";
-CreateLink(limbo_suelo, "cenizas", 0);
-print " hacían pequeños remolinos sobre el asfalto.";
-new_line;
-return true;
-5:	! each_turn (C)
-print "El aire estaba cargado de ";
-CreateLink(limbo_suelo, "ceniza", 0);
-print " y ";
-CreateLink(limbo_suelo, "polvo", 0);
-print ".";
-new_line;
-return true;
-6:	! each_turn (D)
-print "El viento levantaba el ";
-CreateLink(limbo_suelo, "polvo", 0);
-print " y la ";
-CreateLink(limbo_suelo, "ceniza", 0);
-print " del suelo. Llevados, esparcidos y llevados de nuevo.";
-new_line;
-return true;
-}
-
-TUNEL: switch (n) {
-1:	! ##Examine (A)
-print "Había estado caminando en ", (the) tunel_oscuridad, " más absoluta, siguiendo a ciegas ", (the) tunel_muro, " que tenía a su derecha para no desorientarse. Una estrategia que había terminado por funcionar. Algo más adelante veía recortarse finalmente un pequeño semicírculo de luz; estaba a punto de alcanzar ", (the) tunel_salida, ".";
-new_line;
-return true;
-2:	! ##Examine (B - Si se permite que Stalker vuelva a entrar al túnel)
-return true;
-3:	! ataque al corazón (A)
-print "Un repentino pinchazo le hizo encogerse sobre sí mismo. Se llevó las manos al pecho y cayó al suelo, atravesado por el dolor.";
-new_line;
-return true;
-4:	! ataque al corazón (B)
-print "La punzante presión le irradiaba desde la altura del esternón y se extendía a través de hombros y cuello hasta atenazarle los brazos y la mandíbula. Tenía la espalda empapada por completo de un sudor frío. Por un momento notó cómo lo dominaba el pánico, pero enseguida luchó por sobreponerse a él y se concentró en controlar la respiración desbocada. Aún permaneció unos minutos en el suelo recuperando el aliento. El dolor, mientras tanto, se atenuó lo suficiente como para poder apartarlo en un rincón de su mente donde sería capaz de ignorarlo. Eso estaba bien. No podía morir allí. Tanteó a su alrededor hasta encontrar ", (the) limbo_fusil, " que se le había caído de las manos y se levantó de nuevo. Tenía que continuar.";
-new_line;
-return true;
-5:	! disparo (A)
-print "Un disparo quebró el silencio con su estallido sordo. Él cayó al suelo apenas una fracción de segundo después.";
-new_line;
-return true;
-6:	! disparo (B)
-print "Se había convertido en un acto reflejo desde el mismo momento en que habían puesto el pie en aquella ciudad; cada vez que escuchaban la detonación de un disparo o el silbido de un obús en vuelo habían interiorizado que debían echar el cuepo a tierra y pronto empezaron a hacerlo automáticamente, antes siquiera de que su cerebro llegase a procesar por completo el sonido. Incluso aunque el disparo sonase lejano, como aquel, y él estuviese oculto en las sombras. Todavía se mantuvo unos segundos quieto en el suelo, intentando escuchar más sonidos del exterior. Cuando pareció que todo volvía a estar tranquilo se levantó de nuevo, aunque inconscientemente ahora apretaba el fusil contra sí mismo con más fuerza que antes.";
-new_line;
-return true;
-7:	! cant_go
-print "Era imposible orientarse bien en la oscuridad, por eso había estado usando las ";
-CreateLink(tunel_muro, "paredes", 0);
-print " del túnel como referencia con la que guiarse. Así, se limitaba a seguir ", (name) f_obj, " o ", (name) b_obj, " a lo largo ", (del) tunel_muro, ".";
-new_line;
-return true;
-8:	! ##Go: b_obj
-print "En aquella dirección ya no quedaba más que un vacío negro.";
-new_line;
-return true;
-9:	! ##Listen (A - ataque al corazón)
-print "Silencio. Salvo por el sonido esporádico de las gotas de agua cayendo entre las sombras y por el eco de sus propias botas contra el suelo. Ni siquiera las ratas parecían habitar aquel lugar.";
-new_line;
-return true;
-10:	! ##Listen (B - disparo)
-print "Se detuvo por completo, tratando de escuchar nuevas señales de combate a lo lejos...
-^^
-Nada. Volvía a reinar un silencio absoluto, casi asfixiante, roto tan sólo por las gotas de agua que caían entre las sombras. Ni siquiera las ratas parecían habitar aquel lugar.";
-new_line;
-return true;
-11:	! ##Listen (C - disparo)
-print "Volvía a reinar un silencio absoluto, roto tan sólo por las gotas de agua que caían entre las sombras.";
-new_line;
-return true;
-12:	! exits
-print "Salidas visibles: ", (name) f_obj, " y ", (name) b_obj, ".";
-return true;
-}
-
-tunel_muro: switch (n) {
-1:	! ##Examine/##Touch
-print "Aunque no ", (lo) obj, " podía ver, notaba los húmedos ladrillos a su lado.";
-new_line;
-return true;
-}
-
-tunel_oscuridad: switch (n) {
-1:	! ##Examine (A)
-print "No podía ver nada aparte de aquella ";
-CreateLink(tunel_salida, "luz", 0);
-print " que se recortaba algo más ", (name) f_obj, ".";
-new_line;
-return true;
-2:	! ##Examine (B)
-print "Todo cuanto podía ver era el semicírculo de ";
-CreateLink(tunel_salida, "luz", 3);
-print " de ", (the) tunel_salida, ".";
-new_line;
-return true;
-3:	! ##Examine (C)
-print "Las ";
-CreateLink(tunel_oscuridad, "sombras", 0);
-print " le impedían ver nada. Salvo por la ";
-CreateLink(tunel_salida, "luz", 0);
-print " que se recortaba más ", (name) f_obj, ".";
-new_line;
-return true;
-4:	! ##Examine (D)
-print "No podía ver nada en ", (the) tunel_oscuridad, ". Salvo el ";
-CreateLink(tunel_salida, "semicírculo de luz", 3);
-print " de ", (the) tunel_salida, ".";
-new_line;
-return true;
-5:	! ##Drop (x1)
-print "Si dejaba ", (the) x1, " allí era posible que después no pudiese encontrar", (lo) x1, " de nuevo en ", (the) tunel_oscuridad, ". Era mejor quedárse", (lo) x1, " consigo por el momento.";
-new_line;
-return true;
-6:	! ##Rub (x1)
-print "Era imposible limpiar ", (the) x1, " ---o cualquier otra cosa--- si no podía ver", (lo) x1, ".";
-new_line;
-return true;
-}
-
-tunel_salida: switch (n) {
-1:	! ##Examine
-print "El final del túnel. Sólo tenía que continuar hacia ", (name) f_obj, " un poco más.";
-new_line;
-return true;
-2:	! default
-print "No necesitaba preocuparse por ";
-SpanishNominativePronoun(obj);
-".";
-}
-
-	}
-];
-
-
-
-[ LanguageOM_present obj n x1;
-	switch (obj) {
-
-TUNEL: switch (n) {
-1:	! ##Examine (A)
-print "Ha estado caminando en la oscuridad más absoluta, siguiendo a ciegas el muro que tiene a su derecha para no desorientarse. Una estrategia que ha terminado por funcionarle. Algo más adelante ve recortarse finalmente un pequeño semicírculo de luz; está a punto de alcanzar la salida.";
-new_line;
-return true;
-2:	! ##Examine (B - Si se permite que Stalker vuelva a entrar al túnel)
-return true;
-3:	! ataque al corazón (A)
-print "Un repentino pinchazo en el pecho le hace encogerse sobre sí mismo. Cae de rodillas por culpa del dolor.";
-new_line;
-return true;
-4:	! ataque al corazón (B)
-print "La presión punzante irradia desde la altura del esternón y se extiende por los hombros y el cuello, atenazándole los brazos y la mandíbula. Aún en el suelo, con la espalda empapada por completo de un sudor frío, hace un esfuerzo por ignorar la angustia y controlar la respiración desbocada. A medida que recupera poco a poco el aliento logra ir apartando el dolor en un rincón. Eso estña bien. No puede detenerse. Tantea a su alrededor hasta encontrar el fusil que se le ha caído de las manos y se levanta de nuevo. Tiene que continuar.";
-new_line;
-return true;
-5:	! disparo (A)
-print "Un disparo quiebra el silencio con su estallido sordo. Él cae al suelo apenas una fracción de segundo después.";
-new_line;
-return true;
-6:	! disparo (B)
-print "Se ha convertido en un acto reflejo desde el mismo momento en que habían puesto el pie en aquella ciudad; cada vez que escuchan la detonación de un disparo o el silbido de un obús en vuelo han interiorizado que deben echar el cuepo a tierra y pronto han empezado a hacerlo automáticamente, antes siquiera de que su cerebro llegue a procesar por completo el sonido. Incluso aunque el disparo sonase lejano, como aquel, y él esté oculto en las sombras. Todavía se mantiene unos segundos quieto en el suelo, intentando escuchar más sonidos del exterior. Cuando parece que todo vuelve a estar tranquilo se levanta de nuevo, aunque inconscientemente ahora aprieta el fusil contra sí mismo con más fuerza que antes.";
-new_line;
-return true;
-7:	! cant_go
-print "Es imposible orientarse bien en la oscuridad, por eso ha estado usando las paredes del túnel como referencia con la que guiarse. Así, se limita a seguir ", (name) f_obj, " o ", (name) b_obj, " a lo largo del muro.";
-new_line;
-return true;
-8:	! ##Go: b_obj
-print "En aquella dirección ya no queda más que un vacío negro.";
-new_line;
-return true;
-9:	! ##Listen (A - ataque al corazón)
-print "Silencio. Salvo por el sonido esporádico de las gotas de agua cayendo entre las sombras y por el eco de sus propias botas contra el suelo. Ni siquiera las ratas parecen habitar aquel lugar.";
-new_line;
-return true;
-10:	! ##Listen (B - disparo)
-print "Se detiene por completo, tratando de escuchar nuevas señales de combate a lo lejos...
-^^
-Nada. Vuelve a reinar un silencio absoluto, casi asfixiante, roto tan sólo por las gotas de agua que caen entre las sombras. Ni siquiera las ratas parecen habitar aquel lugar.";
-new_line;
-return true;
-11:	! ##Listen (C - disparo)
-print "Vuelve a reinar un silencio absoluto, roto tan sólo por las gotas de agua que caen entre las sombras.";
-new_line;
-return true;
-}
-
-default: return LanguageOM_past(obj, n, x1);
-
-	}
-];
-
-
-
-[ LanguageOM_future obj n x1;
-	switch (obj) {
-
-TUNEL: switch (n) {
-1:	! ##Examine (A)
-print "Habrá estado caminando en la oscuridad más absoluta, siguiendo a ciegas el muro que tendrá a su derecha para no desorientarse. Una estrategia que habrá terminado por funcionarle. Algo más adelante verá recortarse finalmente un pequeño semicírculo de luz; estará a punto de alcanzar la salida.";
-new_line;
-return true;
-2:	! ##Examine (B - Si se permite que Stalker vuelva a entrar al túnel)
-return true;
-3:	! ataque al corazón (A)
-print "Un repentino pinchazo en el pecho le hará encogerse sobre sí mismo. Caerá de rodillas por culpa del dolor.";
-new_line;
-return true;
-4:	! ataque al corazón (B)
-print "La presión punzante irradiará desde la altura del esternón y se extenderá por los hombros y el cuello, atenazándole los brazos y la mandíbula. Aún en el suelo, con la espalda empapada por completo de un sudor frío, hará un esfuerzo por ignorar la angustia y controlar la respiración desbocada. A medida que irá recuperando poco a poco el aliento logrará ir apartando el dolor en un rincón. Eso estará bien. No podrá detenerse. Tanteará a su alrededor hasta encontrar el fusil que se le habrá caído de las manos y se levantará de nuevo. Tendrá que continuar.";
-new_line;
-return true;
-5:	! disparo (A)
-print "Un disparo quebrará el silencio con su estallido sordo. Él caerá al suelo apenas una fracción de segundo después.";
-new_line;
-return true;
-6:	! disparo (B)
-print "Se habrá convertido en un acto reflejo desde el mismo momento en que habrán puesto el pie en aquella ciudad; cada vez que escucharán la detonación de un disparo o el silbido de un obús en vuelo habrán interiorizado que deberán echar el cuepo a tierra y pronto empezarán a hacerlo automáticamente, antes siquiera de que su cerebro llegue a procesar por completo el sonido. Incluso aunque el disparo sonara lejano, como aquel, y él vaya a estar oculto en las sombras. Todavía se mantendrá unos segundos quieto en el suelo, intentando escuchar más sonidos del exterior. Cuando pareciera que todo volverá a estar tranquilo se levantará de nuevo, aunque inconscientemente ahora apretará el fusil contra sí mismo con más fuerza que antes.";
-new_line;
-return true;
-7:	! cant_go
-print "Será imposible orientarse bien en la oscuridad, por eso habrá estado usando las paredes del túnel como referencia con la que guiarse. Así, se limitará a seguir ", (name) f_obj, " o ", (name) b_obj, " a lo largo del muro.";
-new_line;
-return true;
-8:	! ##Go: b_obj
-print "En aquella dirección ya no quedará más que un vacío negro.";
-new_line;
-return true;
-9:	! ##Listen (A - ataque al corazón)
-print "Silencio. Salvo por el sonido esporádico de las gotas de agua cayendo entre las sombras y por el eco de sus propias botas contra el suelo. Ni siquiera las ratas parecerán habitar aquel lugar.";
-new_line;
-return true;
-10:	! ##Listen (B - disparo)
-print "Se detendrá por completo, tratando de escuchar nuevas señales de combate a lo lejos...
-^^
-Nada. Volverá a reinar un silencio absoluto, casi asfixiante, roto tan sólo por las gotas de agua que caerán entre las sombras. Ni siquiera las ratas parecerán habitar aquel lugar.";
-new_line;
-return true;
-11:	! ##Listen (C - disparo)
-print "Volverá a reinar un silencio absoluto, roto tan sólo por las gotas de agua que caerán entre las sombras.";
-new_line;
-return true;
-}
-
-default: return LanguageOM_past(obj, n, x1);
-
-	}
-];
-
-
-
 [ O__M obj n x1;
 	if (n == 0) n = 1;
-	switch (_grammatical_inflection) {
+	if (DM.get_iteration() == 0) {
+		if (LanguageOM_firstIteration(obj, n, x1)) {
+			return true;;
+		}
+	}
+	switch (DM.get_grammatical_inflection()) {
 		FIRST_PERSON_PRESENT,
 		SECOND_PERSON_PRESENT,
 		THIRD_PERSON_PRESENT:
@@ -693,4 +24,2226 @@ default: return LanguageOM_past(obj, n, x1);
 		THIRD_PERSON_FUTURE:
 			LanguageOM_future(obj, n, x1);
 	}
+];
+
+
+
+[ LanguageOM_firstIteration obj n;
+	switch (obj) {
+
+Colillas: switch (n) {
+1: ! ##Examine
+print "Tan sólo quedan los filtros. Está claro que aquí ha estado apostado un francotirador.";
+new_line;
+return true;
+default:
+return false;
+}
+
+Cuerpo: switch (n) {
+1:	! ##Examine (A - ataque al corazón)
+print "Ese ", (name) Cuerpo, " es el primero que ve desde... ¿cuánto tiempo lleva deambulando por esta ciudad fantasma? ¿horas? ¿días? Tal vez por culpa del cansancio, pero no es capaz de recordar cuándo fue la última vez que vio a alguien, vivo o muerto.
+^^
+Aún le separa de ", (SpanishNominativePronoun) Cuerpo, " al menos una docena de pasos y resulta difícil distinguir nada desde aquí por culpa de la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (the) Polvo, ".";
+new_line;
+return true;
+3: ! ##Examine (B - disparo)
+print "Se acerca lentamente hacia el ";
+Hyperlink(Cuerpo, "soldado caído", 0);
+print " con ", (the) Fusil, " preparado para disparar de nuevo si es necesario. Aún a unos diez metros de distancia es capaz de ver, a pesar ", (del) Humo, " y la ";
+Hyperlink(Polvo, "ceniza", 0);
+print ", la sangre salpicando el suelo junto ", (al) Cuerpo, ". Y también es capaz de distinguir algo más; el uniforme es idéntico al suyo. Ha matado a uno de sus compañeros.";
+new_line;
+return true;
+default:
+return false;
+}
+
+Diana: switch (n) {
+4: ! describe
+print "En un edificio al otro lado de la calle, alguien ha pintado ", (a) Diana, " con tiza sobre la pared y ha estado probando puntería.";
+new_line;
+return true;
+default:
+return false;
+}
+
+EdificiosCallejon: switch (n) {
+1: ! ##Examine
+print "Los altos muros de ladrillo parecen cernirse sobre su cabeza.";
+new_line;
+return true;
+default:
+return false;
+}
+
+EdificiosCanal: switch (n) {
+1: ! ##Examine
+print "Estudia detenidamente los ", (name) EdificiosCanal, " medio derruidos que se levantan en las orillas ", (del) Canal, ". ";
+return true;
+default:
+return false;
+}
+
+Fusil: switch (n) {
+3: ! ##Touch
+print "Se ha acostumbrado a llevar aquel ";
+Hyperlink(Fusil, "arma", 0);
+print " entre las manos. Su peso, la suavidad de la culata, el tacto del gatillo. Va a resultar extraño salir de este lugar y poder olvidarse de él.";
+new_line;
+return true;
+5: ! ##Rub
+print "No tiene forma de limpiarlo mejor.";
+new_line;
+return true;
+default:
+return false;
+}
+
+Tunel: switch (n) {
+4: ! initial
+print "El pinchazo es repentino. Se lleva las manos al pecho de forma automática, apenas un momento antes de caer al suelo por el dolor.";
+new_line;
+return true;
+default:
+return false;
+}
+
+default:
+return false;
+
+	}
+];
+
+
+
+[ LanguageOM_present obj n x1;
+	switch (obj) {
+
+Azotea: switch (n) {
+1: ! ##Examine
+print "En armonía con el resto del edificio, ", (the) Azotea, " está completamente vacía, salvo por un sucio ", (name) Colchon, " cerca de la cornisa. Una posición ideal para un tirador; tiene una gran vista de ", (the) CalleAzotea, " y resulta fácil de defender. El único acceso hasta aquí arriba es ", (the) PuertaAzotea, " por la que ha llegado.";
+new_line;
+return true;
+2: ! ##Exits
+print "Salidas visibles: ", (name) d_obj, ".";
+return true;
+3: ! cant_go
+print "Sólo puede volver atrás, por la misma ", (name) PuertaAzotea, " por la que ha llegado.";
+new_line;
+return true;
+4: ! ##Go (d_obj)
+print "Vuelve sobre sus pasos.";
+new_line;
+return true;
+}
+
+Basura: switch (n) {
+1: ! ##Examine
+print "", (The) Callejon, " es tan estrecho y está tan lleno de basura que apenas se puede cruzar; montones de muebles destrozados, contenedores desbordados, viejas cajas de cartón podridas e hinchadas por la humedad y pilas de escombros se acumulan contra las ";
+Hyperlink(EdificiosCallejon, "paredes", 0);
+print " de ladrillo.";
+new_line;
+return true;
+}
+
+CalleAzotea: switch (n) {
+1: ! ##Examine
+print "La guerra le arrebata el color a las cosas. Desde aquí arriba puede ver ", (the) CalleAzotea, ", extendiéndose como una franja de gris claro de polvo de cemento y hormigón; el ";
+Hyperlink(CalleAzotea, "río", 0);
+print " fluyendo paralelo a ", (the) CalleAzotea, ", una franja de gris más oscuro; los pocos ";
+Hyperlink(CalleAzotea, "árboles", 0);
+print " que se mantienen en pie, esqueletos raquíticos ennegrecidos; los ";
+Hyperlink(CalleAzotea, "coches", 0);
+print ", amasijos de metal descolorido; incluso ", (the) Cielo, " está encapotado y plomizo.";
+new_line;
+return true;
+}
+
+CalleCentro: switch (n) {
+1: ! ##Examine
+print "Nota la irritación en la garganta un momento antes de ver la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " cayendo a su alrededor, lentamente, como una nieve fina y reseca. ", (The) CalleCentro, " continúa en una larga línea recta, hacia ", (the) w_obj, ".";
+new_line;
+return true;
+2: ! ##Exits
+print "Salidas visibles: ", (name) e_obj, ", ", (name) w_obj, ".";
+return true;
+3: ! cant_go
+print "La calle se extiende en línea recta, de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+4: ! ##Go (w_obj)
+print "Sigue andando. Hacia ", (the) w_obj, ". ", (The) Fusil, " preparado. Los pinchazos del pecho más intensos con cada paso...";
+new_line;
+return true;
+}
+
+CalleEste: switch (n) {
+1: ! ##Examine
+print "", (The) CallejonAdj, " desemboca en ", (a) CalleEste, " principal, mucho más ancha. Se extiende de ", (name) e_obj, " a ", (name) w_obj, ", paralela ", (al) CanalCalle, ", y está salpicada de ", (name) Coches, " calcinados y de cascotes desprendidos desde las fachadas y los tejados cercanos. La ";
+Hyperlink(EdificiosCalle, "ciudad", 0);
+print " entera parece haber quedado reducida a un montón de ruinas.";
+new_line;
+return true;
+2: ! ##Exits
+print "Salidas visibles: ", (name) e_obj, ", ", (name) w_obj, ".";
+return true;
+3: ! cant_go
+print "No puede ir por ahí. ", (The) CalleEste, " se extiende de ", (name) e_obj, " a ", (name) w_obj, ", paralela ", (al) CanalCalle, ". ", (_Al) n_obj, " se abre el estrecho ", (name) CallejonAdj, " por el que ha llegado hasta aquí.";
+new_line;
+return true;
+4: ! ##Go (w_obj)
+print "Camina en silencio, tratando de protegerse con las paredes de los edificios y aferrando ", (the) Fusil, " con fuerza";
+return true;
+5: ! ##Go (w_obj)
+print " ---ahora se arrepiente de haber probado puntería sobre la diana, temiendo que alguien haya podido escuchar los disparos---";
+return true;
+6: ! ##Go (w_obj)
+print ". Crujido de cristales rotos bajo sus botas. Susurros del viento entre los agujeros de las ventanas. Por lo demás impera el silencio.";
+new_line;
+return true;
+}
+
+CalleOeste: switch (n) {
+1: ! ##Examine
+print "", (The) Humo, " es en este punto tan espeso que resulta difícil respirar o ver nada con claridad. Como si alguien le hubiese colocado una mortaja al mundo. Todo es gris; ", (name) Humo, " gris, ";
+Hyperlink(Polvo, "ceniza", 0);
+print " gris, ", (name) Polvo, " gris, ", (name) Ruinas, " grises.";
+return true;
+2: ! ##Exits
+print "Salidas visibles: ", (name) e_obj, ", ", (name) w_obj, ".";
+return true;
+3: ! cant_go
+print "La calle continúa en línea recta, de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+}
+
+Callejon: switch (n) {
+1: ! ##Examine
+print "Está en ", (a) Callejon, " estrecho, abierto como una herida entre dos ", (name) EdificiosCanal, " de sucias paredes de ladrillo. Montones de muebles destrozados y otros desperdicios se amontonan a lo largo de prácticamente todo el trecho, desde ", (the) Valla, " que franquea el paso al canal, ", (al) n_obj, ", hasta el extremo ", (name) s_obj, " opuesto.";
+new_line;
+return true;
+2: ! ##Exits
+print "Salidas visibles: ", (name) n_obj, ", ", (name) s_obj, ", ", (name) w_obj, ".";
+return true;
+3: ! cant_go
+print "No puede ir por ahí. ", (The) Callejon, " se extiende de ", (name) n_obj, " a ", (name) s_obj, ". El único otro acceso es aquella ", (name) PuertaCallejon, " metálica, en la pared ", (name) w_obj, ".";
+new_line;
+return true;
+4: ! ##Go (s_obj)
+print "Cada vez se hace más difícil ignorar el dolor del pecho, pero no puede detenerse. Todavía no.";
+new_line;
+return true;
+5: ! ##Go (n_obj)
+print "Atraviesa la valla y desciende de nuevo por ", (the) Escalera, " del terraplén.";
+new_line;
+return true;
+}
+
+Canal: switch (n) {
+1: ! ##Examine
+print "Se encuentra en la parte más profunda de un ancho canal de hormigón, junto a la boca ", (del) TunelCanal, " de alcantarillado que hay en uno de los terraplenes laterales. A lo largo de cada orilla se levantan penosamente unas hileras irregulares de ", (name) EdificiosCanal, " agujereados por los disparos y las bombas, como dentaduras partidas. ", (The) Rio, ", casi opaco por la porquería, fluye caudaloso por el centro ", (del) Canal, ", arrastrando al ", (name) w_obj, " los últimos restos de la ciudad moribunda.";
+new_line;
+return true;
+2: ! ##Exits
+print "Salidas visibles: ", (name) e_obj, ", ", (name) w_obj, ", ", (name) u_obj, ".";
+return true;
+3: ! cant_go
+print "Continuar por ", (the) Canal, " no es buena idea; está demasiado a descubierto. Y tampoco puede volver atrás. Tiene que usar ", (the) Escalera, " y salir de aquí.";
+new_line;
+return true;
+4: ! initial
+print "La intensa luz del exterior ciega sus ojos por completo y durante varios segundos es incapaz de ver nada. A medida que sus pupilas se van acostumbrando paulatinamente a la nueva claridad, se dibujan también las figuras sobrecogedoras de aquel lugar destrozado.";
+new_line;
+return true;
+5: ! ##Go (e_obj/w_obj)
+print "Aunque no parece haber signos de vida por ninguna parte, no es buena idea continuar por ", (the) Canal, ". Demasiado abierto. Aquí es blanco fácil para cualquier posible francotirador escondido entre ", (the) Ruinas, ".";
+new_line;
+return true;
+}
+
+CanalCalle: switch (n) {
+1: ! ##Examine
+print "Queda oculto por los ", (name) EdificiosCalle, " ", (del) n_obj, ", pero corre paralelo a ", (the) location, ", de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+}
+
+Cielo: switch (n) {
+1: ! ##Examine
+print "El cielo está encapotado por completo. De un gris plomizo. Como el resto de la ciudad.";
+new_line;
+return true;
+}
+
+Coches: switch (n) {
+1: ! ##Examine
+print "Poco más ya que amasijos retorcidos de metal.";
+new_line;
+return true;
+}
+
+Colchon: switch (n) {
+1: ! ##Examine
+print "Muy sucio y medio destrozado. Está colocado casi en la misma cornisa de ", (the) Azotea, ", para no perder de vista ", (the) CalleAzotea, ".";
+new_line;
+return true;
+2: ! ##Take
+print "No l", (o) Colchon, " necesita para nada.";
+new_line;
+return true;
+}
+
+Colillas: switch (n) {
+1: ! ##Examine
+print "También ", (SpanishNominativePronoun) player, " ha tenido un paquete de tabaco en algún momento. O eso cree... le resulta difícil recordar las cosas con claridad.";
+new_line;
+return true;
+3: ! describe
+print "Hay un montón de ", (name) Colillas, " consumidas en el suelo, cerca de la cornisa.";
+new_line;
+return true;
+}
+
+Cuerpo: switch (n) {
+1:	! ##Examine (A - ataque al corazón)
+print "Ese ", (name) Cuerpo, " es el primero que ve desde... ¿cuánto tiempo lleva deambulando sol", (o) player, " por esta ciudad fantasma? ¿horas? ¿días? Tal vez por culpa del cansancio, pero no es capaz de recordar cuándo fue la última vez que vio a alguien, vivo o muerto.
+^^
+Aún le separa de ", (SpanishNominativePronoun) Cuerpo, " al menos una docena de pasos y resulta difícil distinguir nada desde aquí por culpa de la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (the) Polvo, ".";
+new_line;
+return true;
+2:	! ##Examine (A)
+print "Cruza los últimos metros que le separan del ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print ". Al alcanzarlo el mundo parece congelarse. Las ";
+Hyperlink(Polvo, "cenizas", 0);
+print " flotan inmóviles en el aire. Su corazón se detiene. El dolor del pecho desaparece. Los ojos marrones ", (del) Cuerpo, " miran vidriosos y sin vida, fijos en ninguna parte. Unos ojos marrones idénticos a los suyos. Una boca como la suya. Su mandíbula. Su nariz. Su rostro. Era ", (SpanishNominativePronoun) player, ".
+^^
+Contempla el ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " horrorizad", (o) player, ", incapaz de comprender. Está tirad", (o) player, " en el suelo, sin heridas visibles, sin rastro alguno de sangre. Contorsionad", (o) player, " con las manos aferradas al torso como... como sorprendid", (o) player, " por un ataque cardíaco. Su rostro se pone tan lívido como el del ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " que tiene a sus pies...";
+new_line;
+return true;
+3: ! ##Examine (B - disparo)
+print "Se acerca lentamente hacia el ";
+Hyperlink(Cuerpo, "soldado caído", 0);
+print " con ", (the) Fusil, " en alto, preparad", (o) player, " para disparar de nuevo si es necesario. Aún a unos diez metros de distancia es capaz de ver, a pesar ", (del) Humo, " y la ";
+Hyperlink(Polvo, "ceniza", 0);
+print ", la sangre salpicando el suelo junto ", (al) Cuerpo, ". Y también es capaz de distinguir algo más; un uniforme idéntico al suyo. Ha matado a uno de sus compañeros.";
+new_line;
+return true;
+4: ! ##Examine (B)
+print "Cruza los últimos metros temblando, preguntándose si reconocerá a la persona a la que acaba de matar. Cuando lo alcanza, el horror asalta su mente. Indescriptible. Intolerable. Reconoce al soldado caído, desde luego; es ", (SpanishNominativePronoun) player, ". Jadeando, recorre con la mirada los rasgos de aquel cuerpo idéntico al suyo que yace sin vida en el suelo, llenándolo todo de sangre por culpa de un agujero de bala abierto en el pecho. Su cerebro se desborda por una vorágine de pensamientos incoherentes. Esos ojos marrones, vidriosos y sin vida, perdidos en la nada.. es ", (SpanishNominativePronoun) player, ". Es imposible. Pero es ", (SpanishNominativePronoun) player, ".
+^^
+Una idea cobra forma entre la confusión. Alarmad", (o) player, ", se incorpora y gira la cabeza hacia atrás, hacia la azotea del edificio del inicio de ", (the) CalleOeste, ". Allí está, una figura gris, apuntando ", (a) Fusil, " desde la cornisa. Sus piernas dejan de responder.";
+new_line;
+return true;
+5: ! describe (A - ataque al corazón)
+print "Salta por encima de un montón de ladrillos y lo ve a través de la cortina de ", (name) Humo, ". ", (A) Cuerpo, " sin vida. Yace de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+6: ! describe (A)
+print "Un ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " gris yace de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+7: ! describe (A)
+print "Un ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " gris yace de espaldas unos metros más allá, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+8: ! describe (B - disparo)
+print "Cruza un gran bloque de hormigón caído en medio de ", (the) location, " y lo ve. El ";
+Hyperlink(Cuerpo, "cuerpo del soldado", 0);
+print " yace de espaldas, a una veintena de metros. Completamente inmóvil.";
+new_line;
+return true;
+9: ! describe (B)
+print "El ";
+Hyperlink(Cuerpo, "soldado", 0);
+print " yace en el suelo, a unos veinte metros de distancia.";
+new_line;
+return true;
+10: ! describe (B)
+print "", (The) Cuerpo, " inmóvil de uno de sus camaradas yace de bruces sobre un charco de sangre a unos metros de donde se encuentra.";
+new_line;
+return true;
+11: ! ##Search
+print "Tal vez tenga algo de valor en los bolsillos, pero tiene que acercarse más para comprobarlo.";
+new_line;
+return true;
+12: ! ##Search
+print "Se abalanza sobre el cadáver, incapaz de aceptar que es ", (SpanishNominativePronoun) player, " realmente. Buscando algo, cualquier cosa, que le demostrase que se trataba de un error. Pero no encuentra nada.";
+new_line;
+return true;
+13: ! ##Search
+print "Con un sentimiento de angustia insoportable, incapaz de creer que este cadáver pueda ser realmente ", (SpanishNominativePronoun) player, ", se abalanza sobre sus bolsillos. Y lo encuentra. Encuentra la ";
+Hyperlink(Monedas, "moneda", 0);
+print ", exactamente igual que la que tiene ", (SpanishNominativePronoun) player, " mism", (o) player, " en su bolsillo. Imposible...";
+new_line;
+return true;
+14: ! ##Search
+print "Con un sentimiento de angustia insoportable, incapaz de creer que este cadáver pueda ser realmente ", (SpanishNominativePronoun) player, ", se abalanza sobre sus bolsillos. No acierta a introducir las manos temblorosas en el bolsillo, pero puede escuchar claramente el tintineo de dos piezas de metal chocando una sobre otra. No puede ser...";
+new_line;
+return true;
+15: ! ##Go (e_obj / w_obj)
+print "Echa a andar hacia ", (the) x1, ", ignorando ", (the) Cuerpo, ", intentando ignorar el sonido, cada vez más atronador, de sus propios latidos del corazón en los oídos. Pero no llega muy lejos...";
+new_line;
+return true;
+16: ! ##Go (e_obj / w_obj)
+print "Antes de echar a andar, algo le empuja a echar la vista atrás, hacia la azotea del edificio del extremo de ", (the) CalleOeste, ". Su corazón se desboca. Allí hay una figura gris, apuntando con ", (a) Fusil, " desde la cornisa. Sus piernas dejan de responder...";
+new_line;
+return true;
+
+}
+
+Diana: switch (n) {
+1: ! ##Examine
+print "Pintada con tiza. Tiene un montón de agujeros de bala alrededor.";
+new_line;
+return true;
+2: ! ##Examine
+print "Testimonio de mala puntería. Son más los agujeros de bala que quedan fuera de los círculos de tiza, que los de su interior.";
+new_line;
+return true;
+3: ! ##Examine
+print "La mayoría de los agujeros de bala están abiertos en el interior de la diana.";
+new_line;
+return true;
+4: ! describe
+print "Frente a ", (SpanishNominativePronoun) player, ", en un edificio al otro lado de la calle, alguien ha pintado ", (a) diana, " con tiza sobre la pared y ha estado probando puntería.";
+new_line;
+return true;
+5:
+switch (random(4)) {
+	1: print "Dispara sobre ", (the) diana, ".";
+	2: print "Levanta ", (the) fusil, ", toma aire profundamente, y dispara.";
+	3: print "Se arrodilla para apuntar mejor y dispara sobre ", (the) diana, ".";
+	4: print "Intenta controlar la respiración mientras apunta ", (the) fusil, ". Y dispara.";
+}
+switch (random(4)) {
+	1: print " El impacto de la bala levanta una pequeña nubecilla de polvo y deja un nuevo agujero en el interior del círculo de tiza.";
+	2: print " La bala impacta con un golpe seco sobre la pared, abriendo un agujero varios palmos de distancia fuera de la circunferencia de tiza.";
+	3: print " Abre un nuevo agujero de bala dentro la circunferencia de tiza.";
+	4: print " La bala penetra en el yeso de la pared, abriendo un nuevo aguero fuera del círculo de tiza.";
+}
+new_line;
+return true;
+}
+
+EdificioDerrumbado: switch (n) {
+1: ! ##Examine
+print "Uno de los edificios se ha desplomado por completo sobre ", (the) CalleEste, ", unos metros más allá, creando una gran barricada que impide el paso hacia ", (the) e_obj, ".";
+new_line;
+return true;
+}
+
+EdificiosCalle: switch (n) {
+1: ! ##Examine
+print "Los agujeros de las ventanas parecen cuencas vacías. Y tienen una mirada acusadora.";
+new_line;
+return true;
+}
+
+EdificiosCallejon: switch (n) {
+1: ! ##Examine
+print "Los altos muros de ladrillo parecen cernirse sobre ", (SpanishNominativePronoun) player, ".";
+new_line;
+return true;
+}
+
+EdificiosCanal: switch (n) {
+1: ! ##Examine
+print "Agazapad", (o) player, " junto a la entrada ", (del) TunelCanal, ", estudia ", (the) EdificiosCanal, " medio derruidos que se levantan en las orillas. ";
+return true;
+2: ! ##Examine
+print "Todo cuanto queda en pie en esta parte de la ciudad son poco más que esqueletos destrozados por las bombas. Armazones sin fachada que dejan al descubierto un feo damero de suelos y tabiques. Pueden verse columnas esporádicas de humo allí donde todavía queda combustible suficiente como para alimentar un fuego.";
+new_line;
+return true;
+}
+
+Escalera: switch (n) {
+1: ! ##Examine
+print "Labrada directamente sobre el hormigón, ";
+Hyperlink(u_obj, "asciende", 0);
+print " fuera ", (del) Canal, ".";
+new_line;
+return true;
+2: ! describe
+print "Una ";
+Hyperlink(Escalera, "escalinata", 0);
+print " labrada directamente sobre el hormigón asciende fuera ", (del) Canal, ", a unos metros de la boca ", (del) tunelCanal, ".";
+new_line;
+return true;
+3: ! ##Enter
+print "Podría haber francotiradores enemigos apostados en alguno de los edificios del otro lado del canal, pero tampoco es que tenga otra alternativa. Sólo cabe confiar que ahora mismo no haya nadie mirando justo en esta dirección. Echa a correr hacia la escalinata, tan rápido como es capaz.";
+new_line;
+return true;
+4: ! ##Enter
+print "Sube por ", (the) Escalera, ".";
+new_line;
+return true;
+}
+
+FinalTunel: switch (n) {
+1:	! ##Examine
+print "El final del túnel. Sólo tiene que continuar hacia ", (name) f_obj, " un poco más.";
+new_line;
+return true;
+2: ! ##Enter
+print "Inspira hondo, haciendo caso omiso de la opresión que siente en el pecho, y camina con paso titubeante hacia la salida.";
+new_line;
+return true;
+}
+
+Fusil: switch (n) {
+1: ! ##Examine
+print "", (A) Fusil, " semiautomático largo. Tiene restos de tiza en la culata de madera.";
+new_line;
+return true;
+2: ! ##Examine
+print "", (A) Fusil, " semiautomático con culata de madera.";
+new_line;
+return true;
+3: ! ##Touch
+print "Se ha acostumbrado a llevar aquel ";
+Hyperlink(Fusil, "arma", 0);
+print " entre las manos. Su peso, la suavidad de la culata, el tacto del gatillo. Va a sentirse extrañ", (o) player, " cuando salga de este lugar y pueda olvidarse de él.";
+new_line;
+return true;
+4: ! ##Rub
+print "Es imposible mantener ", (the) Fusil, " limpio por mucho cuidado que ponga. De todas formas, frota la culata con la manga del uniforme, intentando quitarle el polvo y las manchas de tiza más superficiales.";
+new_line;
+return true;
+5: ! ##Rub
+print "No tiene forma de limpiarlo mejor. ", (SpanishNominativePronounCap) player, " mism", (o) player, " está cubiert", (o) player, " enter", (o) player, " de polvo y barro. Como mucho va a conseguir ensuciarlo aún más.";
+new_line;
+return true;
+}
+
+Humo: switch (n) {
+1: ! ##Examine (CalleCentro)
+print "Algo se está quemando más ", (name) f_obj, ".";
+new_line;
+return true;
+2: ! ##Examine (CalleOeste)
+print "El humo difumina las formas de ", (the) CalleOeste, ".";
+new_line;
+return true;
+3: ! ##Smell
+print "Tose con fuerza por culpa ", (del) Humo, ".";
+new_line;
+return true;
+}
+
+Limbo: switch (n) {
+1:	! ##Examine
+print "Más allá de la barrera casi insuperable que separa la realidad de todo lo demás. Un lugar etéreo, donde la vida, la materia y la vitalidad no son necesariamente constantes; un lugar donde el el tiempo y el espacio no existen tal y como los capta nuestro ser despierto...";
+return true;
+2:	! ##Examine (primera vez)
+print " ¿Qué? ¿Cómo?... ¿cómo he llegado aquí?";
+return true;
+}
+
+MaquinaTabaco: switch (n) {
+1: ! ##Examine (A - cerrada)
+print "Está algo aplastada, pero se encuentra en mejores condiciones que la mayor parte de ", (the) basura, " arrojada a su alrededor. Tal vez merezca la pena buscar dentro. Quizá aún se pueda encontrar algo de tabaco.";
+new_line;
+return true;
+2: ! ##Attack
+print "Golpea con la culata ", (del) fusil, " sobre la tapa de la máquina hasta que cede y se abre violentamente. No tenía cajetillas dentro. Sin embargo sí recupera una moneda.";
+new_line;
+return true;
+3: ! ##ShootAt
+print "La tapa se abre con un estallido de plástico. No hay cajetillas dentro. Sin embargo sí recupera una moneda.";
+}
+
+Moneda: switch (n) {
+1: ! ##Examine
+print "Parece antigua. Tal vez se trata de algún tipo de amuleto olvidado por alguien.";
+new_line;
+return true;
+2: ! describe (Azotea)
+print "Entre ", (the) Colillas, " y ", (the) Polvo, " del suelo hay ", (un_) Moneda, " pequeñ", (o) Moneda, " ", (a) Moneda, ".";
+new_line;
+return true;
+3:
+print "Se agacha para recogerlo y le sopla ", (the) Polvo, " de encima. Es ", (a) Moneda, ".";
+new_line;
+return true;
+4:
+print "Algo le llama la atención junto ", (al) Colchon, ". ", (A) Moneda, " pequeñ", (o) Moneda, ", tirad", (o) Moneda, " entre un montón de ", (name) Colillas, " y semiocult", (o) Moneda, " por culpa ", (del) Polvo, ".";
+new_line;
+return true;
+}
+
+Monedas: switch (n) {
+1: ! ##Examine
+print "Un par de ", (name) Monedas, " antiguas.";
+new_line;
+return true;
+}
+
+Muro: switch (n) {
+1: ! ##Examine
+print "Aunque no ", (lo) obj, " puede ver, nota los húmedos ladrillos a su lado.";
+new_line;
+return true;
+}
+
+Oscuridad: switch (n) {
+1:
+print "No puede ver otra cosa en ", (the) Oscuridad, " aparte del pálido punto de  ";
+Hyperlink(FinalTunel, "luz", 0);
+print " que se recorta más ", (name) f_obj, ".";
+new_line;
+return true;
+2:
+print "Todo cuanto puede ver en ", (the) Oscuridad, " es ese punto de ";
+Hyperlink(FinalTunel, "luz", 0);
+print " de más ", (name) f_obj, ".";
+new_line;
+return true;
+3:
+print "Las ";
+Hyperlink(Oscuridad, "sombras", 0);
+print " impiden ver nada. Salvo por aquella pálida mota de ";
+Hyperlink(FinalTunel, "luz", 0);
+print ".";
+new_line;
+return true;
+4: ! ##Drop
+print "Si deja ", (the) x1, " aquí es posible que más tarde no pueda encontrar", (lo) x1, " de nuevo en ", (the) Oscuridad, ". Es mejor quedárse", (lo) x1, " consigo por el momento.";
+new_line;
+return true;
+5: ! ##Rub
+print "Es imposible limpiar ", (the) x1, " ---o cualquier otra cosa--- si no puede ver", (lo) x1, ".";
+new_line;
+return true;
+}
+
+Polvo: switch (n) {
+1: ! ##Examine (general)
+print "Camina sobre una alfombra gris. ", (The) Polvo, " le ha arrebatado el color a la ciudad.";
+new_line;
+return true;
+2: ! ##Examine (en CalleCentro/CalleOeste)
+print "Nieva ";
+Hyperlink(Polvo, "ceniza", 0);
+print " sobre ", (the) location, ". Todo cubierto de ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (name) Polvo, ".";
+new_line;
+return true;
+3: ! each_turn
+print "Lo único que se mueve en ", (the) location, " es la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " levantada por el viento.";
+new_line;
+return true;
+4: ! each_turn
+print "Las ";
+Hyperlink(Polvo, "cenizas", 0);
+print " hacen pequeños remolinos sobre el asflato.";
+new_line;
+return true;
+5: ! each_turn
+print "El aire está cargado de ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (name) Polvo, ".";
+new_line;
+return true;
+6: ! each_turn
+print "El viento levanta ", (the) Polvo, " y la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " del suelo. Llevados, esparcidos y llevados de nuevo.";
+new_line;
+return true;
+}
+
+PuertaAzotea: switch (n) {
+1: ! ##Examine
+print "En realidad ya no hay ", (name) PuertaAzotea, ", sólo un hueco negro al interior del edificio.";
+new_line;
+return true;
+}
+
+PuertaCallejon: switch (n) {
+1: ! ##Examine
+print "Revestida de chapa, le han reventado la cerradura de un disparo.";
+new_line;
+return true;
+2: ! describe
+print "Hay una pequeña ", (name) PuertaCallejon, " trasera en la pared ", (name) w_obj, ". Alguien le ha volado la cerradura.";
+new_line;
+return true;
+3: ! ##Close
+print "La cerradura está destrozada. Es imposible cerrar ", (the) PuertaCallejon, ".";
+new_line;
+return true;
+4: ! ##Enter
+print "Levanta ", (the) Fusil, " y entra en el edificio procurando no hacer ruido.
+^^
+Aquí no hay nada. Incluso los marcos de madera de las puertas han desaparecido, pasto de los incendios. Alcanza unas escaleras y asciende por ellas, despacio, sin bajar el ";
+Hyperlink(Fusil, "arma", 0);
+print " en ningún momento, hasta salir a ", (a) Azotea, ".";
+new_line;
+return true;
+5: ! ##Enter
+print "Entra al edificio y sube por la escalera hasta alcanzar ", (the) Azotea, ".";
+new_line;
+return true;
+7: ! ##Enter
+print "Vuelve sobre sus pasos.";
+new_line;
+return true;
+}
+
+Rio: switch (n) {
+1: ! ##Examine
+print "Plásticos, trozos de madera calcinada y otros bultos imprecisos medio sumergidos en las aguas turbias son arrastrados lentamente por la corriente.";
+new_line;
+return true;
+2: ! ##Enter
+print "Demasiado peligroso. No va a atravesar ", (the) Rio, " a nado.";
+new_line;
+return true;
+}
+
+Ruinas: switch (n) {
+1: ! ##Examine
+print "La ciudad entera se descompone ante sus ojos.";
+new_line;
+return true;
+2: ! ##Examine
+print "Todo cuanto queda son escombros. Esqueletos silenciosos. Sombras. Los vivos no son bien recibidos en este sitio.";
+new_line;
+return true;
+}
+
+Soldado: switch (n) {
+1: ! ##Examine
+print "Se encuentra más adelante en ", (the) CalleAzotea, ", a distancia de tiro, unos doscientos metros ", (al) w_obj, ". Ignora que lo están observando pero aún así anda con cautela, agachado y semioculto por los ";
+Hyperlink(Ruinas, "escombros", 0);
+print ". Su uniforme está tan descolorido y sucio que resulta imposible distinguir si se trata de un aliado o un enemigo...";
+new_line;
+return true;
+2: ! describe
+print "Se puede divisar ", (a) Soldado, ", abajo, en ", (the) CalleAzotea, ".";
+new_line;
+return true;
+3:
+print "Ve un movimiento allí abajo, a tal vez unos doscientos metros hacia ", (the) w_obj, ". Camina agachado y queda semioculto por los ";
+Hyperlink(Ruinas, "escombros", 0);
+print " pero se puede distinguir claramente un arma en sus manos. Es ", (a) Soldado, ", sin duda. Quizá el tirador que ha estado apostado en ", (the) Colchon, "... Nota la descarga de adenalina y el pulso que se acelera de pronto. Sus manos aferran ", (the) Fusil, " con fuerza.";
+new_line;
+return true;
+4:
+print "Puede ver a ", (a) Soldado, " allí abajo, caminando entre ", (the) Ruinas, ".";
+new_line;
+return true;
+5: ! ##ShootAt
+print "Es imposible asegurar si se trata de un enemigo o no, pero no puede arriesgarse. Apoya el cañón ", (del) Fusil, " en un bloque de hormigón y apunta ", (al) Soldado, ". No es un disparo difícil. Toca la curva del gatillo con el dedo. No es un disparo difícil. No puede fallar. Contiene la respiración...";
+new_line;
+return true;
+6: ! ##ShootAt
+print "El estruendo de la detonación rompe el silencio. Como un trozo grueso de madera al romperse. A pesar del peso del cañón el ";
+Hyperlink(Fusil, "rifle", 0);
+print " salta de su punto de apoyo. Busca ", (al) Soldado, " en ", (the) CalleAzotea, " con la mirada pero no hay rastro alguno. Sólo ", (name) Ruinas, ". ¿Le ha alcanzado?";
+new_line;
+return true;
+7:
+print "No necesita preocuparse por eso.";
+new_line;
+return true;
+}
+
+SoldadoDesaparecido: switch (n) {
+1: ! ##Examine
+print "Busca ", (al) Soldado, " entre los ";
+Hyperlink(Ruinas, "escombros", 0);
+print " de ", (the) CalleAzotea, " pero ya no hay rastro alguno. Ha desaparecido.";
+if (x1) print " No tiene forma de saber si le ha alcanzado o no.";
+new_line;
+return true;
+}
+
+Stalker: switch (n) {
+1: ! ##Pray
+print "Suelta un escupitajo amargo. Mierda de Dios, piensa. Sea quien sea, si es que hay alguno. Y ojalá lo haya. Tal vez pueda pedirle cuentas pronto.";
+new_line;
+return true;
+2: ! ##Pray
+print "Tal vez pueda pedir cuentas pronto...";
+new_line;
+return true;
+3:  ! ##ShootAt (self)
+print "Se suele caer en el error de considerarlo la salida más fácil. Es una idea estúpida. Nunca es fácil.
+^^
+Coloca el cañón ", (del) Fusil, " bajo la barbilla, mientras intenta encontrar unas últimas palabras adecuadas. Alguna epifanía de última hora, tal vez. No da con nada.
+^^
+Aprieta el gatillo.";
+new_line;
+return true;
+4:  ! ##JumpOver (Cornisa)
+print "Se suele caer en el error de considerarlo la salida más fácil. Es una idea estúpida. Nunca es fácil.
+^^
+Mira hacia el vacío, mientras intenta encontrar unas últimas palabras adecuadas. Alguna epifanía de última hora, tal vez. No da con nada.
+^^
+Salta.";
+new_line;
+return true;
+5:  ! (Final)
+print "Vaya, vaya, chiquill", (o) player, ". Así que por fin has llegado.";
+new_line;
+return true;
+6:  ! (Final)
+print "Nos alegramos por supuesto, por supuesto. Tod", (o) player, "s acaban saliendo de la Zona en un momento u otro, ¿sabes? pero a algun", (o) player, "s les lleva mucho, mucho más tiempo. Así que felicidades. Suponemos.";
+new_line;
+return true;
+7:  ! (Final)
+print "Sin embargo, nos tememos que ahora llegan las malas noticias. Siempre hay malas noticias, ¿verdad? ", (emph) "Toca apoquinar", ", cariño. Si, lo entendemos, lo entendemos. Creías que ya te habías librado de esa mierda, ¿eh? Pues ¡sorpresa! ¡no! Ya sabes lo que dicen; la banca siempre gana. También aquí.";
+new_line;
+return true;
+8:  ! (Final)
+print "¿Ya estás de vuelta, cariño? ";
+return true;
+9:  ! (Final)
+print "Esperamos que no te hayas olvidado; si quieres pasar, ", (emph) "tienes que pagar", ". ";
+return true;
+10: ! (Final)
+print "No nos mires así, por favor. ¿Es injusto? Ya lo hemos oído antes. ¿Podría haber otra manera? Desde luego. ¿Tienes alguna otra observación? Ahórratela. Aquí tú no eres nadie. No puedes hacer nada para cambiarlo.";
+new_line;
+return true;
+11:  ! (Final)
+print "¿Y bien? ¿Qué tenemos?";
+new_line;
+return true;
+12:  ! (Final)
+print "Oh, vaya. De modo que estás sec", (o) player, ", encanto. Pues verás, si no puedes pagar te vas a tener que ir a tomar por culo. Una pena, pero así es la vida... ¡ja! esa es buena. En fin, tú ya nos entiendes.";
+new_line;
+return true;
+13: ! (Final)
+print "¡Qué lástima! Sólo una moneda. Casi, pero no. Ya conoces las historias, ¿no es así? Caronte y todo eso... Verás, resulta que ese Caronte es un gorila de discoteca avaricioso. El paseo cuesta tan sólo una moneda pero siempre se queda otra como comisión, el viejo zorro. ¡Él es el verdadero ricachón del cementerio! Así que guárdate tu moneda por ahora. Y regresa cuando puedas pagarte el viaje.";
+new_line;
+return true;
+14: ! (Final)
+print "Con viento fresco, chat", (o) player, ".";
+new_line;
+return true;
+15: ! (Final)
+print "Fíjate. ¡Qué sorpresa! De modo que puedes pagar, ¿eh, encanto? Perfecto, perfecto. Si nos preguntas a nosotros, aquello está más bien sobrevalorado, pero quiénes somos para opinar. Allá tú. ¿Cómo decís vosotros? ", (emph) "El cliente tiene siempre la razón.", "";
+new_line;
+return true;
+16: ! (Final)
+print "Muy bien, entonces. Ven con nosotros.";
+new_line;
+return true;
+}
+
+Tunel: switch (n) {
+1: ! ##Examine
+print "Ha estado caminando durante horas en ", (the) Oscuridad, " más absoluta, siguiendo a ciegas ", (the) Muro, " de su derecha para no desorientarse. Una odisea a través de las ";
+Hyperlink(Oscuridad, "tinieblas", 0);
+print " que, sin embargo, parece haber terminado por fin; más ", (name) f_obj, " puede ver un tenue punto de ";
+Hyperlink(FinalTunel, "luz", 3);
+print ", como una mota azul pálido. Ha alcanzado la ";
+Hyperlink(FinalTunel, "salida", 0);
+print ".";
+new_line;
+return true;
+2: ! ##Exits
+print "Salidas visibles: ", (name) f_obj, ".";
+return true;
+3: ! cant_go
+print "Es imposible orientarse bien en ", (the) Oscuridad, ", por eso ha estado usando las ";
+Hyperlink(Muro, "paredes", 0);
+print " del túnel como referencia con la que guiarse. Así, se ha limitado a continuar hacia ", (name) f_obj, ", a lo largo ", (del) Muro, ".";
+new_line;
+return true;
+4: ! initial
+print "El pinchazo es repentino. Se lleva las manos al pecho de forma automática y cae al suelo, atravesad", (o) player, " por el dolor.";
+new_line;
+return true;
+5: ! initial
+print "Una presión punzante le irradia desde la altura del esternón, extendiéndose a través de hombros y cuello y llegando a atenazarle los brazos y la mandíbula. Tiene la espalda empapada por completo de un sudor frío de pronto. Durante un instante percibe el sabor del pánico, su amenaza clara de dominarlo todo. No quiero morir, piensa. No ahora, después de haber llegado hasta aquí.
+^^
+Aún permanece unos minutos en el suelo, luchando por controlar la respiración desbocada e intentando sobreponerse al miedo. El dolor parece atenuarse. Un poco. Lo suficiente como para apartarlo en un rincón y poder ignorarlo por ahora. Tantea a su alrededor hasta encontrar ", (the) Fusil, " que se le ha caído de las manos y se levanta de nuevo. Tiene que seguir avanzando.";
+new_line;
+return true;
+6: ! ##Listen
+print "Silencio. Salvo por el sonido esporádico de alguna gota de agua cayendo entre las ";
+Hyperlink(Oscuridad, "sombras", 0);
+print " y el eco de sus propios pasos contra las ";
+Hyperlink(Muro, "paredes", 0);
+print ".";
+return true;
+7: ! ##Listen
+print " Ni siquiera las ratas parecen habitar este lugar.";
+return true;
+8: ! ##Go (b_obj)
+print "En esa dirección ya no queda más que un vacío negro.";
+new_line;
+return true;
+}
+
+TunelCanal: switch (n) {
+1: ! ##Examine
+print "Una abertura negra que desemboca en ", (the) Canal, ".";
+new_line;
+return true;
+2: ! ##Enter
+print "Mira a la oscura boca ", (del) TunelCanal, "... No puede volver. En esa dirección ya no queda nada.";
+new_line;
+return true;
+}
+
+	}
+];
+
+
+[ LanguageOM_past obj n x1;
+	switch (obj) {
+
+Azotea: switch (n) {
+1: ! ##Examine
+print "En armonía con el resto del edificio, ", (the) Azotea, " estabab completamente vacía, salvo por un sucio ", (name) Colchon, " cerca de la cornisa. Una posición ideal para un tirador; tenía una gran vista de ", (the) CalleAzotea, " y resultaba fácil de defender. El único acceso hasta allí arriba era ", (the) PuertaAzotea, " por la que había llegado.";
+new_line;
+return true;
+3: ! cant_go
+print "Sólo podía volver atrás, por la misma ", (name) PuertaAzotea, " por la que había llegado.";
+new_line;
+return true;
+4: ! ##Go (d_obj)
+print "Volvió sobre sus pasos.";
+new_line;
+return true;
+}
+
+Basura: switch (n) {
+1: ! ##Examine
+print "", (The) Callejon, " era tan estrecho y estaba tan lleno de basura que apenas se puedía cruzar; montones de muebles destrozados, contenedores desbordados, viejas cajas de cartón podridas e hinchadas por la humedad y pilas de escombros se acumulaban contra las ";
+Hyperlink(EdificiosCallejon, "paredes", 0);
+print " de ladrillo.";
+new_line;
+return true;
+}
+
+CalleAzotea: switch (n) {
+1: ! ##Examine
+print "La guerra le arrebata el color a las cosas. Desde allí arriba podía ver ", (the) CalleAzotea, ", extendiéndose como una franja de gris claro de polvo de cemento y hormigón; el ";
+Hyperlink(CalleAzotea, "río", 0);
+print " fluyendo paralelo a ", (the) CalleAzotea, ", una franja de gris más oscuro; los pocos ";
+Hyperlink(CalleAzotea, "árboles", 0);
+print " que se mantenían en pie, esqueletos raquíticos ennegrecidos; los ";
+Hyperlink(CalleAzotea, "coches", 0);
+print ", amasijos de metal descolorido; incluso ", (the) Cielo, " estaba encapotado y plomizo.";
+new_line;
+return true;
+}
+
+CalleCentro: switch (n) {
+1: ! ##Examine
+print "Notó la irritación en la garganta un momento antes de ver la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " cayendo a su alrededor, lentamente, como una nieve fina y reseca. ", (The) CalleCentro, " continuaba en una larga línea recta, hacia ", (the) w_obj, ".";
+new_line;
+return true;
+3: ! cant_go
+print "La calle se extendía en línea recta, de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+4: ! ##Go (w_obj)
+print "Siguió andando. Hacia ", (the) w_obj, ". ", (The) Fusil, " preparado. Los pinchazos del pecho más intensos con cada paso...";
+new_line;
+return true;
+}
+
+CalleEste: switch (n) {
+1: ! ##Examine
+print "", (The) CallejonAdj, " desembocaba en ", (a) CalleEste, " principal, mucho más ancha. Se extendía de ", (name) e_obj, " a ", (name) w_obj, ", paralela ", (al) CanalCalle, ", y estaba salpicada de ", (name) Coches, " calcinados y de cascotes desprendidos desde las fachadas y los tejados cercanos. La ";
+Hyperlink(EdificiosCalle, "ciudad", 0);
+print " entera parecía haber quedado reducida a un montón de ruinas.";
+new_line;
+return true;
+3: ! cant_go
+print "No podía ir por ahí. ", (The) CalleEste, " se extendía de ", (name) e_obj, " a ", (name) w_obj, ", paralela ", (al) CanalCalle, ". ", (_Al) n_obj, " se abría el estrecho ", (name) CallejonAdj, " por el que había llegado hasta allí.";
+new_line;
+return true;
+4: ! ##Go (w_obj)
+print "Caminaba en silencio, tratando de protegerse con las paredes de los edificios y aferrando ", (the) Fusil, " con fuerza";
+return true;
+5: ! ##Go (w_obj)
+print " ---ahora se arrepentía de haber probado puntería sobre la diana, temiendo que alguien hubiese podido escuchar los disparos---";
+return true;
+6: ! ##Go (w_obj)
+print ". Crujido de cristales rotos bajo sus botas. Susurros del viento entre los agujeros de las ventanas. Por lo demás imperaba el silencio.";
+new_line;
+return true;
+}
+
+CalleOeste: switch (n) {
+1: ! ##Examine
+print "", (The) Humo, " era en aquel punto tan espeso que resultaba difícil respirar o ver nada con claridad. Como si alguien le hubiese colocado una mortaja al mundo. Todo era gris; ", (name) Humo, " gris, ";
+Hyperlink(Polvo, "ceniza", 0);
+print " gris, ", (name) Polvo, " gris, ", (name) Ruinas, " grises.";
+return true;
+3: ! cant_go
+print "La calle continuaba en línea recta, de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+}
+
+Callejon: switch (n) {
+1: ! ##Examine
+print "Estaba en ", (a) Callejon, " estrecho, abierto como una herida entre dos ", (name) EdificiosCanal, " de sucias paredes de ladrillo. Montones de muebles destrozados y otros desperdicios se amontonaban a lo largo de prácticamente todo el trecho, desde ", (the) Valla, " que franqueaba el paso al canal, ", (al) n_obj, ", hasta el extremo ", (name) s_obj, " opuesto.";
+new_line;
+return true;
+3: ! cant_go
+print "No podía ir por ahí. ", (The) Callejon, " se extendía de ", (name) n_obj, " a ", (name) s_obj, ". El único otro acceso era aquella ", (name) PuertaCallejon, " metálica, en la pared ", (name) w_obj, ".";
+new_line;
+return true;
+4: ! ##Go (s_obj)
+print "Cada vez se hacía más difícil ignorar el dolor del pecho, pero no podía detenerse. Todavía no.";
+new_line;
+return true;
+5: ! ##Go (n_obj)
+print "Atravesó la valla y descendió de nuevo por ", (the) Escalera, " del terraplén.";
+new_line;
+return true;
+}
+
+Canal: switch (n) {
+1: ! ##Examine
+print "Se encontraba en la parte más profunda de un ancho canal de hormigón, junto a la boca ", (del) TunelCanal, " de alcantarillado que había en uno de los terraplenes laterales. A lo largo de cada orilla se levantaban penosamente unas hileras irregulares de ", (name) EdificiosCanal, " agujereados por los disparos y las bombas, como dentaduras partidas. ", (The) Rio, ", casi opaco por la porquería, fluía caudaloso por el centro ", (del) Canal, ", arrastrando al ", (name) w_obj, " los últimos restos de la ciudad moribunda.";
+new_line;
+return true;
+3: ! cant_go
+print "Continuar por ", (the) Canal, " no era buena idea; estaba demasiado a descubierto. Y tampoco podía volver atrás. Tenía que usar ", (the) Escalera, " y salir de allí.";
+new_line;
+return true;
+4: ! initial
+print "La intensa luz del exterior cegó sus ojos por completo y durante varios segundos fue incapaz de ver nada. A medida que sus pupilas se iban acostumbrando paulatinamente a la nueva claridad, se dibujaron también las figuras sobrecogedoras de aquel lugar destrozado.";
+new_line;
+return true;
+5: ! ##Go (e_obj/w_obj)
+print "Aunque no parecía haber signos de vida por ninguna parte, no era buena idea continuar por ", (the) Canal, ". Demasiado abierto. Allí era blanco fácil para cualquier posible francotirador escondido entre ", (the) Ruinas, ".";
+new_line;
+return true;
+}
+
+CanalCalle: switch (n) {
+1: ! ##Examine
+print "Quedaba oculto por los ", (name) EdificiosCalle, " ", (del) n_obj, ", pero corría paralelo a ", (the) location, ", de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+}
+
+Cielo: switch (n) {
+1: ! ##Examine
+print "El cielo estaba encapotado por completo. De un gris plomizo. Como el resto de la ciudad.";
+new_line;
+return true;
+}
+
+Coches: switch (n) {
+1: ! ##Examine
+print "Poco más ya que amasijos retorcidos de metal.";
+new_line;
+return true;
+}
+
+Colchon: switch (n) {
+1: ! ##Examine
+print "Muy sucio y medio destrozado. Estaba colocado casi en la misma cornisa de ", (the) Azotea, ", para no perder de vista ", (the) CalleAzotea, ".";
+new_line;
+return true;
+2: ! ##Take
+print "No l", (o) Colchon, " necesitaba para nada.";
+new_line;
+return true;
+}
+
+Colillas: switch (n) {
+1: ! ##Examine
+print "También ", (SpanishNominativePronoun) player, " había tenido un paquete de tabaco en algún momento. O eso creía... le resultaba difícil recordar las cosas con claridad.";
+new_line;
+return true;
+3: ! describe
+print "Había un montón de ", (name) Colillas, " consumidas en el suelo, cerca de la cornisa.";
+new_line;
+return true;
+}
+
+Cuerpo: switch (n) {
+1:	! ##Examine (A - ataque al corazón)
+print "Aquel ", (name) Cuerpo, " era el primero que veía desde... ¿cuánto tiempo llevaba deambulando sol", (o) player, " por aquella ciudad fantasma? ¿horas? ¿días? Tal vez por culpa del cansancio, pero no era capaz de recordar cuándo fue la última vez que había visto a alguien, vivo o muerto.
+^^
+Aún le separaba de ", (SpanishNominativePronoun) Cuerpo, " al menos una docena de pasos y resultaba difícil distinguir nada desde allí por culpa de la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (the) Polvo, ".";
+new_line;
+return true;
+2:	! ##Examine (A)
+print "Cruzó los últimos metros que le separaban del ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print ". Al alcanzarlo el mundo pareció congelarse. Las ";
+Hyperlink(Polvo, "cenizas", 0);
+print " flotaban inmóviles en el aire. Su corazón se detuvo. El dolor del pecho desapareció. Los ojos marrones ", (del) Cuerpo, " miraban vidriosos y sin vida, fijos en ninguna parte. Unos ojos marrones idénticos a los suyos. Una boca como la suya. Su mandíbula. Su nariz. Su rostro. Era ", (SpanishNominativePronoun) player, ".
+^^
+Contempló el ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " horrorizad", (o) player, ", incapaz de comprender. Estaba tirad", (o) player, " en el suelo, sin heridas visibles, sin rastro alguno de sangre. Contorsionad", (o) player, " con las manos aferradas al torso como... como sorprendid", (o) player, " por un ataque cardíaco. Su rostro se puso tan lívido como el del ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " que tenía a sus pies...";
+new_line;
+return true;
+3: ! ##Examine (B - disparo)
+print "Se acercó lentamente hacia el ";
+Hyperlink(Cuerpo, "soldado caído", 0);
+print " con ", (the) Fusil, " en alto, preparad", (o) player, " para disparar de nuevo si era necesario. Aún a unos diez metros de distancia fue capaz de ver, a pesar ", (del) Humo, " y la ";
+Hyperlink(Polvo, "ceniza", 0);
+print ", la sangre salpicando el suelo junto ", (al) Cuerpo, ". Y también fue capaz de distinguir algo más; un uniforme idéntico al suyo. Había matado a uno de sus compañeros.";
+new_line;
+return true;
+4: ! ##Examine (B)
+print "Cruzó los últimos metros temblando, preguntándose si reconocería a la persona a la que acababa de matar. Cuando lo alcanzó, el horror asaltó su mente. Indescriptible. Intolerable. Reconoció al soldado caído, desde luego; era ", (SpanishNominativePronoun) player, ". Jadeando, recorrió con la mirada los rasgos de aquel cuerpo idéntico al suyo que yacía sin vida en el suelo, llenándolo todo de sangre por culpa de un agujero de bala abierto en el pecho. Su cerebro se desbordó por una vorágine de pensamientos incoherentes. Aquellos ojos marrones, vidriosos y sin vida, perdidos en la nada.. era ", (SpanishNominativePronoun) player, ". Era imposible. Pero era ", (SpanishNominativePronoun) player, ".
+^^
+Una idea cobró forma entre la confusión. Alarmad", (o) player, ", se incorporó y giró la cabeza hacia atrás, hacia la azotea del edificio del inicio de ", (the) CalleOeste, ". Allí estaba, una figura gris, apuntando ", (a) Fusil, " desde la cornisa. Sus piernas dejaron de responder.";
+new_line;
+return true;
+5: ! describe (A - ataque al corazón)
+print "Saltó por encima de un montón de ladrillos y lo vio a través de la cortina de ", (name) Humo, ". ", (A) Cuerpo, " sin vida. Yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+6: ! describe (A)
+print "Un ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " gris yacía de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+7: ! describe (A)
+print "Un ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " gris yacía de espaldas unos metros más allá, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+8: ! describe (B - disparo)
+print "Cruzó un gran bloque de hormigón caído en medio de ", (the) location, " y lo vio. El ";
+Hyperlink(Cuerpo, "cuerpo del soldado", 0);
+print " yacía de espaldas, a una veintena de metros. Completamente inmóvil.";
+new_line;
+return true;
+9: ! describe (B)
+print "El ";
+Hyperlink(Cuerpo, "soldado", 0);
+print " yacía en el suelo, a unos veinte metros de distancia.";
+new_line;
+return true;
+10: ! describe (B)
+print "", (The) Cuerpo, " inmóvil de uno de sus camaradas yacía de bruces sobre un charco de sangre a unos metros de donde se encontraba.";
+new_line;
+return true;
+11: ! ##Search
+print "Tal vez tuviese algo de valor en los bolsillos, pero tenía que acercarse más para comprobarlo.";
+new_line;
+return true;
+12: ! ##Search
+print "Se abalanzó sobre el cadáver, incapaz de aceptar que era ", (SpanishNominativePronoun) player, " realmente. Buscando algo, cualquier cosa, que le demostrase que se trataba de un error. Pero no encontró nada.";
+new_line;
+return true;
+13: ! ##Search
+print "Con un sentimiento de angustia insoportable, incapaz de creer que aquel cadáver pudiese ser realmente ", (SpanishNominativePronoun) player, ", se abalanzó sobre sus bolsillos. Y lo encuentró. Encuentró la ";
+Hyperlink(Monedas, "moneda", 0);
+print ", exactamente igual que la que tenía ", (SpanishNominativePronoun) player, " mism", (o) player, " en su bolsillo. Imposible...";
+new_line;
+return true;
+14: ! ##Search
+print "Con un sentimiento de angustia insoportable, incapaz de creer que aquel cadáver pudiese ser realmente ", (SpanishNominativePronoun) player, ", se abalanzó sobre sus bolsillos. No acertó a introducir las manos temblorosas en el bolsillo, pero pudo escuchar claramente el tintineo de dos piezas de metal chocando una sobre otra. No puedía ser...";
+new_line;
+return true;
+15: ! ##Go (e_obj / w_obj)
+print "Echó a andar hacia ", (the) x1, ", ignorando ", (the) Cuerpo, ", intentando ignorar el sonido, cada vez más atronador, de sus propios latidos del corazón en los oídos. Pero no llegó muy lejos...";
+new_line;
+return true;
+16: ! ##Go (e_obj / w_obj)
+print "Antes de echar a andar, algo le empujó a echar la vista atrás, hacia la azotea del edificio del extremo de ", (the) CalleOeste, ". Su corazón se desbocó. Allí había una figura gris, apuntando con ", (a) Fusil, " desde la cornisa. Sus piernas dejaron de responder...";
+new_line;
+return true;
+}
+
+EdificioDerrumbado: switch (n) {
+1: ! ##Examine
+print "Uno de los edificios se había desplomado por completo sobre ", (the) CalleEste, ", unos metros más allá, creando una gran barricada que impedía el paso hacia ", (the) e_obj, ".";
+new_line;
+return true;
+}
+
+EdificiosCalle: switch (n) {
+1: ! ##Examine
+print "Los agujeros de las ventanas parecían cuencas vacías. Y tenían una mirada acusadora.";
+new_line;
+return true;
+}
+
+EdificiosCallejon: switch (n) {
+1: ! ##Examine
+print "Los altos muros de ladrillo parecían cernirse sobre ", (SpanishNominativePronoun) player, ".";
+new_line;
+return true;
+}
+
+EdificiosCanal: switch (n) {
+1: ! ##Examine
+print "Agazapad", (o) player, " junto a la entrada ", (del) TunelCanal, ", estudió ", (the) EdificiosCanal, " medio derruidos que se levantaban en las orillas. ";
+return true;
+2: ! ##Examine
+print "Todo cuanto quedaba en pie en aquella parte de la ciudad eran poco más que esqueletos destrozados por las bombas. Armazones sin fachada que dejaban al descubierto un feo damero de suelos y tabiques. Podían verse columnas esporádicas de humo allí donde todavía quedaba combustible suficiente como para alimentar un fuego.";
+new_line;
+return true;
+}
+
+Escalera: switch (n) {
+1: ! ##Examine
+print "Labrada directamente sobre el hormigón, ";
+Hyperlink(u_obj, "ascendía", 0);
+print " fuera ", (del) Canal, ".";
+new_line;
+return true;
+2: ! describe
+print "Una ";
+Hyperlink(Escalera, "escalinata", 0);
+print " labrada directamente sobre el hormigón ascendía fuera ", (del) Canal, ", a unos metros de la boca ", (del) tunelCanal, ".";
+new_line;
+return true;
+3: ! ##Enter
+print "Podría haber francotiradores enemigos apostados en alguno de los edificios del otro lado del canal, pero tampoco es que tuviese otra alternativa. Sólo cabía confiar que en ese momento no hubiese nadie mirando justo en aquella dirección. Echó a correr hacia la escalinata, tan rápido como era capaz.";
+new_line;
+return true;
+4: ! ##Enter
+print "Subió por ", (the) Escalera, ".";
+new_line;
+return true;
+}
+
+FinalTunel: switch (n) {
+1:	! ##Examine
+print "El final del túnel. Sólo tenía que continuar hacia ", (name) f_obj, " un poco más.";
+new_line;
+return true;
+2: ! ##Enter
+print "Inspiró hondo, haciendo caso omiso de la opresión que sentía en el pecho, y caminó con paso titubeante hacia la salida.";
+new_line;
+return true;
+}
+
+Fusil: switch (n) {
+1: ! ##Examine
+print "", (A) Fusil, " semiautomático largo. Tenía restos de tiza en la culata de madera.";
+new_line;
+return true;
+2: ! ##Examine
+print "", (A) Fusil, " semiautomático con culata de madera.";
+new_line;
+return true;
+3: ! ##Touch
+print "Se había acostumbrado a llevar aquel ";
+Hyperlink(Fusil, "arma", 0);
+print " entre las manos. Su peso, la suavidad de la culata, el tacto del gatillo. Iba a sentirse extrañ", (o) player, " cuando saliese de aquel lugar y pudiese olvidarse de él.";
+new_line;
+return true;
+4: ! ##Rub
+print "Era imposible mantener ", (the) Fusil, " limpio por mucho cuidado que pusiese. De todas formas, frotó la culata con la manga del uniforme, intentando quitarle el polvo y las manchas de tiza más superficiales.";
+new_line;
+return true;
+5: ! ##Rub
+print "No tenía forma de limpiarlo mejor. ", (SpanishNominativePronounCap) player, " mism", (o) player, " estaba cubiert", (o) player, " enter", (o) player, " de polvo y barro. Como mucho iba a conseguir ensuciarlo aún más.";
+new_line;
+return true;
+}
+
+Humo: switch (n) {
+1: ! ##Examine (CalleCentro)
+print "Algo se estaba quemando más ", (name) f_obj, ".";
+new_line;
+return true;
+2: ! ##Examine (CalleOeste)
+print "El humo difuminaba las formas ", (del) CalleOeste, ".";
+new_line;
+return true;
+3: ! ##Smell
+print "Tosió con fuerza por culpa ", (del) Humo, ".";
+new_line;
+return true;
+}
+
+Moneda: switch (n) {
+1: ! ##Examine
+print "Parecía antigua. Tal vez se tratase de algún tipo de amuleto olvidado por alguien.";
+new_line;
+return true;
+2: ! describe (Azotea)
+print "Entre ", (the) Colillas, " y ", (the) Polvo, " del suelo había ", (un_) Moneda, " pequeñ", (o) Moneda, " ", (a) Moneda, ".";
+new_line;
+return true;
+3:
+print "Se agachó para recogerlo y le sopló ", (the) Polvo, " de encima. Era ", (a) Moneda, ".";
+new_line;
+return true;
+4:
+print "Algo le llamó la atención junto ", (al) Colchon, ". ", (A) Moneda, " pequeñ", (o) Moneda, ", tirad", (o) Moneda, " entre un montón de ", (name) Colillas, " y semiocult", (o) Moneda, " por culpa ", (del) Polvo, ".";
+new_line;
+return true;
+}
+
+Monedas: switch (n) {
+1: ! ##Examine
+print "Un par de ", (name) Monedas, " antiguas.";
+new_line;
+return true;
+}
+
+Muro: switch (n) {
+1: ! ##Examine
+print "Aunque no ", (lo) obj, " podía ver, notaba los húmedos ladrillos a su lado.";
+new_line;
+return true;
+}
+
+Oscuridad: switch (n) {
+1:
+print "No podía ver otra cosa en ", (the) Oscuridad, " aparte del pálido punto de  ";
+Hyperlink(FinalTunel, "luz", 0);
+print " que se recortaba más ", (name) f_obj, ".";
+new_line;
+return true;
+2:
+print "Todo cuanto podía ver en ", (the) Oscuridad, " era aquel punto de ";
+Hyperlink(FinalTunel, "luz", 0);
+print " de más ", (name) f_obj, ".";
+new_line;
+return true;
+3:
+print "Las ";
+Hyperlink(Oscuridad, "sombras", 0);
+print " impedían ver nada. Salvo por aquella pálida mota de ";
+Hyperlink(FinalTunel, "luz", 0);
+print ".";
+new_line;
+return true;
+4: ! ##Drop
+print "Si dejaba ", (the) x1, " allí era posible que más tarde no pudiese encontrar", (lo) x1, " de nuevo en ", (the) Oscuridad, ". Era mejor quedárse", (lo) x1, " consigo por el momento.";
+new_line;
+return true;
+5: ! ##Rub
+print "Era imposible limpiar ", (the) x1, " ---o cualquier otra cosa--- si no podía ver", (lo) x1, ".";
+new_line;
+return true;
+}
+
+Polvo: switch (n) {
+1: ! ##Examine (general)
+print "Caminaba sobre una alfombra gris. ", (The) Polvo, " le había arrebatado el color a la ciudad.";
+new_line;
+return true;
+2: ! ##Examine (en CalleCentro/CalleOeste)
+print "Nevaba ";
+Hyperlink(Polvo, "ceniza", 0);
+print " sobre ", (the) location, ". Todo cubierto de ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (name) Polvo, ".";
+new_line;
+return true;
+3: ! each_turn
+print "Lo único que se movía en ", (the) location, " era la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " levantada por el viento.";
+new_line;
+return true;
+4: ! each_turn
+print "Las ";
+Hyperlink(Polvo, "cenizas", 0);
+print " hacían pequeños remolinos sobre el asflato.";
+new_line;
+return true;
+5: ! each_turn
+print "El aire estaba cargado de ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (name) Polvo, ".";
+new_line;
+return true;
+6: ! each_turn
+print "El viento levantaba ", (the) Polvo, " y la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " del suelo. Llevados, esparcidos y llevados de nuevo.";
+new_line;
+return true;
+}
+
+PuertaAzotea: switch (n) {
+1: ! ##Examine
+print "En realidad ya no había ", (name) PuertaAzotea, ", sólo un hueco negro al interior del edificio.";
+new_line;
+return true;
+}
+
+PuertaCallejon: switch (n) {
+1: ! ##Examine
+print "Revestida de chapa, le habían reventado la cerradura de un disparo.";
+new_line;
+return true;
+2: ! describe
+print "Había una pequeña ", (name) PuertaCallejon, " trasera en la pared ", (name) w_obj, ". Alguien le había volado la cerradura.";
+new_line;
+return true;
+3: ! ##Close
+print "La cerradura estaba destrozada. Era imposible cerrar ", (the) PuertaCallejon, ".";
+new_line;
+return true;
+4: ! ##Enter
+print "Levantó ", (the) Fusil, " y entró en el edificio procurando no hacer ruido.
+^^
+Allí no había nada. Incluso los marcos de madera de las puertas habían desaparecido, pasto de los incendios. Alcanzó unas escaleras y ascendió por ellas, despacio, sin bajar el ";
+Hyperlink(Fusil, "arma", 0);
+print " en ningún momento, hasta salir a ", (a) Azotea, ".";
+new_line;
+return true;
+5: ! ##Enter
+print "Entró al edificio y subió por la escalera hasta alcanzar ", (the) Azotea, ".";
+new_line;
+return true;
+7: ! ##Enter
+print "Volvió sobre sus pasos.";
+new_line;
+return true;
+}
+
+Rio: switch (n) {
+1: ! ##Examine
+print "Plásticos, trozos de madera calcinada y otros bultos imprecisos medio sumergidos en las aguas turbias eran arrastrados lentamente por la corriente.";
+new_line;
+return true;
+2: ! ##Enter
+print "Demasiado peligroso. No iba a atravesar ", (the) Rio, " a nado.";
+new_line;
+return true;
+}
+
+Ruinas: switch (n) {
+1: ! ##Examine
+print "La ciudad entera se descomponía ante sus ojos.";
+new_line;
+return true;
+}
+
+Soldado: switch (n) {
+1: ! ##Examine
+print "Se encontraba más adelante en ", (the) CalleAzotea, ", a distancia de tiro, unos doscientos metros ", (al) w_obj, ". Ignoraba que lo estaban observando pero aún así andaba con cautela, agachado y semioculto por los ";
+Hyperlink(Ruinas, "escombros", 0);
+print ". Su uniforme estaba tan descolorido y sucio que resultaba imposible distinguir si se trataba de un aliado o un enemigo...";
+new_line;
+return true;
+2: ! describe
+print "Se podía divisar ", (a) Soldado, ", abajo, en ", (the) CalleAzotea, ".";
+new_line;
+return true;
+3:
+print "Vio un movimiento allí abajo, a tal vez unos doscientos metros hacia ", (the) w_obj, ". Caminaba agachado y quedaba semioculto por los ";
+Hyperlink(Ruinas, "escombros", 0);
+print " pero se podía distinguir claramente un arma en sus manos. Era ", (a) Soldado, ", sin duda. Quizá el tirador que había estado apostado en ", (the) Colchon, "... Notó la descarga de adenalina y el pulso que se aceleró de pronto. Sus manos aferraron ", (the) Fusil, " con fuerza.";
+new_line;
+return true;
+4:
+print "Podía ver a ", (a) Soldado, " allí abajo, caminando entre ", (the) Ruinas, ".";
+new_line;
+return true;
+5: ! ##ShootAt
+print "Era imposible asegurar si se trataba de un enemigo o no, pero no podía arriesgarse. Apoyó el cañón ", (del) Fusil, " en un bloque de hormigón y apuntó ", (al) Soldado, ". No es un disparo difícil. Tocó la curva del gatillo con el dedo. No es un disparo difícil. No podía fallar. Contuvo la respiración...";
+new_line;
+return true;
+6: ! ##ShootAt
+print "El estruendo de la detonación rompió el silencio. Como un trozo grueso de madera al romperse. A pesar del peso del cañón el ";
+Hyperlink(Fusil, "rifle", 0);
+print " saltó de su punto de apoyo. Buscó ", (al) Soldado, " en ", (the) CalleAzotea, " con la mirada pero no había rastro alguno. Sólo ", (name) Ruinas, ". ¿Le había alcanzado?";
+new_line;
+return true;
+7:
+print "No necesitaba preocuparse por eso.";
+new_line;
+return true;
+}
+
+SoldadoDesaparecido: switch (n) {
+1: ! ##Examine
+print "Buscó ", (al) Soldado, " entre los ";
+Hyperlink(Ruinas, "escombros", 0);
+print " de ", (the) CalleAzotea, " pero ya no había rastro alguno. Había desaparecido.";
+if (x1) print " No tenía forma de saber si le había alcanzado o no.";
+new_line;
+return true;
+}
+
+Stalker: switch (n) {
+1: ! ##Pray
+print "Soltó un escupitajo amargo. Mierda de Dios, pensó. Sea quien sea, si es que había alguno. Y ojalá lo hubiera. Tal vez pudiese pedirle cuentas pronto.";
+new_line;
+return true;
+2: ! ##Pray
+print "Tal vez pudiese pedir cuentas pronto...";
+new_line;
+return true;
+3:  ! ##ShootAt (self)
+print "Se suele caer en el error de considerarlo la salida más fácil. Es una idea estúpida. Nunca es fácil.
+^^
+Colocó el cañón ", (del) Fusil, " bajo la barbilla, mientras intentaba encontrar unas últimas palabras adecuadas. Alguna epifanía de última hora, tal vez. No dio con nada.
+^^
+Apretó el gatillo.";
+new_line;
+return true;
+4:  ! ##JumpOver (Cornisa)
+print "Se suele caer en el error de considerarlo la salida más fácil. Es una idea estúpida. Nunca es fácil.
+^^
+Miró hacia el vacío, mientras intentaba encontrar unas últimas palabras adecuadas. Alguna epifanía de última hora, tal vez. No dio con nada.
+^^
+Saltó.";
+new_line;
+return true;
+}
+
+Tunel: switch (n) {
+1: ! ##Examine
+print "Había estado caminando durante horas en ", (the) Oscuridad, " más absoluta, siguiendo a ciegas ", (the) Muro, " de su derecha para no desorientarse. Una odisea a través de las ";
+Hyperlink(Oscuridad, "tinieblas", 0);
+print " que, sin embargo, parecía haber terminado por fin; más ", (name) f_obj, " podía ver un tenue punto de ";
+Hyperlink(FinalTunel, "luz", 3);
+print ", como una mota azul pálido. Había alcanzado la ";
+Hyperlink(FinalTunel, "salida", 0);
+print ".";
+new_line;
+return true;
+3: ! cant_go
+print "Era imposible orientarse bien en ", (the) Oscuridad, ", por eso había estado usando las ";
+Hyperlink(Muro, "paredes", 0);
+print " del túnel como referencia con la que guiarse. Así, se ha limitado a continuar hacia ", (name) f_obj, ", a lo largo ", (del) Muro, ".";
+new_line;
+return true;
+4: ! initial
+print "El pinchazo fue repentino. Se llevó las manos al pecho de forma automática y cayó al suelo, atravesad", (o) player, " por el dolor.";
+new_line;
+return true;
+5: ! initial
+print "Una presión punzante le irradiaba desde la altura del esternón, extendiéndose a través de hombros y cuello y llegando a atenazarle los brazos y la mandíbula. Tenía la espalda empapada por completo de un sudor frío de pronto. Durante un instante percibió el sabor del pánico, su amenaza clara de dominarlo todo. No quiero morir, pensó. No ahora, después de haber llegado hasta aquí.
+^^
+Aún permaneció unos minutos en el suelo, luchando por controlar la respiración desbocada e intentando sobreponerse al miedo. El dolor parecía atenuarse. Un poco. Lo suficiente como para apartarlo en un rincón y poder ignorarlo por el momento. Tanteó a su alrededor hasta encontrar ", (the) Fusil, " que se le había caído de las manos y se levantó de nuevo. Tenía que seguir avanzando.";
+new_line;
+return true;
+6: ! ##Listen
+print "Silencio. Salvo por el sonido esporádico de alguna gota de agua cayendo entre las ";
+Hyperlink(Oscuridad, "sombras", 0);
+print " y el eco de sus propios pasos contra las ";
+Hyperlink(Muro, "paredes", 0);
+print ".";
+return true;
+7: ! ##Listen
+print " Ni siquiera las ratas parecían habitar aquel lugar.";
+return true;
+8: ! ##Go (b_obj)
+print "En aquella dirección ya no quedaba más que un vacío negro.";
+new_line;
+return true;
+}
+
+TunelCanal: switch (n) {
+1: ! ##Examine
+print "Una abertura negra que desembocaba en ", (the) Canal, ".";
+new_line;
+return true;
+2: ! ##Enter
+print "Miró a la oscura boca ", (del) TunelCanal, "... No podía volver. En esa dirección ya no quedaba nada.";
+new_line;
+return true;
+}
+
+	}
+return LanguageOM_present(obj, n, x1);
+];
+
+
+[ LanguageOM_future obj n x1;
+	switch(obj) {
+
+Azotea: switch (n) {
+1: ! ##Examine
+print "En armonía con el resto del edificio, ", (the) Azotea, " estará completamente vacía, salvo por un sucio ", (name) Colchon, " cerca de la cornisa. Una posición ideal para un tirador; tiene una gran vista de ", (the) CalleAzotea, " y resultará fácil de defender. El único acceso hasta allí arriba será ", (the) PuertaAzotea, " por la que haya llegado.";
+new_line;
+return true;
+3: ! cant_go
+print "Sólo podrá volver atrás, por la misma ", (name) PuertaAzotea, " por la que haya llegado.";
+new_line;
+return true;
+4: ! ##Go (d_obj)
+print "Volverá sobre sus pasos.";
+new_line;
+return true;
+}
+
+Basura: switch (n) {
+1: ! ##Examine
+print "", (The) Callejon, " será tan estrecho y estará tan lleno de basura que apenas se podrá cruzar; montones de muebles destrozados, contenedores desbordados, viejas cajas de cartón podridas e hinchadas por la humedad y pilas de escombros se acumularán contra las ";
+Hyperlink(EdificiosCallejon, "paredes", 0);
+print " de ladrillo.";
+new_line;
+return true;
+}
+
+CalleAzotea: switch (n) {
+1: ! ##Examine
+print "La guerra le arrebata el color a las cosas. Desde allí arriba podrá ver ", (the) CalleAzotea, ", extendiéndose como una franja de gris claro de polvo de cemento y hormigón; el ";
+Hyperlink(CalleAzotea, "río", 0);
+print " fluyendo paralelo a ", (the) CalleAzotea, ", una franja de gris más oscuro; los pocos ";
+Hyperlink(CalleAzotea, "árboles", 0);
+print " que se mantenían en pie, esqueletos raquíticos ennegrecidos; los ";
+Hyperlink(CalleAzotea, "coches", 0);
+print ", amasijos de metal descolorido; incluso ", (the) Cielo, " estará encapotado y plomizo.";
+new_line;
+return true;
+}
+
+CalleCentro: switch (n) {
+1: ! ##Examine
+print "Notará la irritación en la garganta un momento antes de ver la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " cayendo a su alrededor, lentamente, como una nieve fina y reseca. ", (The) CalleCentro, " continuará en una larga línea recta, hacia ", (the) w_obj, ".";
+new_line;
+return true;
+3: ! cant_go
+print "La calle se extenderá en línea recta, de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+4: ! ##Go (w_obj)
+print "Seguirá andando. Hacia ", (the) w_obj, ". ", (The) Fusil, " preparado. Los pinchazos del pecho más intensos con cada paso...";
+new_line;
+return true;
+}
+
+CalleEste: switch (n) {
+1: ! ##Examine
+print "", (The) CallejonAdj, " desembocará en ", (a) CalleEste, " principal, mucho más ancha. Se extenderá de ", (name) e_obj, " a ", (name) w_obj, ", paralela ", (al) CanalCalle, ", y estará salpicada de ", (name) Coches, " calcinados y de cascotes desprendidos desde las fachadas y los tejados cercanos. La ";
+Hyperlink(EdificiosCalle, "ciudad", 0);
+print " entera parecerá haber quedado reducida a un montón de ruinas.";
+new_line;
+return true;
+3: ! cant_go
+print "No podrá ir por ahí. ", (The) CalleEste, " se extenderá de ", (name) e_obj, " a ", (name) w_obj, ", paralela ", (al) CanalCalle, ". ", (_Al) n_obj, " se abrirá el estrecho ", (name) CallejonAdj, " por el que haya llegado hasta allí.";
+new_line;
+return true;
+4: ! ##Go (w_obj)
+print "Caminará en silencio, tratando de protegerse con las paredes de los edificios y aferrando ", (the) Fusil, " con fuerza";
+return true;
+5: ! ##Go (w_obj)
+print " ---ahora se arrepentirá de haber probado puntería sobre la diana, temiendo que alguien haya podido escuchar los disparos---";
+return true;
+6: ! ##Go (w_obj)
+print ". Crujido de cristales rotos bajo sus botas. Susurros del viento entre los agujeros de las ventanas. Por lo demás imperará el silencio.";
+new_line;
+return true;
+}
+
+CalleOeste: switch (n) {
+1: ! ##Examine
+print "", (The) Humo, " será en aquel punto tan espeso que resultará difícil respirar o ver nada con claridad. Como si alguien le colocara una mortaja al mundo. Todo será gris; ", (name) Humo, " gris, ";
+Hyperlink(Polvo, "ceniza", 0);
+print " gris, ", (name) Polvo, " gris, ", (name) Ruinas, " grises.";
+return true;
+3: ! cant_go
+print "La calle continuará en línea recta, de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+}
+
+Callejon: switch (n) {
+1: ! ##Examine
+print "Estará en ", (a) Callejon, " estrecho, abierto como una herida entre dos ", (name) EdificiosCanal, " de sucias paredes de ladrillo. Montones de muebles destrozados y otros desperdicios se amontonarán a lo largo de prácticamente todo el trecho, desde la ";
+Hyperlink(Valla, "valla", 3);
+print " que franqueará el paso al canal, ", (al) n_obj, ", hasta el extremo ", (name) s_obj, " opuesto.";
+new_line;
+return true;
+3: ! cant_go
+print "No podrá ir por ahí. ", (The) Callejon, " se extenderá de ", (name) n_obj, " a ", (name) s_obj, ". El único otro acceso será aquella ", (name) PuertaCallejon, " metálica, en la pared ", (name) w_obj, ".";
+new_line;
+return true;
+4: ! ##Go (s_obj)
+print "Cada vez se hará más difícil ignorar el dolor del pecho, pero no podrá detenerse. Todavía no.";
+new_line;
+return true;
+5: ! ##Go (n_obj)
+print "Atravesará la valla y descenderá de nuevo por ", (the) Escalera, " del terraplén.";
+new_line;
+return true;
+}
+
+Canal: switch (n) {
+1: ! ##Examine
+print "Se encontrará en la parte más profunda de un ancho canal de hormigón, junto a la boca ", (del) TunelCanal, " de alcantarillado que habrá en uno de los terraplenes laterales. A lo largo de cada orilla se levantarán penosamente unas hileras irregulares de ", (name) EdificiosCanal, " agujereados por los disparos y las bombas, como dentaduras partidas. ", (The) Rio, ", casi opaco por la porquería, fuirá caudaloso por el centro ", (del) Canal, ", arrastrando al ", (name) w_obj, " los últimos restos de la ciudad moribunda.";
+new_line;
+return true;
+3: ! cant_go
+print "Continuar por ", (the) Canal, " no será buena idea; estará demasiado a descubierto. Y tampoco podrá volver atrás. Tendrá que usar ", (the) Escalera, " y salir de allí.";
+new_line;
+return true;
+4: ! initial
+print "La intensa luz del exterior cegará sus ojos por completo y durante varios segundos será incapaz de ver nada. A medida que sus pupilas se vayan acostumbrando paulatinamente a la nueva claridad, se dibujarán también las figuras sobrecogedoras de aquel lugar destrozado.";
+new_line;
+return true;
+5: ! ##Go (e_obj/w_obj)
+print "Aunque no parecerá haber signos de vida por ninguna parte, no será buena idea continuar por ", (the) Canal, ". Demasiado abierto. Allí será blanco fácil para cualquier posible francotirador escondido entre ", (the) Ruinas, ".";
+new_line;
+return true;
+}
+
+CanalCalle: switch (n) {
+1: ! ##Examine
+print "Quedará oculto por los ", (name) EdificiosCalle, " ", (del) n_obj, ", pero correrá paralelo a ", (the) location, ", de ", (name) e_obj, " a ", (name) w_obj, ".";
+new_line;
+return true;
+}
+
+Cielo: switch (n) {
+1: ! ##Examine
+print "El cielo estará encapotado por completo. De un gris plomizo. Como el resto de la ciudad.";
+new_line;
+return true;
+}
+
+Coches: switch (n) {
+1: ! ##Examine
+print "Poco más que amasijos retorcidos de metal.";
+new_line;
+return true;
+}
+
+Colchon: switch (n) {
+1: ! ##Examine
+print "Muy sucio y medio destrozado. Estará colocado casi en la misma cornisa de ", (the) Azotea, ", para no perder de vista ", (the) CalleAzotea, ".";
+new_line;
+return true;
+2: ! ##Take
+print "No l", (o) Colchon, " necesitará para nada.";
+new_line;
+return true;
+}
+
+Colillas: switch (n) {
+1: ! ##Examine
+print "También ", (SpanishNominativePronoun) player, " habrá tenido un paquete de tabaco en algún momento. O eso creerá... le resultará difícil recordar las cosas con claridad.";
+new_line;
+return true;
+3: ! describe
+print "Habrá un montón de ", (name) Colillas, " consumidas en el suelo, cerca de la cornisa.";
+new_line;
+return true;
+}
+
+Cuerpo: switch (n) {
+1:	! ##Examine (A - ataque al corazón)
+print "Aquel ", (name) Cuerpo, " será el primero que vea desde... ¿cuánto tiempo llevará deambulando sol", (o) player, " por aquella ciudad fantasma? ¿horas? ¿días? Tal vez por culpa del cansancio, pero no será capaz de recordar cuándo sea la última vez que haya visto a alguien, vivo o muerto.
+^^
+Aún le serparará de ", (SpanishNominativePronoun) Cuerpo, " al menos una docena de pasos y resultará difícil distinguir nada desde allí por culpa de la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (the) Polvo, ".";
+new_line;
+return true;
+2:	! ##Examine (A)
+print "Cruzará los últimos metros que le separen del ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print ". Al alcanzarlo el mundo parecerá congelarse. Las ";
+Hyperlink(Polvo, "cenizas", 0);
+print " flotarán inmóviles en el aire. Su corazón se detendrá. El dolor del pecho desaparecerá. Los ojos marrones ", (del) Cuerpo, " mirarán vidriosos y sin vida, fijos en ninguna parte. Unos ojos marrones idénticos a los suyos. Una boca como la suya. Su mandíbula. Su nariz. Su rostro. Será ", (SpanishNominativePronoun) player, ".
+^^
+Contemplará el ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " horrorizad", (o) player, ", incapaz de comprender. Estará tirad", (o) player, " en el suelo, sin heridas visibles, sin rastro alguno de sangre. Contorsionad", (o) player, " con las manos aferradas al torso como... como sorprendid", (o) player, " por un ataque cardíaco. Su rostro se pondrá tan lívido como el del ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " que tendrá a sus pies...";
+new_line;
+return true;
+3: ! ##Examine (B - disparo)
+print "Se acercará lentamente hacia el ";
+Hyperlink(Cuerpo, "soldado", 0);
+print " caído con ", (the) Fusil, " en alto, preparad", (o) player, " para disparar de nuevo si fuera necesario. Aún a unos diez metros de distancia será capaz de ver, a pesar ", (del) Humo, " y la ";
+Hyperlink(Polvo, "ceniza", 0);
+print ", la sangre salpicando el suelo junto ", (al) Cuerpo, ". Y también será capaz de distinguir algo más; un uniforme idéntico al suyo. Habrá matado a uno de sus compañeros.";
+new_line;
+return true;
+4: ! ##Examine (B)
+print "Cruzará los últimos metros temblando, preguntándose si reconocerá a la persona a la que abara de matar. Cuando lo alcance, el horror asaltará su mente. Indescriptible. Intolerable. Reconocerá al soldado caído, desde luego; será ", (SpanishNominativePronoun) player, ". Jadeando, recorrerá con la mirada los rasgos de aquel cuerpo idéntico al suyo que yacerá sin vida en el suelo, llenándolo todo de sangre por culpa de un agujero de bala abierto en el pecho. Su cerebro se desbordará por una vorágine de pensamientos incoherentes. Aquellos ojos marrones, vidriosos y sin vida, perdidos en la nada.. será ", (SpanishNominativePronoun) player, ". Será imposible. Pero será ", (SpanishNominativePronoun) player, ".
+^^
+Una idea cobrará forma entre la confusión. Alarmad", (o) player, ", se incorporará y girará la cabeza hacia atrás, hacia la azotea del edificio del inicio de ", (the) CalleOeste, ". Allí estará, una figura gris, apuntando ", (a) Fusil, " desde la cornisa. Sus piernas dejarán de responder.";
+new_line;
+return true;
+5: ! describe (A - ataque al corazón)
+print "Saltará por encima de un montón de ladrillos y lo verá a través de la cortina de ", (name) Humo, ". ", (A) Cuerpo, " sin vida. Yacerá de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+6: ! describe (A)
+print "Un ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " gris yacerá de espaldas a una veintena de metros, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+7: ! describe (A)
+print "Un ";
+Hyperlink(Cuerpo, "cadáver", 0);
+print " gris yacerá de espaldas unos metros más allá, semienterrado entre los escombros y la ceniza.";
+new_line;
+return true;
+8: ! describe (B - disparo)
+print "Cruzará un gran bloque de hormigón caído en medio de ", (the) location, " y lo verá. El ";
+Hyperlink(Cuerpo, "cuerpo del soldado", 0);
+print " yacerá de espaldas, a una veintena de metros. Completamente inmóvil.";
+new_line;
+return true;
+9: ! describe (B)
+print "El ";
+Hyperlink(Cuerpo, "soldado", 0);
+print " yacerá en el suelo, a unos veinte metros de distancia.";
+new_line;
+return true;
+10: ! describe (B)
+print "", (The) Cuerpo, " inmóvil de uno de sus camaradas yacerá de bruces sobre un charco de sangre a unos metros de donde se encuentre.";
+new_line;
+return true;
+11: ! ##Search
+print "Tal vez tenga algo de valor en los bolsillos, pero tendrá que acercarse más para comprobarlo.";
+new_line;
+return true;
+12: ! ##Search
+print "Se abalanzará sobre el cadáver, incapaz de aceptar que sea ", (SpanishNominativePronoun) player, " realmente. Buscando algo, cualquier cosa, que le demostrase que se tratará de un error. Pero no encontrará nada.";
+new_line;
+return true;
+13: ! ##Search
+print "Con un sentimiento de angustia insoportable, incapaz de creer que aquel cadáver pueda ser realmente ", (SpanishNominativePronoun) player, ", se abalanzará sobre sus bolsillos. Y lo encontrará. Encontrará la ";
+Hyperlink(Monedas, "moneda", 0);
+print ", exactamente igual que la que tendrá ", (SpanishNominativePronoun) player, " mism", (o) player, " en su bolsillo. Imposible...";
+new_line;
+return true;
+14: ! ##Search
+print "Con un sentimiento de angustia insoportable, incapaz de creer que aquel cadáver pueda ser realmente ", (SpanishNominativePronoun) player, ", se abalanzará sobre sus bolsillos. No acertará a introducir las manos temblorosas en el bolsillo, pero podrá escuchar claramente el tintineo de dos piezas de metal chocando una sobre otra. Imposible...";
+new_line;
+return true;
+15: ! ##Go (e_obj / w_obj)
+print "Echará a andar hacia ", (the) x1, ", ignorando ", (the) Cuerpo, ", intentando ignorar el sonido, cada vez más atronador, de sus propios latidos del corazón en los oídos. Pero no llegará muy lejos...";
+new_line;
+return true;
+16: ! ##Go (e_obj / w_obj)
+print "Antes de echar a andar, algo le empujará a echar la vista atrás, hacia la azotea del edificio del extremo de ", (the) CalleOeste, ". Su corazón se desbocará. Allí habrá una figura gris, apuntando con ", (a) Fusil, " desde la cornisa. Sus piernas dejarán de responder...";
+new_line;
+return true;
+}
+
+EdificioDerrumbado: switch (n) {
+1: ! ##Examine
+print "Uno de los edificios se habrá desplomado por completo sobre ", (the) CalleEste, ", unos metros más allá, creando una gran barricada que impedirá el paso hacia ", (the) e_obj, ".";
+new_line;
+return true;
+}
+
+EdificiosCalle: switch (n) {
+1: ! ##Examine
+print "Los agujeros de las ventanas parecerán cuencas vacías. Y tendrán una mirada acusadora.";
+new_line;
+return true;
+}
+
+EdificiosCallejon: switch (n) {
+1: ! ##Examine
+print "Los altos muros de ladrillo parecerán cernirse sobre ", (SpanishNominativePronoun) player, ".";
+new_line;
+return true;
+}
+
+EdificiosCanal: switch (n) {
+1: ! ##Examine
+print "Agazapad", (o) player, " junto a la entrada ", (del) TunelCanal, ", estudiará ", (the) EdificiosCanal, " medio derruidos que se levanten en las orillas. ";
+return true;
+2: ! ##Examine
+print "Todo cuanto quede en pie en aquella parte de la ciudad serán poco más que esqueletos destrozados por las bombas. Armazones sin fachada que dejarán al descubierto un feo damero de suelos y tabiques. Podrán verse columnas esporádicas de humo allí donde todavía quede combustible suficiente como para alimentar un fuego.";
+new_line;
+return true;
+}
+
+Escalera: switch (n) {
+1: ! ##Examine
+print "Labrada directamente sobre el hormigón, permitirá ";
+Hyperlink(u_obj, "ascender", 0);
+print " fuera ", (del) Canal, ".";
+new_line;
+return true;
+2: ! describe
+print "Una ";
+Hyperlink(Escalera, "escalinata", 0);
+print " labrada directamente sobre el hormigón ascenderá fuera ", (del) Canal, ", a unos metros de la boca ", (del) tunelCanal, ".";
+new_line;
+return true;
+3: ! ##Enter
+print "Podrá haber francotiradores enemigos apostados en alguno de los edificios del otro lado del canal, pero tampoco es que vaya a tener otra alternativa. Sólo cabrá confiar que en ese momento no vaya a haber nadie mirando justo en aquella dirección. Echará a correr hacia la escalinata, tan rápido como sea capaz.";
+new_line;
+return true;
+4: ! ##Enter
+print "Subirá por ", (the) Escalera, ".";
+new_line;
+return true;
+}
+
+FinalTunel: switch (n) {
+1:	! ##Examine
+print "El final del túnel. Sólo tendrá que continuar hacia ", (name) f_obj, " un poco más.";
+new_line;
+return true;
+2: ! ##Enter
+print "Inspirará hondo, haciendo caso omiso de la opresión que sentirá en el pecho, y caminará con paso titubeante hacia la salida.";
+new_line;
+return true;
+}
+
+Fusil: switch (n) {
+1: ! ##Examine
+print "", (A) Fusil, " semiautomático largo. Tendrá restos de tiza en la culata de madera.";
+new_line;
+return true;
+2: ! ##Examine
+print "", (A) Fusil, " semiautomático con culata de madera.";
+new_line;
+return true;
+3: ! ##Touch
+print "Para entonces se habrá acostumbrado a llevar aquel ";
+Hyperlink(Fusil, "arma", 0);
+print " entre las manos. Su peso, la suavidad de la culata, el tacto del gatillo. Se sentirá extrañ", (o) player, " cuando salga de aquel lugar y pueda olvidarse de él.";
+new_line;
+return true;
+4: ! ##Rub
+print "Será imposible mantener ", (the) Fusil, " limpio por mucho cuidado que ponga. De todas formas, frotará la culata con la manga del uniforme, intentando quitarle el polvo y las manchas de tiza más superficiales.";
+new_line;
+return true;
+5: ! ##Rub
+print "No tendrá forma de limpiarlo mejor. ", (SpanishNominativePronounCap) player, " mism", (o) player, " estará cubiert", (o) player, " enter", (o) player, " de polvo y barro. Como mucho conseguirá ensuciarlo aún más.";
+new_line;
+return true;
+}
+
+Humo: switch (n) {
+1: ! ##Examine (CalleCentro)
+print "Algo se estará quemando más ", (name) f_obj, ".";
+new_line;
+return true;
+2: ! ##Examine (CalleOeste)
+print "El humo difuminará las formas ", (del) CalleOeste, ".";
+new_line;
+return true;
+3: ! ##Smell
+print "Toserá con fuerza por culpa ", (del) Humo, ".";
+new_line;
+return true;
+}
+
+Moneda: switch (n) {
+1: ! ##Examine
+print "Parecerá antigua. Tal vez se tratará de algún tipo de amuleto olvidado por alguien.";
+new_line;
+return true;
+2: ! describe (Azotea)
+print "Entre ", (the) Colillas, " y ", (the) Polvo, " del suelo habrá ", (un_) Moneda, " pequeñ", (o) Moneda, " ", (a) Moneda, ".";
+new_line;
+return true;
+3:
+print "Se agachará para recogerlo y le soplará ", (the) Polvo, " de encima. Será ", (a) Moneda, ".";
+new_line;
+return true;
+4:
+print "Algo le llamará la atención junto ", (al) Colchon, ". ", (A) Moneda, " pequeñ", (o) Moneda, ", tirad", (o) Moneda, " entre un montón de ", (name) Colillas, " y semiocult", (o) Moneda, " por culpa ", (del) Polvo, ".";
+new_line;
+return true;
+}
+
+Monedas: switch (n) {
+1: ! ##Examine
+print "Un par de ", (name) Monedas, " antiguas.";
+new_line;
+return true;
+}
+
+Muro: switch (n) {
+1: ! ##Examine
+print "Aunque no ", (lo) obj, " podrá ver, notará los húmedos ladrillos a su lado.";
+new_line;
+return true;
+}
+
+Oscuridad: switch (n) {
+1:
+print "No podrá ver otra cosa en ", (the) Oscuridad, " aparte del pálido punto de  ";
+Hyperlink(FinalTunel, "luz", 0);
+print " que se recortará más ", (name) f_obj, ".";
+new_line;
+return true;
+2:
+print "Todo cuanto podrá ver en ", (the) Oscuridad, " será aquel punto de ";
+Hyperlink(FinalTunel, "luz", 0);
+print " de más ", (name) f_obj, ".";
+new_line;
+return true;
+3:
+print "Las ";
+Hyperlink(Oscuridad, "sombras", 0);
+print " impedirán ver nada. Salvo por aquella pálida mota de ";
+Hyperlink(FinalTunel, "luz", 0);
+print ".";
+new_line;
+return true;
+4: ! ##Drop
+print "Si dejase ", (the) x1, " allí será posible que más tarde no pueda encontrar", (lo) x1, " de nuevo en ", (the) Oscuridad, ". Será mejor quedárse", (lo) x1, " consigo por el momento.";
+new_line;
+return true;
+5: ! ##Rub
+print "Será imposible limpiar ", (the) x1, " ---o cualquier otra cosa--- si no puede ver", (lo) x1, ".";
+new_line;
+return true;
+}
+
+Polvo: switch (n) {
+1: ! ##Examine (general)
+print "Caminará sobre una alfombra gris. ", (The) Polvo, " le habrá arrebatado el color a la ciudad.";
+new_line;
+return true;
+2: ! ##Examine (en CalleCentro/CalleOeste)
+print "Nevará ";
+Hyperlink(Polvo, "ceniza", 0);
+print " sobre ", (the) location, ". Todo cubierto de ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (name) Polvo, ".";
+new_line;
+return true;
+3: ! each_turn
+print "Lo único que se moverá en ", (the) location, " será la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " levantada por el viento.";
+new_line;
+return true;
+4: ! each_turn
+print "Las ";
+Hyperlink(Polvo, "cenizas", 0);
+print " harán pequeños remolinos sobre el asflato.";
+new_line;
+return true;
+5: ! each_turn
+print "El aire estará cargado de ";
+Hyperlink(Polvo, "ceniza", 0);
+print " y ", (name) Polvo, ".";
+new_line;
+return true;
+6: ! each_turn
+print "El viento levantará ", (the) Polvo, " y la ";
+Hyperlink(Polvo, "ceniza", 0);
+print " del suelo. Llevados, esparcidos y llevados de nuevo.";
+new_line;
+return true;
+}
+
+PuertaAzotea: switch (n) {
+1: ! ##Examine
+print "En realidad ya no habrá ", (name) PuertaAzotea, ", sólo un hueco negro al interior del edificio.";
+new_line;
+return true;
+}
+
+PuertaCallejon: switch (n) {
+1: ! ##Examine
+print "Revestida de chapa, le habrán reventado la cerradura de un disparo.";
+new_line;
+return true;
+2: ! describe
+print "Habrá una pequeña ", (name) PuertaCallejon, " trasera en la pared ", (name) w_obj, ". Alguien le habrá volado la cerradura.";
+new_line;
+return true;
+3: ! ##Close
+print "La cerradura estará destrozada. Será imposible cerrar ", (the) PuertaCallejon, ".";
+new_line;
+return true;
+4: ! ##Enter
+print "Levantará ", (the) Fusil, " y entrará en el edificio procurando no hacer ruido.
+^^
+Allí no habrá nada. Incluso los marcos de madera de las puertas habrán desaparecido, pasto de los incendios. Alcanzará unas escaleras y ascenderá por ellas, despacio, sin bajar el ";
+Hyperlink(Fusil, "arma", 0);
+print " en ningún momento, hasta salir a ", (a) Azotea, ".";
+new_line;
+return true;
+5: ! ##Enter
+print "Entrará al edificio y subirá por la escalera hasta alcanzar ", (the) Azotea, ".";
+new_line;
+return true;
+7: ! ##Enter
+print "Volverá sobre sus pasos.";
+new_line;
+return true;
+}
+
+Rio: switch (n) {
+1: ! ##Examine
+print "Plásticos, trozos de madera calcinada y otros bultos imprecisos medio sumergidos en las aguas turbias serán arrastrados lentamente por la corriente.";
+new_line;
+return true;
+2: ! ##Enter
+print "Demasiado peligroso. No atravesará ", (the) Rio, " a nado.";
+new_line;
+return true;
+}
+
+Ruinas: switch (n) {
+1: ! ##Examine
+print "La ciudad entera se descompondrá ante sus ojos.";
+new_line;
+return true;
+}
+
+Soldado: switch (n) {
+1: ! ##Examine
+print "Se encontrará más adelante en ", (the) CalleAzotea, ", a distancia de tiro, unos doscientos metros ", (al) w_obj, ". Ignorará que lo están observando pero aún así andará con cautela, agachado y semioculto por los ";
+Hyperlink(Ruinas, "escombros", 0);
+print ". Su uniforme estará tan descolorido y sucio que resultará imposible distinguir si se trata de un aliado o un enemigo...";
+new_line;
+return true;
+2: ! describe
+print "Se podrá divisar ", (a) Soldado, ", abajo, en ", (the) CalleAzotea, ".";
+new_line;
+return true;
+3:
+print "Verá un movimiento allí abajo, a tal vez unos doscientos metros hacia ", (the) w_obj, ". Caminará agachado y quedará semioculto por los ";
+Hyperlink(Ruinas, "escombros", 0);
+print " pero se podrá a distinguir claramente un arma en sus manos. Será ", (a) Soldado, ", sin duda. Quizá el tirador que habrá estado apostado en ", (the) Colchon, "... Notará la descarga de adenalina y el pulso que se acelerará de pronto. Sus manos aferrarán ", (the) Fusil, " con fuerza.";
+new_line;
+return true;
+4:
+print "Podrá ver a ", (a) Soldado, " allí abajo, caminando entre ", (the) Ruinas, ".";
+new_line;
+return true;
+5: ! ##ShootAt
+print "Será imposible asegurar si se trata de un enemigo o no, pero no podrá arriesgarse. Apoyará el cañón ", (del) Fusil, " en un bloque de hormigón y apuntará ", (al) Soldado, ". No es un disparo difícil. Tocará la curva del gatillo con el dedo. No es un disparo difícil. No podrá fallar. Contendrá la respiración...";
+new_line;
+return true;
+6: ! ##ShootAt
+print "El estruendo de la detonación romperá el silencio. Como un trozo grueso de madera al romperse. A pesar del peso del cañón el ";
+Hyperlink(Fusil, "rifle", 0);
+print " saltará de su punto de apoyo. Buscará ", (al) Soldado, " en ", (the) CalleAzotea, " con la mirada pero no habrá rastro alguno. Sólo ", (name) Ruinas, ". ¿Le habrá alcanzado?";
+new_line;
+return true;
+7:
+print "No necesitará preocuparse por eso.";
+new_line;
+return true;
+}
+
+SoldadoDesaparecido: switch (n) {
+1: ! ##Examine
+print "Buscará ", (al) Soldado, " entre los ";
+Hyperlink(Ruinas, "escombros", 0);
+print " de ", (the) CalleAzotea, " pero ya no habrá rastro alguno. Habrá desaparecido.";
+if (x1) print " No tendrá forma de saber si le ha alcanzado o no.";
+new_line;
+return true;
+}
+
+Stalker: switch (n) {
+1: ! ##Pray
+print "Soltará un escupitajo amargo. Mierda de Dios, pensará. Sea quien sea, si es que hubiere alguno. Y ojalá lo haya. Tal vez podrá pedirle cuentas pronto.";
+new_line;
+return true;
+2: ! ##Pray
+print "Tal vez podrá pedir cuentas pronto...";
+new_line;
+return true;
+3:  ! ##ShootAt (self)
+print "Se suele caer en el error de considerarlo la salida más fácil. Es una idea estúpida. Nunca es fácil.
+^^
+Colocará el cañón ", (del) Fusil, " bajo la barbilla, mientras intentará encontrar unas últimas palabras adecuadas. Alguna epifanía de última hora, tal vez. No dará con nada.
+^^
+Apretará el gatillo.";
+new_line;
+return true;
+4:  ! ##JumpOver (Cornisa)
+print "Se suele caer en el error de considerarlo la salida más fácil. Es una idea estúpida. Nunca es fácil.
+^^
+Mirará hacia el vacío, mientras intentará encontrar unas últimas palabras adecuadas. Alguna epifanía de última hora, tal vez. No dará con nada.
+^^
+Saltará.";
+new_line;
+return true;
+}
+
+Tunel: switch (n) {
+1: ! ##Examine
+print "Habrá estado caminando durante horas en ", (the) Oscuridad, " más absoluta, siguiendo a ciegas ", (the) Muro, " de su derecha para no desorientarse. Una odisea a través de las ";
+Hyperlink(Oscuridad, "tinieblas", 0);
+print " que, sin embargo, parecerá haber terminado por fin; más ", (name) f_obj, " podrá ver un tenue punto de ";
+Hyperlink(FinalTunel, "luz", 3);
+print ", como una mota azul pálido. Habrá alcanzado la ";
+Hyperlink(FinalTunel, "salida", 0);
+print ".";
+new_line;
+return true;
+3: ! cant_go
+print "Será imposible orientarse bien en ", (the) Oscuridad, ", por eso habrá estado usando las ";
+Hyperlink(Muro, "paredes", 0);
+print " del túnel como referencia con la que guiarse. Así, se habrá limitado a continuar hacia ", (name) f_obj, ", a lo largo ", (del) Muro, ".";
+new_line;
+return true;
+4: ! initial
+print "El pinchazo será repentino. Se llevará las manos al pecho de forma automática y caerá al suelo, atravesad", (o) player, " por el dolor.";
+new_line;
+return true;
+5: ! initial
+print "Una presión punzante le irradiará desde la altura del esternón, extendiéndose a través de hombros y cuello y llegando a atenazarle los brazos y la mandíbula. Tendrá la espalda empapada por completo de un sudor frío de pronto. Durante un instante percibirá el sabor del pánico, su amenaza clara de dominarlo todo. No quiero morir, pensará. No ahora, después de haber llegado hasta aquí.
+^^
+Aún permanecerá unos minutos en el suelo, luchando por controlar la respiración desbocada e intentando sobreponerse al miedo. El dolor parecerá atenuarse. Un poco. Lo suficiente como para apartarlo en un rincón y poder ignorarlo por el momento. Tanteará a su alrededor hasta encontrar ", (the) Fusil, " que se le habrá caído de las manos y se levantará de nuevo. Tendrá que seguir avanzando.";
+new_line;
+return true;
+6: ! ##Listen
+print "Silencio. Salvo por el sonido esporádico de alguna gota de agua cayendo entre las ";
+Hyperlink(Oscuridad, "sombras", 0);
+print " y el eco de sus propios pasos contra las ";
+Hyperlink(Muro, "paredes", 0);
+print ".";
+return true;
+7: ! ##Listen
+print " Ni siquiera las ratas parecerán habitar aquel lugar.";
+return true;
+8: ! ##Go (b_obj)
+print "En aquella dirección ya no quedará más que un vacío negro.";
+new_line;
+return true;
+}
+
+TunelCanal: switch (n) {
+1: ! ##Examine
+print "Una abertura negra que desembocará en ", (the) Canal, ".";
+new_line;
+return true;
+2: ! ##Enter
+print "Mirará a la oscura boca ", (del) TunelCanal, "... No podrá volver. En esa dirección ya no quedará nada.";
+new_line;
+return true;
+}
+
+	}
+return LanguageOM_present(obj, n, x1);
 ];

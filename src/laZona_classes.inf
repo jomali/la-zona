@@ -11,13 +11,13 @@
 !!	Autor(es):		J. Francisco Martín <jfm.lisaso@gmail.com>
 !!	Idioma:			ES (Castellano)
 !!	Sistema:		Inform-INFSP 6
-!!	Plataforma:		GLULX
-!!	Versión:		0.0
-!!	Fecha:			2017/12/16
+!!	Plataforma:		Máquina-Z/Glulx
+!!	Versión:		1.0
+!!	Fecha:			2018/08/25
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	Este archivo forma parte del relato interactivo LA ZONA.
+!!	Este archivo forma parte de la ficción interactiva LA ZONA.
 !!
 !!	LA ZONA es software libre: usted puede redistribuirlo y/o
 !!	modificarlo bajo los términos de la Licencia Pública General GNU
@@ -37,29 +37,21 @@
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	# HISTORIAL DE VERSIONES
+!!	TABLA DE CONTENIDOS
 !!
-!!	0.0: 2016/06/18	Inicio del desarrollo.
-!!
-!!------------------------------------------------------------------------------
-!!
-!!	# TABLA DE CONTENIDOS
-!!
-!!	-	Atributo remarkable
-!!	-	Direcciones Adelante/Atrás
-!!	-	Clase Thing
-!!		+	Clase Item
-!!		+	Clase Furniture
-!!		+	Clase Atrezzo
-!!		+	Clase NPC
-!!	-	Clase Room
-!!		+	Clase Outdoors
-!!		+	Clase Indoors
-!!	-	Clase SmartEnterable
+!!	-	Room
+!!		+	Outdoors
+!!		+	Indoors
+!!	-	Thing
+!!		+	AdjacentRoom
+!!		+	Atrezzo
+!!		+	Item
+!!			*	Clothes
+!!		+	NPC
 !!
 !!------------------------------------------------------------------------------
 !!
-!!	# NOTA SOBRE LAS PROPIEDADES DE CLASE
+!!	NOTA SOBRE LAS PROPIEDADES DE CLASE
 !!
 !!	Hay rutinas como 'before' o 'react_before' que son propiedades no aditivas,
 !!	es decir, si se crea una clase que defina un comportamiento específico para
@@ -80,19 +72,52 @@
 
 
 !!==============================================================================
-!!	Atributo remarkable
+!!	-	Room
 !!------------------------------------------------------------------------------
-!!	Marca un objeto como destacado. El usuario puede utilizar la acción
-!!	##RemarkableObjects para obtener un listado de objetos destacados que se
-!!	encuentren a su alcance. Los objetos destacados, además, se imprimen con
-!!	un estilo de resaltado propio.
+!!	Representa un objeto localidad dentro del modelo de mundo.
 !!------------------------------------------------------------------------------
 
-Attribute remarkable;
-
+Class	Room
+ with	description [;
+			if (action == ##Look || self hasnt visited) {
+				self.long_description();
+			} else self.short_description();
+			!! Espacio para elementos comunes a las dos descripciones.
+			return true;
+		],
+		long_description "EN CONSTRUCCIÓN.",
+		!! Por defecto, la descripción corta es la misma descripción larga:
+		short_description [; return self.long_description(); ],
+		before [;
+			Examine:
+				if (noun == self) <<Look>>;
+		],
+		!! Permite que se inhiba el listado automático de objetos al imprimir
+		!! la descripción de la localidad. (XXX Para ello se debe modificar el
+		!! comportamiento de la acción ##Look en el archivo de mensajes de la
+		!! librería):
+		inhibit_object_list false,
+		state 0,
+ has	light;
 
 !!==============================================================================
-!!	Clase Thing
+!!	+	Indoors
+!!------------------------------------------------------------------------------
+
+Class	Indoors
+ class	Room
+;
+
+!!==============================================================================
+!!	+	Outdoors
+!!------------------------------------------------------------------------------
+
+Class	Outdoors
+ class	Room
+;
+
+!!==============================================================================
+!!	-	Thing
 !!------------------------------------------------------------------------------
 !!	Representa un objeto dentro del modelo del mundo, con un tamaño, volumen y
 !!	peso específicos, así como diferentes valores de capacidad asociados a su
@@ -102,14 +127,13 @@ Attribute remarkable;
 !!------------------------------------------------------------------------------
 
 Class	Thing
- with	size	0,			! Tamaño
-		volume	0,			! Volumen
-		weight	0,			! Peso
-		capacity_number	-1,	! Capacidad total: en cuanto a número de objetos
+ with	action_set 0,
 		capacity_size	-1,	! Capacidad total: en cuanto a tamaño
 		capacity_volume	-1,	! Capacidad total: en cuanto a volumen
 		capacity_weight	-1,	! Capacidad total: en cuanto a peso
-		action_set 0,
+		size	0,			! Tamaño
+		volume	0,			! Volumen
+		weight	0,			! Peso
 		description [;
 			switch (_grammatical_inflection) {
 				FIRST_PERSON_PRESENT:
@@ -142,112 +166,74 @@ Class	Thing
 			}
 			" nada especial en ", (the) self, ".";
 		],
-		reset [; return true; ],
+		state 0,
 ;
 
-
 !!==============================================================================
-!!	Clase Item
+!!	+	AdjacentRoom
 !!------------------------------------------------------------------------------
-!!	Representa un objeto simple dentro del modelo de mundo sobre el que
-!!	inicialmente no se aplican restricciones de ningún tipo.
+!!	Representa un objeto dentro del modelo de mundo, hacia la que el usuario se
+!!	puede desplazar.
 !!------------------------------------------------------------------------------
 
-Class	Item
+Class	AdjacentRoom
  class	Thing
- with	description [;
-			switch (_grammatical_inflection) {
-				FIRST_PERSON_PRESENT,
-				SECOND_PERSON_PRESENT,
-				THIRD_PERSON_PRESENT:
-					print "Tiene", (n) self;
-				FIRST_PERSON_PAST,
-				SECOND_PERSON_PAST,
-				THIRD_PERSON_PAST:
-					print "Tenía", (n) self;
-				FIRST_PERSON_FUTURE,
-				SECOND_PERSON_FUTURE,
-				THIRD_PERSON_FUTURE:
-					print "Tendrá", (n) self;
+ with	short_name [
+			obj;
+			if (self.direction_obj ~= 0 && self.compass_reference) {
+				if (metaclass(self.direction_obj) == Routine) {
+					obj = self.direction_obj();
+				}
+				if (metaclass(self.direction_obj) == Object) {
+					obj = self.direction_obj;
+				}
+				print (object) self, " ", (al) obj;
+				return true;
 			}
-			print " el mismo aspecto que ";
-			if (IsPluralNoun(self)) print "cualesquiera";
-			else print "cualquier";
-			print " otr", (o) self, " ", (name) self, " que ";
-			switch (_grammatical_inflection) {
-				FIRST_PERSON_PRESENT:
-					if (IsPluralNoun(player)) print "hayamos";
-					else print "haya";
-				SECOND_PERSON_PRESENT:
-					if (IsPluralNoun(player)) print "hayáis";
-					else print "hayas";
-				THIRD_PERSON_PRESENT:
-					if (IsPluralNoun(player)) print "hayan";
-					else print "haya";
-				FIRST_PERSON_PAST:
-					if (IsPluralNoun(player)) print "hubiésemos";
-					else print "hubiese";
-				SECOND_PERSON_PAST:
-					if (IsPluralNoun(player)) print "hubieseis";
-					else print "hubieses";
-				THIRD_PERSON_PAST:
-					if (IsPluralNoun(player)) print "hubiesen";
-					else print "hubiese";
-				FIRST_PERSON_FUTURE:
-					if (IsPluralNoun(player)) print "habremos";
-					else print "habré";
-				SECOND_PERSON_FUTURE:
-					if (IsPluralNoun(player)) print "habréis";
-					else print "habrás";
-				THIRD_PERSON_FUTURE:
-					if (IsPluralNoun(player)) print "habrán";
-					else print "habrá";
-			}
-			" visto antes.";
-		];
-
-
-!!==============================================================================
-!!	Clase Furniture.
-!!------------------------------------------------------------------------------
-!!	Representa un objeto estático dentro del modelo de mundo. Se aplica la
-!!	restricción 'static' definida por la librería Inform.
-!!------------------------------------------------------------------------------
-
-Class	Furniture
- class	Thing,
- with	before [;
-			Pull, Push, PushDir, Take, Turn:
-				switch (_grammatical_inflection) {
-					FIRST_PERSON_PRESENT,
-					SECOND_PERSON_PRESENT,
-					THIRD_PERSON_PRESENT:
-						print (The) self, " ", (es) self;
-					FIRST_PERSON_PAST,
-					SECOND_PERSON_PAST,
-					THIRD_PERSON_PAST:
-						print (The) self, " era", (n) self;
-					FIRST_PERSON_FUTURE,
-					SECOND_PERSON_FUTURE,
-					THIRD_PERSON_FUTURE:
-						print (The) self, " será", (n) self;
-				} " demasiado pesad", (o) self, " para andar moviéndol",
-				(o) self, ".";
 		],
- has	static;
-
+		description [;
+			return L__M(##Look, 7, self);
+		],
+		before [
+			previous_style obj;
+			DefaultAction,
+			Use:
+				previous_style = UseTextStyle(TEXT_STYLE_PARSER);
+				print (string) TEXT_STYLE_PARSER_PREFIX;
+				print "ve ", (al_) self, "", (object) self;
+				print (string) TEXT_STYLE_PARSER_SUFIX;
+				UseTextStyle(previous_style);
+				new_line;
+				<<Enter self>>;
+			Enter,
+			Go:
+				if (self.direction_obj ~= 0) {
+					if (metaclass(self.direction_obj) == Routine) {
+						obj = self.direction_obj();
+					}
+					if (metaclass(self.direction_obj) == Object) {
+						obj = self.direction_obj;
+					}
+					<<Go obj>>;
+				}
+		],
+		compass_reference false,
+		direction_obj 0,
+ has	open scenery;
 
 !!==============================================================================
-!!	Clase Atrezzo.
+!!	+	Atrezzo.
 !!------------------------------------------------------------------------------
 !!	Representa un objeto decorado dentro del modelo de mundo. Se aplica la
-!!	restricción *scenery* definida por la librería Inform.
+!!	restricción 'scenery' definida por la librería Inform.
 !!------------------------------------------------------------------------------
 
 Class	Atrezzo
  class	Thing
  with	before [;
-			DefaultAction, Examine, Search:
+			DefaultAction,
+			Examine,
+			Search:
 				return false;
 			default:
 				switch (_grammatical_inflection) {
@@ -295,12 +281,95 @@ Class	Atrezzo
 		],
  has	scenery;
 
+!!==============================================================================
+!!	+	Item
+!!------------------------------------------------------------------------------
+!!	Representa un objeto simple dentro del modelo de mundo sobre el que
+!!	inicialmente no se aplican restricciones de ningún tipo.
+!!------------------------------------------------------------------------------
+
+Class	Item
+ class	Thing
+;
 
 !!==============================================================================
-!!	Clase NPC
+!!	*	Clothes
 !!------------------------------------------------------------------------------
-!!	Representa un personaje no jugador. Hay algunas librerías externas que
-!!	definen sus propias clases personaje (por ejemplo, 'gtalk.h' de Greg
+!!	Para objetos vestibles. Implementa un mecanismo de capas, de modo que no es
+!!	posible vestir ni desvistir prendas de una capa mientras haya puestas
+!!	prendas de una capa superior.
+!!------------------------------------------------------------------------------
+
+Class	Clothes
+ class	Item
+ with	before [
+			obj i temp layer_a layer_b;
+			Disrobe,
+			Wear:
+				!! Calcula la capa de referencia del objeto:
+				for (i = 0 : i < (self.#layers)/WORDSIZE : i++) {
+					temp = self.&layers-->i;
+					if (temp > layer_a) layer_a = temp;
+				}
+				!! Comprueba las capas del resto de elementos vestidos por PJ:
+				objectloop(obj in player && obj ofclass Clothes
+					&& obj has worn && obj ~= self) {
+					for (i = 0 : i < (obj.#layers)/WORDSIZE : i++) {
+						temp = obj.&layers-->i;
+						if (i == 0) layer_b = temp;
+						else if (temp < layer_b) layer_b = temp;
+					}
+					if (layer_a < layer_b) {
+						switch (_grammatical_inflection) {
+							FIRST_PERSON_PAST:
+								if (IsPluralNoun(player))
+									print "Teníamos que quitarnos";
+								else print "Tenías que quitarme";
+							SECOND_PERSON_PAST:
+								if (IsPluralNoun(player))
+									print "Teníais que quitaros";
+								else print "Tenías que quitarte";
+							THIRD_PERSON_PAST:
+								if (IsPluralNoun(player))
+									print "Tenían que quitarse";
+								else print "Tenía que quitarse";
+							FIRST_PERSON_PRESENT:
+								if (IsPluralNoun(player))
+									print "Tenemos que quitarnos";
+								else print "Tengo que quitarme";
+							SECOND_PERSON_PRESENT:
+								if (IsPluralNoun(player))
+									print "Tenéis que quitaros";
+								else print "Tienes que quitarte";
+							THIRD_PERSON_PRESENT:
+								if (IsPluralNoun(player))
+									print "Tienen que quitarse";
+								else print "Tiene que quitarse";
+							FIRST_PERSON_FUTURE:
+								if (IsPluralNoun(player))
+									print "Tendremos que quitarnos";
+								else print "Tendré que quitarme";
+							SECOND_PERSON_FUTURE:
+								if (IsPluralNoun(player))
+									print "Tendréis que quitaros";
+								else print "Tendrás que quitarte";
+							THIRD_PERSON_FUTURE:
+								if (IsPluralNoun(player))
+									print "Tendrán que quitarse";
+								else print "Tendrá que quitarse";
+						}
+						" ", (the) obj, " primero.";
+					}
+				}
+		],
+		layers 0,
+ has	clothing;
+
+!!==============================================================================
+!!	+	NPC
+!!------------------------------------------------------------------------------
+!!	Representa un personaje no jugador. Hay algunas extensiones que definen
+!!	también sus propias clases personaje (por ejemplo, 'gtalk.h' de Greg
 !!	Boettcher, Krister Fundin y Mark J. Tilford, para manejar conversaciones
 !!	por medio de menús, define la clase 'Character'). Se pueden utilizar estas
 !!	librerías y reutilizar las clases definidas en ellas dentro de NPC
@@ -309,7 +378,7 @@ Class	Atrezzo
 !!
 !!		Class NPC
 !!			class Thing
-!!			class Character ! (definida en la librería *gtalk.h*)
+!!			class Character ! (definida en la librería 'gtalk.h')
 !!			[...]
 !!		;
 !!
@@ -317,309 +386,19 @@ Class	Atrezzo
 
 Class	NPC
  class	Thing,
- with	before [;
+ with	before [
+			previous_style;
 			DefaultAction:
 				if (self has described) {
+					previous_style = UseTextStyle(TEXT_STYLE_PARSER);
+					print (string) TEXT_STYLE_PARSER_PREFIX;
+					print "habla con ";
+					PrintToBuffer(temp_array, INPUT_BUFFER_LEN, self);
+					PrintCharacterArray(temp_array);
+					print (string) TEXT_STYLE_PARSER_SUFIX;
+					UseTextStyle(previous_style);
+					new_line;
 					<<TalkTo self>>;
 				}
 		],
  has	animate;
-
-
- !!==============================================================================
- !!	Clase Room
- !!------------------------------------------------------------------------------
- !!	Representa un objeto localidad dentro del modelo de mundo.
- !!------------------------------------------------------------------------------
-
- Class	Room
-  with	description [;
- 			if (action == ##Look || self hasnt visited) self.long_description();
- 			else self.short_description();
- 			!! Espacio para elementos comunes a las dos descripciones.
- 			return true;
- 		],
- 		long_description "EN CONSTRUCCIÓN.",
- 		!! Por defecto, la descripción corta es la misma descripción larga:
- 		short_description [; return self.long_description(); ],
- 		!! Permite que se inhiba el listado automático de objetos al imprimir
- 		!! la descripción de la localidad. (XXX Para ello se debe modificar el
- 		!! comportamiento de la acción ##Look en el archivo de mensajes de la
- 		!! librería):
- 		inhibit_object_list false,
-  has	light remarkable;
-
-
- !!==============================================================================
- !!	Clase Outdoors
- !!------------------------------------------------------------------------------
-
- Class	Outdoors
-  class	Room;
-
-
- !!==============================================================================
- !!	Clase Indoors
- !!------------------------------------------------------------------------------
-
- Class	Indoors
-  class	Room;
-
-
-!!==============================================================================
-!!	Clase SmartEnterable.
-!!------------------------------------------------------------------------------
-!!	Representa un objeto al que el jugador puede entrar o subirse encima. NOTA:
-!!	Conviene recordar que Inform permite herencia múltiple. de manera que se
-!!	pueden crear objetos instancias de varias clases a la vez. Por ejemplo, se
-!!	pueden crear un 'Furniture' que sea además 'SmartEnterable':
-!!
-!!		Furniture	-> cama "cama"
-!!		 class		SmartEnterable
-!!		 with		[...];
-!!------------------------------------------------------------------------------
-
-Class	SmartEnterable
- with	react_before [; if (parent(player) ~= self) return false;
-			!! GROUP 2 ACTIONS: Usually work, given the right circumstances.
-			Close, Open:
-				if (noun hasnt openable) return false;
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			Disrobe, Wear:
-				if (noun hasnt clothing) return false;
-				<Exit self>; new_line;
-				return false;
-			Drop:
-				if (self has container) return false;
-				if ((noun == player) || (parent(noun) ~= player)) return false;
-				if (self.drop_on_object == 0) move noun to self;
-				else move noun to self.drop_on_object;
-				if (keep_silent == 0) print "Dejad", (o) noun, ".^";
-				return true;
-			Eat:
-				if (noun hasnt edible) return false;
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			Empty, Remove, Search, Take:
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			EmptyT: !! TODO - Comprobar funcionamiento
-				if (ObjectIsUntouchable(noun, 1)) return false;
-				if (self.out_of_reach(second))
-					{ <Exit self>; new_line; }
-				return false;
-			!Enter:
-			!Examine:
-			!Exit:
-			!GetOff:
-			!Give:
-			Go:
-				!! TODO - Habría que corregir el comportamiento si se
-				!! implementa un sistema de movimiento no basado en puntos
-				!! cardinales. (Ej: IR A <LOCALIDAD>)
-				if (~~(noun ofclass CompassDirection)) return false;
-				<Exit self>; new_line;
-				return false;
-			!GoIn:
-			Insert, PutOn:
-				if ((second == d_obj) || (player in second)) <<Drop noun>>;
-				if (self.out_of_reach(second))
-					{ <Exit self>; new_line; }
-				return false;
-			!Inv:
-			!InvTall:
-			!InvWide:
-			Lock, Unlock:
-				if (noun hasnt lockable) return false;
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			!Look:
-			!Open:		Ver ##Close
-			!Order:
-			!PutOn:		Ver ##Insert
-			!Remove:	Ver ##Empty
-			!Search:	Ver ##Empty
-			!Show:
-			SwitchOff, SwitchOn:
-				if (noun hasnt switchable) return false;
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			!SwitchOn:	Ver ##SwitchOff
-			!Take:		Ver ##Empty
-			!Transfer:
-			!Unlock:	Ver ##Lock
-			!VagueGo:
-			!Wear:		Ver ##Disrobe
-			!! GROUP 3 ACTIONS: Output a message and stop at the "before" stage.
-			!Answer:
-			!Ask:
-			!AskFor:
-			Attack, Blow, LookUnder, Smell, Squeeze, Taste, Touch:
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			!Blow:		Ver ##Attack
-			!Burn:
-			!Buy:
-			Climb:
-				if (noun hasnt enterable) return false;
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			!Consult:
-			!Cut:
-			!Dig:
-			!Drink:
-			!Fill:
-			Jump:
-				if (noun has supporter) <<Exit self>>;
-				return false;
-			!JumpOver:
-			!Kiss:
-			!LetGo:
-			!Listen:
-			!LookUnder:	Ver ##Attack
-			!Mild:
-			!No:
-			!Pray:
-			Pull, Push, Turn:
-				!! TODO - Comprobar mensaje al empujar objetos scenery o static
-				if (noun has scenery or static) return false;
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			!Push:		Ver ##Pull
-			!PushDir:
-			!Receive:
-			!Rub:
-			!Set:
-			!SetTo:
-			!Sing:
-			!Sleep:
-			!Smell:		Ver ##Attack
-			!Sorry:
-			!Squeeze:	Ver ##Attack
-			!Strong:
-			!Swim:
-			Swing:
-				if (noun has supporter) <<Swing self>>;
-				return false;
-			!Taste:		Ver ##Attack
-			!Tell:
-			!Think:
-			!ThrowAt:
-			!Tie:
-			!Touch:		Ver ##Attack
-			!Turn:		Ver ##Pull
-			!Wait:
-			!Wake:
-			!WakeOther:
-			!Wave:
-			!WaveHands:
-			!Yes:
-			!! CUSTOM ACTIONS
-			!Dance:
-			GoDown:
-				if (self has supporter) <<Exit self>>;
-				return false;
-			!GoUp:
-			!KnockOn:
-			!Masturbate:
-			!Sit:
-			!SleepWith:
-			StandUp:
-				if ((self has supporter) && (noun == nothing or self))
-					<<Exit self>>;
-			TalkTo:
-				if (noun hasnt animate) return false;
-				if (self.out_of_reach(noun))
-					{ <Exit self>; new_line; }
-				return false;
-			!TalkTo:
-			!Untie:
-			!Use:
-			!Write:
-			!Xyzzy:
-		],
-		after [;
-			Exit:
-				if (keep_silent == 0) {
-					if (self has supporter) {
-						print "Baj", (lm_as_) player;
-					} else {
-						switch (_grammatical_inflection) {
-							FIRST_PERSON_PRESENT:
-								if (IsPluralNoun(player)) print "Salimos";
-								else print "Salgo";
-							SECOND_PERSON_PRESENT:
-								if (IsPluralNoun(player)) print "Salís";
-								else print "Sales";
-							THIRD_PERSON_PRESENT:
-								if (IsPluralNoun(player)) print "Salen";
-								else print "Sale";
-							FIRST_PERSON_PAST:
-								if (IsPluralNoun(player)) print "Salimos";
-								else print "Salí";
-							SECOND_PERSON_PAST:
-								if (IsPluralNoun(player)) print "Salisteis";
-								else print "Saliste";
-							THIRD_PERSON_PAST:
-								if (IsPluralNoun(player)) print "Salieron";
-								else print "Salió";
-							FIRST_PERSON_FUTURE:
-								if (IsPluralNoun(player)) print "Saldremos";
-								else print "Saldré";
-							SECOND_PERSON_FUTURE:
-								if (IsPluralNoun(player)) print "Saldréis";
-								else print "Saldrás";
-							THIRD_PERSON_FUTURE:
-								if (IsPluralNoun(player)) print "Saldrán";
-								else print "Saldrá";
-						}
-					}
-					print " ", (del) self, ".^";
-				}
-				return true;
-		],
-		!! Objetos al alcance desde el SmartEnterable:
-		reach_objects 0,
-		!! Objeto destino de la acción ##Drop estando en el SmartEnterable:
-		drop_on_object 0,
- private
-		!! Indica si el objeto pasado como parámetro se encuentra fuera de
-		!! alcance desde el SmartEnterable. Retorna verdadero si el objeto está
-		!! fuera de alcance, falso en caso contrario. [Código adaptado de la
-		!! librería OutOfRch.h v2.00, de Marnie Parker <doeadeer3@aol.com>].
-		out_of_reach [ obj
-			top x y i;
-			!! Se comprueba si el objeto se encuentra fuera de la localidad o
-			!! en el interior de un contenedor cerrado:
-			if (ObjectIsUntouchable(obj, true)) return false;
-			!! Se comrpueba si el objeto se encuentra en el jugador o en el
-			!! propio SmartEnterable:
-			if (IndirectlyContains(player, obj)) return false;
-			if (IndirectlyContains(self, obj)) return false;
-			!! Se comprueba si el objeto es o se encuentra contenido en alguno
-			!! de los reach_objects definidas:
-			top = TopHolder(obj);
-			if (metaclass(self.&reach_objects-->0) == Routine) {
-				x = self.reach_objects();
-				if (x == top) return false;
-			}
-			if (metaclass(self.&reach_objects-->0) == Object or Class) {
-				y = self.#reach_objects;
-				for (i = 0 : i < (y/2) : i++) {
-					x = self.&reach_objects-->i;
-					if (x == top) return false;
-				}
-			}
-			!! El objeto se encuentra fuera del alcance:
-			return true;
-		],
- has	enterable;
